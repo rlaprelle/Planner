@@ -95,13 +95,15 @@ The ability to jot unstructured notes and have them intelligently handled later 
   - When pivoting: make it easy (minimal friction), explicitly prompt to reconsider at intervals or when blocked, and show trade-offs (what are you deprioritizing?)
   - The tool should help separate what matters from what doesn't, so you can focus on what actually matters
 
-*Remaining pain points to explore:*
-- Task Breakdown
-- Context Switching
-- Losing Ideas
-- Time Estimation
-- Progress Invisibility
-- Task Organization
+### Context Switching / Distractions
+- **Pain**: Random ideas, new requests, anything that pops up during the day breaks focus
+- **Your approach**:
+  - The deferred item capture (jot-a-note) is the escape hatch — anything that deserves thought but not *right now* gets captured
+  - Once captured, you need to feel confident it won't be lost:
+    - Brief visual/audio confirmation that it was saved
+    - Ability to review your deferred inbox anytime if you get worried
+    - Trust that it will be processed at regular review times (daily, weekly, etc.)
+  - This lets you mentally let go of distractions and refocus without guilt or anxiety
 
 ---
 

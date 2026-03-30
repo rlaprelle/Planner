@@ -69,9 +69,14 @@
 
 **Hidden/Secondary**:
 - Task description
-- Task priority (implied by project organization)
 - Task dependencies
 - Task history
+
+**Ordering Logic**:
+Tasks within each project column are ordered:
+1. Today's deadlines (sorted by priority 1-5, highest first)
+2. This week's deadlines (sorted by priority 1-5, highest first)
+3. Everything else / no deadline (sorted by priority 1-5, highest first)
 
 **Actions**:
 - Select/deselect task
@@ -185,6 +190,7 @@
 - Project (dropdown to change; only for top-level tasks)
 - Parent task (if this is a child task; dropdown to change or remove)
 - Due date
+- Priority (1-5 dropdown, used for ordering)
 - Points estimate
 - Status (dropdown)
 - Description

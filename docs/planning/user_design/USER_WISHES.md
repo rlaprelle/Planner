@@ -156,22 +156,31 @@ The ability to jot unstructured notes and have them intelligently handled later 
 
 *What's essential vs. optional for you?*
 
-**Must have**:
-- Feature 1
-- Feature 2
-- Feature 3
+**Must Have** (core to the vision):
+- Guided 5-10 min morning planning ritual with step-by-step prompts
+- Deferred items capture (jot-a-note) with visual/audio confirmation, accessible anytime
+- Cadenced reviews (daily, weekly, monthly, yearly) to process deferred items and organize
+- **Guided end-of-day process** for clearing out deferred items (significant enough to call out separately)
+- Calm, simple, uncluttered interface
+- Points-based task estimation (not time)
+- Streak tracking + weekly/monthly summaries
+- Intelligent celebration of significant accomplishments (by hours, complexity, effort)
+- Deadline tracking as a prioritization signal
+- Ability to consciously change plans with minimal friction
+- **Visual time blocking** — see your day laid out in time blocks
 
-**Really want**:
-- Feature 1
-- Feature 2
+**Really Want** (high value but could be phased):
+- Active task timer with gentle reminders for breaks
+- Context switching prevention (via deferred items + focused work sessions)
+- "Just make it smaller" task breakdown with optional "suggest help" button
+- End-of-day reflection form (energy/mood ratings)
 
-**Nice to have**:
-- Feature 1
-- Feature 2
-
-**Don't care about**:
-- Feature 1
-- Feature 2
+**Nice to Have** (future, lower priority):
+- LLM-integrated morning ritual (conversational coach)
+- Estimation accuracy learning over time
+- Microservices for "breakthrough" UIs for different freeze types
+- Recurring task templates
+- Weekly/monthly/yearly review ceremonies with prompts
 
 ---
 

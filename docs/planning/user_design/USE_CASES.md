@@ -110,9 +110,8 @@ These are the core user journeys that happen in every day/week.
    - Timer starts (countdown or countup depending on user preference)
    - Child tasks displayed as checklist
 3. User works...
-4. At 80% of time: gentle chime, "You've got 5 minutes left"
-5. At 100% of time: gentle chime, "Time's up. Good work!"
-6. User can:
+4. At 100% of time: gentle chime, "Time's up. Good work!"
+5. User can:
    - Click "Complete" → marks time block done, updates task.actual_minutes
    - Click "Extend 10 min" → adds time
    - Click "Skip" → marks incomplete, asks for notes ("What happened?")

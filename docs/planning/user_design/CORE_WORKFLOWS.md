@@ -15,7 +15,7 @@ These are the 5-7 most important screens users see daily.
 **Layout**: Two-panel (top/bottom split)
 
 **Top Panel: Task Browser (Table View by Project)**
-- **Column headers**: Project names across the top
+- **Column headers**: Project names across the top (Projects can be traditional work projects like "Auth System" or life categories like "Dental Care")
 - **Under each project**: List of tasks for that project
 - **For each task**:
   - Task name
@@ -24,7 +24,8 @@ These are the 5-7 most important screens users see daily.
     - Large icon/badge (🔴 or "TODAY") for tasks due today
     - Small icon/badge (📅 or "THIS WEEK") for tasks due this week
   - Points estimate
-- Drag from this panel to the calendar below
+- User selects tasks and clicks "Add to calendar" to auto-place them
+- User can then drag tasks around to fine-tune order
 
 **Bottom Panel: Today's Calendar**
 - Visual representation of work day (e.g., 9am-5pm)

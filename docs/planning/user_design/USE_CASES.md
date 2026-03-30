@@ -70,10 +70,13 @@ These are the core user journeys that happen in every day/week.
    - Show the raw text: "Email Dave about invoice"
    - Options: (a) Convert to task, (b) Add to existing project, (c) Dismiss (not needed)
    - If convert: guided form appears
-     - "What project?"
+     - "What project?" (dropdown of existing projects/categories)
      - "Break into subtasks?" (optional)
      - "Points estimate?" (optional)
-     - Save → mark as processed
+     - "Due date?" (optional)
+     - Save → mark as processed, task created
+   - If defer: user selects 1 day / 1 week / 1 month → item re-queued for that date's evening ritual
+     - System tracks `deferral_count` and `created_at` for insights
    - If dismiss: mark as processed
 5. After all items processed: "Inbox Zero! Great work!"
 

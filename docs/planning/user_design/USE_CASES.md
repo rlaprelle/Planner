@@ -108,7 +108,7 @@ These are the core user journeys that happen in every day/week.
 2. Active task view appears:
    - Task title prominent
    - Timer starts (countdown or countup depending on user preference)
-   - Subtasks displayed as checklist
+   - Child tasks displayed as checklist
 3. User works...
 4. At 80% of time: gentle chime, "You've got 5 minutes left"
 5. At 100% of time: gentle chime, "Time's up. Good work!"

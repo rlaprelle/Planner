@@ -14,21 +14,18 @@
 - sort_order, is_active, archived_at
 - created_at, updated_at
 
-**Task**
+**Task** (supports hierarchy via parent_task_id)
 - id, title, description
-- project_id (which project this belongs to)
+- project_id (which project this belongs to; nullable for subtasks)
+- parent_task_id (for subtasks, references parent task; null for top-level tasks)
 - status (TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED)
 - priority (1-5)
 - points_estimate (1-5 or higher, deliberately vague)
 - due_date
+- sort_order (for ordering within parent)
 - created_at, completed_at, archived_at
 - blocked_by_task_id (self-reference for dependencies)
 - is_recurring, recurrence_rule (future)
-
-**Subtask**
-- id, task_id, title
-- is_done, completed_at
-- sort_order, created_at
 
 **DailyPlan**
 - id, user_id, plan_date (unique per user per date)
@@ -86,7 +83,7 @@
 - Task title (prominent)
 - Timer (countdown/countup)
 - Progress bar (% of block time elapsed)
-- Subtasks list with checkboxes
+- Child tasks list with checkboxes
 - Current time block duration
 
 **Hidden/Secondary**:
@@ -181,12 +178,13 @@
 
 **Essential Information** (when user clicks on a task):
 - Task title
-- Project (dropdown to change)
+- Project (dropdown to change; only for top-level tasks)
+- Parent task (if this is a child task; dropdown to change or remove)
 - Due date
 - Points estimate
 - Status (dropdown)
 - Description
-- Subtasks list (with add/remove/reorder)
+- Child tasks list (with add/remove/reorder)
 - Notes field (blockers, context, etc.)
 
 **Hidden/Secondary**:
@@ -197,7 +195,7 @@
 
 **Actions**:
 - Edit any field
-- Add/remove/reorder subtasks
+- Add/remove/reorder child tasks
 - Mark done
 - Change status
 - Add notes

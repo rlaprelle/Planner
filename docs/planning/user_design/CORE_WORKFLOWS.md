@@ -57,7 +57,7 @@ These are the 5-7 most important screens users see daily.
 - Progress bar (% of time elapsed)
 
 **Middle**:
-- Subtasks as a checklist
+- Child tasks as a checklist
 - User can check off subtasks as they complete them
 - Each completion shows a small animation/celebration
 
@@ -155,7 +155,7 @@ After saving:
 - Due date
 - Priority (1-5)
 - Status (TODO / IN_PROGRESS / BLOCKED / DONE / SKIPPED)
-- Subtasks list (can add/remove/reorder)
+- Child tasks list (can add/remove/reorder)
 - Notes field (for storing work context, blockers, etc.)
 
 **Actions**:

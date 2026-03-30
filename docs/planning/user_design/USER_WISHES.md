@@ -14,6 +14,12 @@
 
 **Your answer:**
 
+A successful day is one where:
+- **Morning**: Open the app to a guided 5-10 minute morning planning ritual (step-by-step prompts, but feeling natural and conversational, not rigid)
+- **Throughout the day**: Stay focused on one thing at a time, with the ability to jot unstructured notes whenever something random comes up (knowing it will be handled later, not cluttering my head)
+- **End of day**: See tangible accomplishment that reflects the true significance of what was done (accounting for effort, impact, and difficulty), and feel a sense of closure and peace
+- **Emotional tone**: The interface is calm, simple, and uncluttered — it feels like a supportive presence, not a demanding manager
+
 ---
 
 ## Biggest ADHD-Related Obstacles
@@ -28,6 +34,8 @@
 
 **Your answer:**
 
+*To be filled in — guided questions coming next*
+
 ---
 
 ## What Would Feel "Magical" or Surprising?
@@ -39,6 +47,10 @@
 - Something that makes you actually want to use it?
 
 **Your answer:**
+
+The ability to jot unstructured notes and have them intelligently handled later (deferred items). This escape hatch should be available in almost every flow so the tool never feels constraining. Once captured, I should be able to mentally let it go, trusting the system to process it at the right time.
+
+**Future vision** (out of scope for MVP, but exciting): LLM-integrated morning ritual that flows like a conversation with a supportive coach rather than a rigid step-by-step form.
 
 ---
 
@@ -52,46 +64,20 @@
 
 **Your answer:**
 
+**Calm, grounded, and supported.** The tool should feel like:
+- A mindfulness exercise that roots me in the here and now
+- A supportive presence that reduces anxiety (not adds it)
+- A place where I can let go of future worries because they're safely captured
+- A celebration of what I actually accomplished, not a judge of what I didn't do
+- A way to feel in control without feeling overwhelmed
+
 ---
 
 ## Specific Pain Points to Solve
 
 *For each of these common ADHD challenges, describe how badly you experience it and what the ideal solution would look like:*
 
-### Task Breakdown
-- **Pain**: Tasks are too big and I don't know where to start
-- **Your experience**: [describe]
-- **Ideal solution**: [describe]
-
-### Decision Fatigue
-- **Pain**: Too many choices about what to work on
-- **Your experience**: [describe]
-- **Ideal solution**: [describe]
-
-### Context Switching
-- **Pain**: Jumping between different projects/areas loses my momentum
-- **Your experience**: [describe]
-- **Ideal solution**: [describe]
-
-### Losing Ideas
-- **Pain**: Random ideas and tasks disappear if I don't capture them immediately
-- **Your experience**: [describe]
-- **Ideal solution**: [describe]
-
-### Time Estimation
-- **Pain**: I misjudge how long things take
-- **Your experience**: [describe]
-- **Ideal solution**: [describe]
-
-### Progress Invisibility
-- **Pain**: I can't see what I've accomplished
-- **Your experience**: [describe]
-- **Ideal solution**: [describe]
-
-### Task Organization
-- **Pain**: Tasks sprawl across Areas/Projects and become messy
-- **Your experience**: [describe]
-- **Ideal solution**: [describe]
+*To be filled in with guided one-by-one questions*
 
 ---
 
@@ -108,6 +94,8 @@
 - Do you like reminders or would they feel intrusive?
 
 **Your answer:**
+
+*To be filled in with guided questions*
 
 ---
 

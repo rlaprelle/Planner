@@ -14,11 +14,16 @@ These are the 5-7 most important screens users see daily.
 **When**: User opens app in morning
 **Layout**: Two-panel (top/bottom split)
 
-**Top Panel: Task Browser**
-- Shows all active projects and tasks
-- Filterable by: deadline (soonest first), priority, points
-- Searchable
-- Each task shows: name, project, points estimate, due date, priority
+**Top Panel: Task Browser (Table View by Project)**
+- **Column headers**: Project names across the top
+- **Under each project**: List of tasks for that project
+- **For each task**:
+  - Task name
+  - Due date (displayed next to name)
+  - **Visual deadline indicators**:
+    - Large icon/badge (🔴 or "TODAY") for tasks due today
+    - Small icon/badge (📅 or "THIS WEEK") for tasks due this week
+  - Points estimate
 - Drag from this panel to the calendar below
 
 **Bottom Panel: Today's Calendar**
@@ -29,10 +34,11 @@ These are the 5-7 most important screens users see daily.
 - Shows current task count vs max_daily_tasks limit
 - "Confirm plan" button at bottom
 
-**Optional Pre-ritual**:
-- Soft prompt: "What are your 1-3 top priorities today?"
-- User types free text (grounding exercise)
-- Can skip or come back to it anytime
+**User Flow**:
+1. User internally reflects on "What are my 1-3 top priorities today?" (grounding exercise, internal thinking)
+2. User browses tasks in the table and selects which ones they want to work on
+3. User clicks "Add to calendar" to auto-place selected tasks on the calendar below
+4. User manually drags tasks around the calendar to arrange them in desired order
 
 **End state**: DailyPlan created with TimeBlocks for the day
 

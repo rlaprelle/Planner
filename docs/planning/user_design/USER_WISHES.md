@@ -87,7 +87,21 @@ The ability to jot unstructured notes and have them intelligently handled later 
 
 *For each of these common ADHD challenges, describe how badly you experience it and what the ideal solution would look like:*
 
-*To be filled in with guided one-by-one questions*
+### Decision Fatigue / What Matters
+- **Pain**: Too many choices about what to work on; feels pressured to do everything; hard to separate signal from noise
+- **Your approach**:
+  - Set rough, approximate priorities ahead of time (via morning ritual or planning cadence) — have intentionality about what matters
+  - BUT actively encourage consciously changing the plan — don't treat it as rigid
+  - When pivoting: make it easy (minimal friction), explicitly prompt to reconsider at intervals or when blocked, and show trade-offs (what are you deprioritizing?)
+  - The tool should help separate what matters from what doesn't, so you can focus on what actually matters
+
+*Remaining pain points to explore:*
+- Task Breakdown
+- Context Switching
+- Losing Ideas
+- Time Estimation
+- Progress Invisibility
+- Task Organization
 
 ---
 

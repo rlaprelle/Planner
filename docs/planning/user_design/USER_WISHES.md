@@ -113,6 +113,17 @@ The ability to jot unstructured notes and have them intelligently handled later 
   - Over time, the tool can help you learn your own patterns (e.g., "You said 3 points, it actually took 2 hours")
   - But the initial estimate itself should be judgment-free and low-pressure
 
+### Progress Invisibility
+- **Pain**: Can't see what you've accomplished; easy to feel like you did nothing
+- **Your approach**:
+  - **Streak tracking**: Track consecutive days of morning planning, weekly reviews, or consistent work
+  - **Weekly/monthly summaries**: Show stats like "You completed 12 tasks this week" with trends over time
+  - **Intelligent celebrations**: Congratulate the user specifically on tasks that were large in terms of:
+    - Hours spent
+    - Complexity/difficulty (high-point tasks)
+    - Level of effort required
+  - Progress should correlate to actual significance, not just task count
+
 ---
 
 ## Work Patterns & Preferences

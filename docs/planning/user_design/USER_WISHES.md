@@ -34,7 +34,17 @@ A successful day is one where:
 
 **Your answer:**
 
-*To be filled in — guided questions coming next*
+**Paralysis**, especially at two critical moments:
+1. **At the very beginning** — Getting started on a big task is hard
+2. **When hitting an early roadblock** — Momentum breaks when something doesn't work immediately
+
+**Approach to solving paralysis**:
+- Start with a "Just make it smaller" paradigm — the user owns the process of breaking down their task
+- But offer a non-pressuring "suggest help" button: "Do you think it would help to talk about the first few micro-steps?"
+- Only show guided breakdown UI if the user accepts the suggestion
+- This prevents feeling trapped while offering help when needed
+
+**Architectural note**: Build flexible enough architecture that new "breakthrough" UIs can be easily added by developers to help with different types of freezes (possibly via microservices that suggest workflows and offer guidance).
 
 ---
 

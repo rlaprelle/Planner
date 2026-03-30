@@ -410,21 +410,12 @@
 
 ## View 7: Plan Adjustment View
 
-**Layout**: Modal showing today's plan with suggestions
+**Layout**: Modal showing today's plan with adjustment options
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ REASSESS TODAY'S PLAN                                  [✕]   │
 ├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  WHAT'S CHANGED?                                            │
-│  ○ Task blocked                                             │
-│  ○ New request                                              │
-│  ○ Feeling overwhelmed                                      │
-│  ○ Low energy                                               │
-│  ○ Other                                                    │
-│                                                              │
-│  ─────────────────────────────────────────────────────────  │
 │                                                              │
 │  CURRENT PLAN                                               │
 │                                                              │
@@ -436,9 +427,7 @@
 │                                                              │
 │  ─────────────────────────────────────────────────────────  │
 │                                                              │
-│  SUGGESTIONS                                                │
-│                                                              │
-│  Based on "Task blocked":                                   │
+│  ADJUST YOUR PLAN                                           │
 │                                                              │
 │  ○ Skip "Schedule checkup" to recover energy?               │
 │    Trade-off: ⚠ You'll miss the Wednesday deadline         │
@@ -447,6 +436,8 @@
 │                                                              │
 │  ○ Move "Schedule checkup" to Done for now, revisit later?  │
 │    Trade-off: Task stays in master list                     │
+│                                                              │
+│  ○ Swap "Schedule checkup" with a different task?           │
 │                                                              │
 │  ─────────────────────────────────────────────────────────  │
 │                                                              │
@@ -464,11 +455,9 @@
 ```
 
 **Key Interactions**:
-- ○ Radio buttons: Select what changed
-- Current plan shown with status (✓ done, ◔ in progress, ○ pending)
-- Suggestions appear based on selection
-- Trade-offs shown for each suggestion
-- Optional notes field
+- ○ Radio buttons: Select an adjustment option
+- Trade-offs shown for each option where applicable
+- Optional notes field for context
 - [Keep Current Plan]: Cancel, back to work
 - [Make This Change]: Update today's plan, show celebration
 

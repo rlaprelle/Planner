@@ -105,6 +105,14 @@ The ability to jot unstructured notes and have them intelligently handled later 
     - Trust that it will be processed at regular review times (daily, weekly, etc.)
   - This lets you mentally let go of distractions and refocus without guilt or anxiety
 
+### Time Estimation
+- **Pain**: Time estimates create stress and are often inaccurate
+- **Your approach**:
+  - Use "points" instead of time estimates — deliberately vague and stress-free
+  - Points roughly indicate complexity/scope (1 point = small, 5 points = big) without the precision anxiety of "45 minutes"
+  - Over time, the tool can help you learn your own patterns (e.g., "You said 3 points, it actually took 2 hours")
+  - But the initial estimate itself should be judgment-free and low-pressure
+
 ---
 
 ## Work Patterns & Preferences

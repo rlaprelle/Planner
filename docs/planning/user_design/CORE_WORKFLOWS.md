@@ -63,12 +63,10 @@ These are the 5-7 most important screens users see daily.
 
 **Footer**:
 - Action buttons: "Complete", "Extend", "Done for now"
-- Customizable reminders: water, food, break/exercise (inline notifications that don't break focus)
 
-**During Session**:
-- At 80% time (customizable): gentle notification "X minutes left"
-- At 100% time: gentle chime + "Time's up. Good work!"
-- Reminders appear as gentle notifications (not intrusive)
+**At end of time block**:
+- Gentle chime + "Time's up. Good work!"
+- (Customizable reminders like water/food/break → Phase 2+)
 
 **End state**: User chooses Complete/Extend/Done for now, actual_minutes recorded
 
@@ -88,14 +86,23 @@ Sub-view: Inbox
 - Each card shows: raw text of the deferred item
 
 Action buttons for each item:
-- "Convert to task" → opens mini-form
-- "Add to project" → pick existing project
+- "Convert to task" → opens mini-form to create a task in selected project
+  - Pre-filled with deferred item text as title
+  - Optional fields: description, due date, priority, points estimate, child tasks
+  - All fields optional (user can save with just title)
 - "Defer" → select 1 day / 1 week / 1 month → item re-queued
 - "Dismiss" → item is marked processed, removed
 
 If "Convert to task":
-- Mini-form appears: project dropdown, "Add subtasks?" toggle, points estimate
-- Save → task created, item marked processed, move to next item
+- Mini-form appears with optional fields:
+  - Project (required, dropdown to select which project)
+  - Title (pre-filled with deferred item text, editable)
+  - Description (optional)
+  - Due date (optional)
+  - Priority (optional, defaults to 3)
+  - Points estimate (optional)
+  - Add child tasks? (optional toggle)
+- Save → task created with filled fields, item marked processed, move to next item
 
 After all items processed (or deferred):
 - "Inbox Zero! Great work! 🎉"
@@ -213,7 +220,7 @@ After saving:
 
 **Trade-offs shown**:
 - "If you skip Task C, you'll miss the 3pm deadline"
-- "If you pivot to Task X, Task A moves to tomorrow"
+- "If you pivot to Task X, Task A stays unscheduled for today"
 
 **Actions**:
 - "Make this change" → plan updates, celebration shown

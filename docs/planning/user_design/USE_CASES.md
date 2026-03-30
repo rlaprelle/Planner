@@ -68,7 +68,7 @@ These are the core user journeys that happen in every day/week.
 3. Items are presented one at a time (stack of cards)
 4. For each item:
    - Show the raw text: "Email Dave about invoice"
-   - Options: (a) Convert to task, (b) Add to existing project, (c) Dismiss (not needed)
+   - Options: (a) Convert to task, (b) Defer, (c) Dismiss
    - If convert: guided form appears
      - "What project?" (dropdown of existing projects/categories)
      - "Break into subtasks?" (optional)

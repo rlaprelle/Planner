@@ -124,6 +124,14 @@ The ability to jot unstructured notes and have them intelligently handled later 
     - Level of effort required
   - Progress should correlate to actual significance, not just task count
 
+### Task Organization
+- **Pain**: Tasks sprawl across Areas/Projects; hard to separate signal from noise; don't know which tasks matter
+- **Your approach**:
+  - Don't enforce organization — let the user make their own organizational decisions
+  - BUT give them protected time during cadenced reviews (daily, weekly, monthly, yearly) to consciously organize and prioritize
+  - **Key constraint: Track deadlines prominently** — tasks with approaching deadlines naturally force prioritization
+  - The tool should make deadlines visible and help the user consciously decide what matters based on due dates and effort
+
 ---
 
 ## Work Patterns & Preferences

@@ -193,6 +193,8 @@ The ability to jot unstructured notes and have them intelligently handled later 
 
 **Your answer:**
 
+*To be filled in later if relevant*
+
 ---
 
 ## Success Metrics
@@ -203,6 +205,14 @@ The ability to jot unstructured notes and have them intelligently handled later 
 
 **Your answer:**
 
+The tool is working if:
+- I feel less anxious about capturing ideas and tasks (because I trust the deferred item system)
+- I can complete a full day without feeling overwhelmed or frozen
+- I finish tasks on schedule more consistently
+- I can see tangible progress at the end of each day (accomplishment sense)
+- The morning ritual feels like a grounding practice, not a chore
+- I'm willing to open the app at the start of each day
+
 ---
 
 ## Notes & Thoughts
@@ -210,3 +220,5 @@ The ability to jot unstructured notes and have them intelligently handled later 
 *Anything else that feels important to mention?*
 
 **Your answer:**
+
+**Key insight**: The tool should be designed with a developer mindset for extensibility. Future developers should be able to add new "breakthrough" UIs, new review cadences, new ways to celebrate accomplishments, and new approaches to handling freezes — without needing to rebuild the core architecture.

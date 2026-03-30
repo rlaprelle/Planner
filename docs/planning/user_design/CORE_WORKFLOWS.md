@@ -41,7 +41,7 @@ These are the 5-7 most important screens users see daily.
 3. User clicks "Add to calendar" to auto-place selected tasks on the calendar below
 4. User manually drags tasks around the calendar to arrange them in desired order
 
-**End state**: DailyPlan created with TimeBlocks for the day
+**End state**: DailyReflection created with TimeBlocks for the day
 
 ---
 
@@ -231,13 +231,13 @@ How the app flows between views:
 ```
 Dashboard
 ├── Morning Planning (top/bottom split)
-│   └── confirm → creates DailyPlan
+│   └── confirm → creates DailyReflection
 │       └── navigate to Dashboard or Active Work
 ├── Active Work Session (from time block)
 │   └── Complete/Extend/Done → updates session
 │       └── back to Dashboard or next block
 ├── Plan Adjustment (from "Reassess" button)
-│   └── confirm change → updates DailyPlan
+│   └── confirm change → updates DailyReflection
 │       └── back to Dashboard
 ├── Quick Capture Modal (Ctrl+Space)
 │   └── Enter → creates DeferredItem
@@ -247,7 +247,7 @@ Dashboard
 │   │   ├── Convert/Defer/Dismiss each item
 │   │   └── "Inbox Zero" → move to Reflection
 │   └── Reflection Form
-│       └── Save → finalize DailyPlan, celebrate
+│       └── Save → finalize DailyReflection, celebrate
 ├── Task Details View (from any task list)
 │   └── Edit/Save → back to previous screen
 └── Dashboard

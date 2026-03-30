@@ -27,18 +27,22 @@
 - blocked_by_task_id (self-reference for dependencies)
 - is_recurring, recurrence_rule (future)
 
-**DailyPlan**
-- id, user_id, plan_date (unique per user per date)
-- energy_rating, mood_rating, reflection_notes
-- is_finalized
+**DailyReflection**
+- id, user_id, reflection_date (unique per user per date)
+- energy_rating (1-5), mood_rating (1-5)
+- reflection_notes (optional free text)
+- is_finalized (whether evening ritual is complete)
 - created_at, updated_at
 
 **TimeBlock**
-- id, daily_plan_id, task_id (nullable for breaks)
+- id, user_id, block_date (date of the block)
+- task_id (nullable for breaks/buffers)
 - block_type (WORK, BREAK, BUFFER, ADMIN)
-- start_time, end_time
-- actual_start, actual_end, was_completed
-- notes, sort_order
+- start_time, end_time (clock times: 9:00 AM, 10:30 AM, etc.)
+- actual_start, actual_end (timestamps when user actually started/ended)
+- was_completed (boolean: completed or done for now/skipped)
+- notes (optional: user notes about what happened)
+- sort_order (chronological order within the day)
 - created_at, updated_at
 
 **DeferredItem**
@@ -323,14 +327,28 @@
 
 ---
 
+## Entity Relationships
+
+For a given user on a given date:
+```
+User + Date
+├── TimeBlocks (multiple)
+│   ├── One per scheduled work/break/buffer block
+│   └── Reference task_id (nullable for breaks)
+└── DailyReflection (one)
+    ├── Energy/mood ratings
+    ├── Reflection notes
+    └── is_finalized flag
+```
+
 ## Information Hierarchy Summary
 
 ```
 ESSENTIAL (show always):
 ├── What user is working on now (active task)
 ├── How much time is left (timer)
-├── What needs to happen today (schedule)
-└── How they're doing (mood/energy at end of day)
+├── What needs to happen today (schedule via TimeBlocks)
+└── How they're doing (mood/energy from DailyReflection)
 
 IMPORTANT (show prominently):
 ├── What's due soon (deadlines)

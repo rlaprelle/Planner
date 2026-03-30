@@ -27,7 +27,7 @@ These are the core user journeys that happen in every day/week.
    - User places tasks into blocks
 6. Step 5: Review and confirm plan
    - "Here's your day. Feel good?" → Save or adjust
-7. System creates today's DailyPlan with TimeBlocks
+7. System creates today's DailyReflection with TimeBlocks
 
 **End state**: User has a visual plan for the day, feels grounded, knows what to work on
 

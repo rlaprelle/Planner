@@ -1,6 +1,6 @@
 # Phase 6: Wireframes of Major Views
 
-**Purpose**: Create low-fidelity visual layouts for the 7 critical views. These are ASCII/text wireframes designed for easy review and iteration.
+**Purpose**: Create low-fidelity visual layouts for the 6 critical views. These are ASCII/text wireframes designed for easy review and iteration.
 
 ---
 
@@ -408,67 +408,13 @@
 
 ---
 
-## View 7: Plan Adjustment View
-
-**Layout**: Modal showing today's plan with adjustment options
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ REASSESS TODAY'S PLAN                                  [✕]   │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  CURRENT PLAN                                               │
-│                                                              │
-│  ✓ 9:00-10:00  Fix login bug (Done)                         │
-│  ─ 10:00-10:15 ☕ BREAK (Pending)                            │
-│  ◔ 10:15-12:00 Design dashboard (In progress)              │
-│  ○ 12:00-1:00  ☰ LUNCH (Pending)                            │
-│  ○ 1:00-2:30   Schedule checkup (Pending)                   │
-│                                                              │
-│  ─────────────────────────────────────────────────────────  │
-│                                                              │
-│  ADJUST YOUR PLAN                                           │
-│                                                              │
-│  ○ Skip "Schedule checkup" to recover energy?               │
-│    Trade-off: ⚠ You'll miss the Wednesday deadline         │
-│                                                              │
-│  ○ Take an extended break now (15 min)?                     │
-│                                                              │
-│  ○ Move "Schedule checkup" to Done for now, revisit later?  │
-│    Trade-off: Task stays in master list                     │
-│                                                              │
-│  ○ Swap "Schedule checkup" with a different task?           │
-│                                                              │
-│  ─────────────────────────────────────────────────────────  │
-│                                                              │
-│  NOTES (optional)                                           │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │ Waiting on API response from backend team            │ │
-│  │                                                       │ │
-│  └────────────────────────────────────────────────────────┘ │
-│                                                              │
-│                                                              │
-│  [Keep Current Plan]  [Make This Change]                    │
-│                                                              │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Key Interactions**:
-- ○ Radio buttons: Select an adjustment option
-- Trade-offs shown for each option where applicable
-- Optional notes field for context
-- [Keep Current Plan]: Cancel, back to work
-- [Make This Change]: Update today's plan, show celebration
-
----
-
 ## Wireframe Navigation Flow
 
 ```
 Dashboard
 ├── [Start Morning Planning] → Morning Planning View
 │   └── [Confirm plan] → back to Dashboard
+│   └── (Users can also adjust their plan by reopening this view mid-day)
 ├── [Current task] → Active Work Session View
 │   └── [Complete/Extend/Done] → back to Dashboard
 ├── [Start Evening Clean-up] → Evening Clean-up (Phase 1)
@@ -476,14 +422,14 @@ Dashboard
 │   └── [All items processed] → Evening Clean-up (Phase 2: Reflection)
 │       └── [Save & Close] → Dashboard + celebration
 ├── [Deferred Inbox Badge] → Evening Clean-up Phase 1 (anytime review)
-├── [Reassess plan] → Plan Adjustment View
-│   └── [Make change] → back to Dashboard
 ├── [Capture thought] (Ctrl+Space) → Quick Capture Modal
 │   └── [Save] → back to previous screen
 ├── [Task from list] → Task Details View (side panel)
 │   └── [Save/Close] → back to previous screen
 └── [Upcoming deadline] → Jump to Morning Planning
 ```
+
+**Mid-Day Plan Adjustments**: To reassess/adjust your plan during the day, simply return to the Morning Planning View (same interface used for morning planning). Drag tasks around, add/remove blocks, and save your changes. No separate modal needed.
 
 ---
 

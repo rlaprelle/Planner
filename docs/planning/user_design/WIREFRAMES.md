@@ -106,8 +106,9 @@
 - ☑ Checkboxes: Check off subtasks as you complete them (with celebration animation)
 - [Complete]: Finished the block, mark time block as done
 - [Extend]: Extend time (prompts for duration: 15min, 30min, 1hr, custom)
-- [Done for now]: Stop working, block incomplete, optional notes
+- [Done for now]: Stop working, block incomplete
 - Timer updates every second
+- No notes field in MVP (add notes later via Task Details if needed — Phase 2+)
 
 ---
 

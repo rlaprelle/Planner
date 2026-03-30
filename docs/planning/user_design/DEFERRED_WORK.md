@@ -12,6 +12,14 @@
 - **Estimated effort**: Medium (settings view + notification system enhancements)
 - **Priority**: High (users will want these after MVP)
 
+### Notes Capture During Active Work
+- **Description**: Capture notes/context when ending a work session (at completion or "Done for now" moment)
+  - Prompt: "Notes for next time?" or "Any blockers to record?"
+  - Optional notes field in Active Work view or modal
+- **Why deferred**: MVP has no notes capture during work; users can add notes later via Task Details
+- **Estimated effort**: Low (add modal/form, store in task.notes)
+- **Priority**: Medium (useful for tracking blockers, but not essential)
+
 ### Settings/Preferences View
 - **Description**: Dedicated settings screen for user preferences
   - Timer type (countdown vs countup)

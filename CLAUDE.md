@@ -49,3 +49,4 @@ The spec is a checklist. Always check off items as they are completed.
 - The tool should encourage the user to be kind to themselves and to not be too hard on themselves.
 - The task list should be small and focused. This means that deciding NOT to do something is a victory.
 - The tool should act as a supportive assistant, not a demanding manager. It should never question or challenge the user's decisions.
+- Never delete anything. Always archive instead.

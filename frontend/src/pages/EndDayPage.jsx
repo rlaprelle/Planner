@@ -142,10 +142,10 @@ export function EndDayPage() {
     queryFn: getDeferredItems,
   })
 
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [processedCount, setProcessedCount] = useState(0)
   const [phase, setPhase] = useState(1)
   const [showCelebration, setShowCelebration] = useState(false)
-  // Capture total at load time so stale query cache doesn't affect "remaining" calculation
+  // Capture total at load time so progress counter stays stable as items are removed
   const totalItemsRef = useRef(null)
   if (!isLoading && totalItemsRef.current === null) {
     totalItemsRef.current = items.length
@@ -153,15 +153,14 @@ export function EndDayPage() {
 
   function handleItemDone() {
     queryClient.invalidateQueries({ queryKey: ['deferred'] })
-    const remaining = totalItemsRef.current - (currentIndex + 1)
-    if (remaining <= 0) {
+    const newCount = processedCount + 1
+    setProcessedCount(newCount)
+    if (newCount >= totalItemsRef.current) {
       setShowCelebration(true)
       setTimeout(() => {
         setShowCelebration(false)
         setPhase(2)
       }, 2000)
-    } else {
-      setCurrentIndex((i) => i + 1)
     }
   }
 
@@ -179,8 +178,8 @@ export function EndDayPage() {
     )
   }
 
-  const noItems = items.length === 0
-  const currentItem = items[currentIndex]
+  const noItems = totalItemsRef.current === 0
+  const currentItem = items[0]
 
   if (showCelebration) {
     return (
@@ -206,11 +205,11 @@ export function EndDayPage() {
         ) : (
           <div className="mb-8">
             <p className="text-sm text-gray-400 mb-4">
-              {currentIndex + 1} of {items.length}
+              {processedCount + 1} of {totalItemsRef.current}
             </p>
             <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
               {currentItem && (
-                <DeferredItemActions item={currentItem} onDone={handleItemDone} />
+                <DeferredItemActions key={currentItem.id} item={currentItem} onDone={handleItemDone} />
               )}
             </div>
           </div>

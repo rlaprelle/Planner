@@ -16,11 +16,11 @@ Stand up the dev environment with auth. No business logic.
 - [x] Spring Boot app with `/health` endpoint
 - [x] PostgreSQL in Docker Compose
 - [x] Flyway wired up (app_user migration)
-- [ ] Spring Security with JWT auth: register, login, refresh endpoints
-- [ ] Refresh token in HttpOnly cookie, access token in response body
+- [x] Spring Security with JWT auth: register, login, refresh endpoints
+- [x] Refresh token in HttpOnly cookie, access token in response body
 
 **Frontend:**
-- [ ] React app with Vite (Tailwind CSS, Radix UI configured)
+- [x] React app with Vite (Tailwind CSS, Radix UI configured)
 - [ ] Login/register pages
 - [ ] Auth context: store access token, handle refresh, protect routes
 

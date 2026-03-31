@@ -22,6 +22,8 @@ ADHD-friendly daily work management tool. Design phase complete, implementation 
 
 Vertical slices, built sequentially. See `docs/planning/2026-03-30-implementation-plan-design.md` for the full spec.
 
+The spec is a checklist. Always check off items as they are completed.
+
 ## Key Documents
 
 - `docs/ARCHITECTURE.md` — Data model, API endpoints, tech stack

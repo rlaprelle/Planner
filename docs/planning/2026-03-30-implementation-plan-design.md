@@ -13,9 +13,9 @@ Tasks should be checked off when they are completed.
 Stand up the dev environment with auth. No business logic.
 
 **Backend:**
-- [ ] Spring Boot app with `/health` endpoint
-- [ ] PostgreSQL in Docker Compose
-- [ ] Flyway wired up (app_user migration)
+- [x] Spring Boot app with `/health` endpoint
+- [x] PostgreSQL in Docker Compose
+- [x] Flyway wired up (app_user migration)
 - [ ] Spring Security with JWT auth: register, login, refresh endpoints
 - [ ] Refresh token in HttpOnly cookie, access token in response body
 

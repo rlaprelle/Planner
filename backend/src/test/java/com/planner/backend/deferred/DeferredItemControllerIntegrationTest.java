@@ -118,6 +118,17 @@ class DeferredItemControllerIntegrationTest {
     }
 
     @Test
+    void listPending_noItems_returns200WithEmptyArray() throws Exception {
+        when(deferredItemService.listPending(any(AppUser.class))).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/deferred")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
     void listPending_noAuth_returns401() throws Exception {
         mockMvc.perform(get("/api/v1/deferred"))
                 .andExpect(status().isUnauthorized());

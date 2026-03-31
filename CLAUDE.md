@@ -34,3 +34,16 @@ Vertical slices, built sequentially. See `docs/planning/2026-03-30-implementatio
 - API prefix: `/api/v1/`
 - Database migrations: Flyway (SQL files)
 - ADHD-friendly UX tone: "Done for now" not "Skip", "Time's up. Good work!" not "Timer expired"
+
+## Design Principles
+
+- UIs should be simple and intuitive with minimal distractions.
+- Feedback should focus on progress and completion, not on failures.
+- The goal of the tool is to encourage the user to make informed decisions about how to spend their time. It should never question or second-guess the users decisions.
+- The workflow should be a suggestion and not a restriction. The user should always be able to override the workflow and make their own decisions.
+- The tool should be a tool for the user, not a tool that controls the user.
+- The tool should be a tool that helps the user to be more productive, not a tool that makes the user feel bad about themselves.
+- Instead of asking "Why haven't you done this yet?", ask "Is this still important to you?" and "What would help you do this?"
+- The tool should encourage the user to be kind to themselves and to not be too hard on themselves.
+- The task list should be small and focused. This means that deciding NOT to do something is a victory.
+- The tool should act as a supportive assistant, not a demanding manager. It should never question or challenge the user's decisions.

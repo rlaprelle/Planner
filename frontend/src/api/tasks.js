@@ -42,3 +42,8 @@ export async function updateTaskStatus(taskId, status) {
   })
   return handleResponse(res)
 }
+
+export async function getTodayCompletedTasks() {
+  const res = await authFetch(`/api/v1/tasks/completed-today`)
+  return handleResponse(res)
+}

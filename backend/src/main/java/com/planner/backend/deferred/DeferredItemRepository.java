@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface DeferredItemRepository extends JpaRepository<DeferredItem, UUID> {
@@ -20,4 +21,7 @@ public interface DeferredItemRepository extends JpaRepository<DeferredItem, UUID
             ORDER BY d.capturedAt ASC
             """)
     List<DeferredItem> findPendingForUser(@Param("user") AppUser user, @Param("today") LocalDate today);
+
+    @Query("SELECT d FROM DeferredItem d WHERE d.id = :id AND d.user = :user")
+    Optional<DeferredItem> findByIdAndUserId(@Param("user") AppUser user, @Param("id") UUID id);
 }

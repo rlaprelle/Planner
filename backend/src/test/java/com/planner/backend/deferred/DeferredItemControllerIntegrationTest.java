@@ -22,9 +22,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.planner.backend.deferred.dto.ConvertToTaskRequest;
+import com.planner.backend.deferred.dto.DeferRequest;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -131,6 +135,97 @@ class DeferredItemControllerIntegrationTest {
     @Test
     void listPending_noAuth_returns401() throws Exception {
         mockMvc.perform(get("/api/v1/deferred"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    // --- POST /api/v1/deferred/{id}/convert ---
+
+    @Test
+    void convert_validRequest_returns200WithTask() throws Exception {
+        UUID itemId = UUID.randomUUID();
+        ConvertToTaskRequest req = new ConvertToTaskRequest(
+                UUID.randomUUID(), "Buy oat milk", null, null, null, null);
+
+        com.planner.backend.task.dto.TaskResponse taskResp =
+                new com.planner.backend.task.dto.TaskResponse(
+                        UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
+                        "Buy oat milk", null, null,
+                        com.planner.backend.task.TaskStatus.TODO,
+                        (short) 3, null, null, null, null, 0, null,
+                        com.planner.backend.task.DeadlineGroup.NO_DEADLINE,
+                        null, null, null, null, java.util.List.of());
+
+        when(deferredItemService.convert(any(AppUser.class), any(UUID.class),
+                any(ConvertToTaskRequest.class))).thenReturn(taskResp);
+
+        mockMvc.perform(post("/api/v1/deferred/{id}/convert", itemId)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Buy oat milk"));
+    }
+
+    @Test
+    void convert_noAuth_returns401() throws Exception {
+        mockMvc.perform(post("/api/v1/deferred/{id}/convert", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"projectId\":\"" + UUID.randomUUID() + "\",\"title\":\"x\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    // --- POST /api/v1/deferred/{id}/defer ---
+
+    @Test
+    void defer_validRequest_returns200WithItem() throws Exception {
+        UUID itemId = UUID.randomUUID();
+        DeferRequest req = new DeferRequest(DeferRequest.DeferDuration.ONE_DAY);
+        DeferredItemResponse resp = new DeferredItemResponse(
+                itemId, user.getId(), "Buy oat milk",
+                false, Instant.now(), null, null, null,
+                java.time.LocalDate.now().plusDays(1), 1,
+                Instant.now(), Instant.now());
+
+        when(deferredItemService.defer(any(AppUser.class), any(UUID.class),
+                any(DeferRequest.class))).thenReturn(resp);
+
+        mockMvc.perform(post("/api/v1/deferred/{id}/defer", itemId)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.deferralCount").value(1));
+    }
+
+    @Test
+    void defer_noAuth_returns401() throws Exception {
+        mockMvc.perform(post("/api/v1/deferred/{id}/defer", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"deferFor\":\"ONE_DAY\"}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    // --- PATCH /api/v1/deferred/{id}/dismiss ---
+
+    @Test
+    void dismiss_validRequest_returns200() throws Exception {
+        UUID itemId = UUID.randomUUID();
+        DeferredItemResponse resp = new DeferredItemResponse(
+                itemId, user.getId(), "Old thought",
+                true, Instant.now(), Instant.now(), null, null, null, 0,
+                Instant.now(), Instant.now());
+
+        when(deferredItemService.dismiss(any(AppUser.class), any(UUID.class))).thenReturn(resp);
+
+        mockMvc.perform(patch("/api/v1/deferred/{id}/dismiss", itemId)
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.isProcessed").value(true));
+    }
+
+    @Test
+    void dismiss_noAuth_returns401() throws Exception {
+        mockMvc.perform(patch("/api/v1/deferred/{id}/dismiss", UUID.randomUUID()))
                 .andExpect(status().isUnauthorized());
     }
 }

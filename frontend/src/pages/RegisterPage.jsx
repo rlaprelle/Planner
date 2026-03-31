@@ -19,12 +19,7 @@ export function RegisterPage() {
     setError(null)
     setIsSubmitting(true)
     try {
-      // Register the account
       await register(email, password, displayName)
-      // Auto-login: the register endpoint sets the refresh cookie,
-      // so we log in to get an access token into context
-      await login(email, password)
-      navigate('/', { replace: true })
     } catch (err) {
       if (err.status === 409) {
         setError('An account with that email already exists.')
@@ -33,6 +28,17 @@ export function RegisterPage() {
       } else {
         setError('Something went wrong. Please try again.')
       }
+      setIsSubmitting(false)
+      return
+    }
+
+    // Registration succeeded — auto-login
+    try {
+      await login(email, password)
+      navigate('/', { replace: true })
+    } catch {
+      // Registration worked but auto-login failed — redirect to login page
+      navigate('/login')
     } finally {
       setIsSubmitting(false)
     }

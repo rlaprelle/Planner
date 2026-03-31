@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from 'react'
 import { login as apiLogin, refreshToken } from '@/api/auth'
-import { setAuthToken } from '@/api/client'
+import { setAuthToken, setTokenRefreshedCallback, setAuthFailureCallback } from '@/api/client'
 
 export const AuthContext = createContext(null)
 
@@ -13,6 +13,16 @@ export function AuthProvider({ children }) {
     setToken(accessToken)
     setAuthToken(accessToken)
   }, [])
+
+  // Register callbacks so client.js can sync token and force logout
+  useEffect(() => {
+    setTokenRefreshedCallback(storeToken)
+    setAuthFailureCallback(() => {
+      setToken(null)
+      setUser(null)
+      setAuthToken(null)
+    })
+  }, [storeToken])
 
   // On mount: attempt to restore session from the HttpOnly refresh cookie
   useEffect(() => {
@@ -32,10 +42,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (email, password) => {
     const data = await apiLogin(email, password)
     storeToken(data.accessToken)
-    if (data.user) setUser(data.user)
-    // Store email so HomePage can show it even if the API doesn't return user info
-    setUser((prev) => prev ?? { email })
-    return data
+    setUser(data.user ?? { email })
   }, [storeToken])
 
   const logout = useCallback(() => {

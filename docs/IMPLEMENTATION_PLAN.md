@@ -190,56 +190,45 @@
 
 ---
 
-## Phase 2+ Features (Deferred)
+## Key Design Decisions & Rationale
 
-- Daily Task Limits (max_daily_tasks) — Overwhelm prevention for users who need guardrails
-- Configurable Break Reminders — Water, food, movement prompts
-- Task Breakdown Assistance — "Just make it smaller" + optional AI help
-- Customizable Timer Reminders — 80% warning, custom duration options
-- Notes Capture During Work — Post-session notes
-- Estimated Minutes Tracking — Time-based estimation (currently using points only)
-- Recurring Task Templates — Scheduled task generation
-- LLM-Integrated Morning Ritual — Conversational coach instead of step-by-step prompts
-- Estimation Accuracy Learning — Compare points vs actual time
-- Cross-Day Task Rescheduling — Move tasks between days when plan changes
-- Weekly/Monthly/Yearly Reviews — Extended reflection ceremonies
-- Multi-User Team Features — Collaboration, shared projects
-- Advanced Analytics & Insights — Trend analysis, habit tracking
+| Decision | Rationale |
+|----------|-----------|
+| Points-based estimation (no time tracking) | Removes precision anxiety; captures "how complex is this?" not "how long will this take?" |
+| Visual time blocking (calendar, not task list) | ADHD brains work better with spatial/visual representation than text lists |
+| Deferred items with re-queueing | Capture-and-forget reduces decision fatigue; re-queue lets items bubble up without inbox bloat |
+| Single gentle chime (no customization) | Distraction reduction; MVP avoids settings/customization complexity |
+| "Done for now" instead of "Skip" | Psychologically more supportive; acknowledges work done without total completion pressure |
+| Reuse Morning Planning for mid-day adjustment | Simpler UX; no separate "Plan Adjustment View" with complex diffing |
+| No task limit in MVP | Simplifies MVP; max_daily_tasks as Phase 2+ feature for those who need guardrails |
+| Task hierarchy via parent_task_id (not separate subtask table) | Subtasks are full tasks with their own priority, points, due date; supports flexible breakdown |
+| Flat project list (no area entity) | Simpler organization; projects can be colored/iconed for visual grouping |
+| No notes during work (Phase 2+) | MVP focus on completion; notes can be added post-session in reflection |
 
 ---
 
-## Next Steps (Phase 6)
+## Implementation Roadmap
 
-### Step 1: Update Design Documents
-Execute the 4 batches of action items above in priority order:
-1. Update USE_CASES.md
-2. Update INFORMATION_ARCHITECTURE.md
-3. Update CORE_WORKFLOWS.md
-4. Update DEFERRED_WORK.md
+| Phase | Timeline | Scope | Validates |
+|-------|----------|-------|-----------|
+| **Phase 1: Foundation** | Week 1 | Auth, DB, skeleton UIs | System works end-to-end |
+| **Phase 2: Core CRUD** | Week 2 | Projects, Tasks | Data hierarchy works |
+| **Phase 3: Deferred Items & Evening Ritual** | Week 3 | Quick capture, inbox, processing, evening clean-up (reflection form, streak) | Distraction handling + daily closure works |
+| **Phase 4: Daily Planning** | Week 3-4 | Morning ritual, time blocks, active work session, suggestions | Planning + execution flow works |
 
-### Step 2: Commit Changes
-Create a single commit with all design document updates:
-```bash
-git add docs/planning/user_design/*.md
-git commit -m "Phase 5: Resolve 13 design gaps from wireframe-to-use-case review
+**Total MVP timeline**: ~4 weeks to validate core vision.
 
-- Simplify MVP scope: remove max_daily_tasks, 80% timer warning, notes capture
-- Fix data model: add deferred_until_date, remove area_hint/project_hint/estimated_minutes
-- Improve UX: change 'Skip' to 'Done for now', clarify plan adjustment access
-- Merge Plan Adjustment View into Morning Planning View
-- Update all use cases and workflows to reflect design decisions"
-```
+---
 
-### Step 3: Verify Completeness
-- [ ] All 4 design documents updated
-- [ ] Gaps reference resolved in each document
-- [ ] No remaining references to removed features (max_daily_tasks, estimated_minutes, etc.)
-- [ ] Tone and language consistent (ADHD-friendly, supportive)
+## Phase 2+ Features (Deferred)
 
-### Step 4: Begin Phase 7 (Optional)
-After documents are updated, user may request:
-- Phase 7: Design Refinement (responsive design, accessibility, final polish)
-- Or: Move directly to implementation (Phase 1: Foundation)
+See `docs/planning/user_design/DEFERRED_WORK.md` for full details.
+
+---
+
+## Next Steps
+
+Ready for implementation. Next action: begin Phase 1 (Foundation).
 
 ---
 

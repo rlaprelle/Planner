@@ -257,13 +257,20 @@ Dashboard
 
 ---
 
-## Accessibility & ADHD Considerations
+## ADHD-Specific UX Decisions
 
-- **Calm visual hierarchy**: One clear action at a time
-- **Reduce cognitive load**: Group related info, hide non-essential details
-- **Visual confirmation**: Every action has feedback (checkmark, celebration, streak update)
-- **Prevent decision paralysis**: Morning wizard guides you through steps; evening ritual processes one item at a time
-- **Flexible interaction**: Can always change the plan, always capture thoughts, always review inbox
+1. **Overwhelm Prevention**: Showing only today's tasks + next week visible; long-term items exist but not cluttering view
+2. **Quick Capture**: Floating button + Ctrl+Space, zero required fields, instant confirmation
+3. **Visual Time Blocking**: See the day visually; easier than task lists to understand what fits
+4. **Active Task Timer**: Single gentle chime at 100% (no 80% warning, not customizable)
+5. **One-at-a-Time Processing**: Deferred items shown as stack, not list; Inbox Zero celebration
+6. **Dopamine-Friendly Progress**: Subtask completion animations, streak counter, weekly summaries
+7. **Flexible Pivoting**: Encouraged to adjust plan mid-day; "Done for now" vs "Complete" distinction
+8. **Minimal Navigation Depth**: Everything reachable in 2 clicks from sidebar
+9. **Supportive Tone**: "Done for now" not "Skip"; "Time's up. Good work!" not "Timer expired"
+10. **Calm Visual Hierarchy**: One clear action at a time; group related info, hide non-essential details
+11. **Visual Confirmation**: Every action has feedback (checkmark, celebration, streak update)
+12. **Prevent Decision Paralysis**: Morning planning guides you through steps; evening ritual processes one item at a time
 
 ---
 

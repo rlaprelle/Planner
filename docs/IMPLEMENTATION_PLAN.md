@@ -105,7 +105,9 @@
 - ✅ Added `deferred_until_date` to DeferredItem (for re-queueing)
 - ✅ Removed `area_hint`, `project_hint` from DeferredItem
 - ✅ Removed `estimated_minutes` from Task (keep `actual_minutes`)
-- ✅ Confirmed separate Subtask table (not Task hierarchy)
+- ✅ Removed `area` entity — flat project list with color/icon on project
+- ✅ Removed separate `subtask` table — use `parent_task_id` on task (self-referencing hierarchy)
+- ✅ Renamed `points` to `points_estimate`
 
 ### UX/Tone Improvements
 - ✅ Changed "Skip" to "Done for now" (more ADHD-friendly)
@@ -165,32 +167,26 @@
 
 ## Data Model (Final)
 
-### Entities (10 total)
+### Entities (6 total)
 
 1. **app_user** — Authentication, preferences
    - ~~max_daily_tasks~~ (removed)
 
-2. **area** — Labeled category for projects
+2. **project** — Concrete project (flat list, no area grouping)
+   - ✅ color, icon (moved from removed area entity)
 
-3. **project** — Concrete project
-
-4. **task** — Actionable work item
+3. **task** — Actionable work item (supports hierarchy via parent_task_id)
    - ~~estimated_minutes~~ (removed)
-   - ✅ actual_minutes, points, energy_level
+   - ✅ actual_minutes, points_estimate, energy_level
+   - ✅ parent_task_id (subtasks are full tasks, not a separate table)
 
-5. **subtask** — Child task for breaking down work
-
-6. **deferred_item** — Quick capture
+4. **deferred_item** — Quick capture
    - ✅ deferred_until_date (added for re-queueing)
    - ~~area_hint, project_hint~~ (removed)
 
-7. **daily_reflection** — End-of-day ritual
+5. **daily_reflection** — End-of-day ritual
 
-8. **time_block** — Scheduled work
-
-9. **recurring_template** — Recurring task definition (Phase 2+)
-
-10. **recurring_instance** — Generated instances of recurring tasks (Phase 2+)
+6. **time_block** — Scheduled work
 
 ---
 
@@ -251,34 +247,43 @@ After documents are updated, user may request:
 
 ### User Design Documents
 - `docs/planning/user_design/USER_WISHES.md` — Original vision
-- `docs/planning/user_design/USE_CASES.md` — 5 core use cases (IN PROGRESS: needs 4 updates)
-- `docs/planning/user_design/CORE_WORKFLOWS.md` — 6 views, detailed flows (IN PROGRESS: needs 2 updates)
-- `docs/planning/user_design/INFORMATION_ARCHITECTURE.md` — Entity definitions (IN PROGRESS: needs 5 updates)
-- `docs/planning/user_design/WIREFRAMES.md` — ASCII wireframes
-- `docs/planning/user_design/DEFERRED_WORK.md` — Phase 2+ features (IN PROGRESS: needs verification)
+- `docs/planning/user_design/USE_CASES.md` — 5 core use cases ✅
+- `docs/planning/user_design/CORE_WORKFLOWS.md` — 6 views, detailed flows ✅
+- `docs/planning/user_design/INFORMATION_ARCHITECTURE.md` — Entity definitions, task ordering ✅
+- `docs/planning/user_design/WIREFRAMES.md` — ASCII wireframes ✅
+- `docs/planning/user_design/DEFERRED_WORK.md` — Phase 2+ features ✅
+- `docs/planning/user_design/USER_DESIGN_CHECKLIST.md` — Design phase checklist
 
 ### Architecture & Implementation
-- `docs/ARCHITECTURE.md` — Comprehensive architecture (just created)
+- `docs/ARCHITECTURE.md` — Comprehensive architecture ✅
 - `docs/IMPLEMENTATION_PLAN.md` — This document
 
 ---
 
 ## Verification Checklist
 
-After updating all design documents, verify:
+Design document review and alignment (completed):
 
-- [ ] All references to max_daily_tasks removed
-- [ ] All references to estimated_minutes removed (except in Phase 2+ section)
-- [ ] All references to area_hint/project_hint removed
-- [ ] deferred_until_date added to DeferredItem description
-- [ ] "Skip" changed to "Done for now" everywhere
-- [ ] Plan Adjustment View removed (merged into Morning Planning)
-- [ ] Use Case 5 simplified to describe Morning Planning reuse
-- [ ] Active Work 80% chime references removed
-- [ ] Deferred items re-queueing flow documented (1 day / 1 week / 1 month selection)
-- [ ] Sidebar menu option for mid-day plan adjustment mentioned
-- [ ] All Phase 2+ features documented in DEFERRED_WORK.md
-- [ ] ARCHITECTURE.md matches final design decisions
+- [x] All references to max_daily_tasks removed (except Phase 2+ sections)
+- [x] All references to estimated_minutes removed (except Phase 2+ sections)
+- [x] All references to area_hint/project_hint removed
+- [x] deferred_until_date added to DeferredItem description
+- [x] "Skip" changed to "Done for now" everywhere
+- [x] Plan Adjustment View removed (merged into Morning Planning)
+- [x] Use Case 5 simplified to describe Morning Planning reuse
+- [x] Active Work 80% chime references removed
+- [x] Deferred items re-queueing flow documented (1 day / 1 week / 1 month selection)
+- [x] Sidebar menu option for mid-day plan adjustment mentioned
+- [x] All Phase 2+ features documented in DEFERRED_WORK.md
+- [x] ARCHITECTURE.md matches final design decisions
+- [x] area entity removed — flat project list
+- [x] subtask table removed — parent_task_id hierarchy on task
+- [x] project_id required on all tasks; child tasks inherit parent's project
+- [x] recurring_template and recurring_instance removed from MVP data model
+- [x] Project status simplified to is_active boolean
+- [x] Project priority removed
+- [x] points renamed to points_estimate
+- [x] Evening clean-up included in implementation roadmap Phase 3
 
 ---
 
@@ -286,23 +291,27 @@ After updating all design documents, verify:
 
 If another agent picks up this work:
 
-1. **Context**: User is building an ADHD-friendly work planning tool. We're at the end of design phase (Phase 5 complete).
+1. **Context**: User is building an ADHD-friendly work planning tool. Design phase is complete and all documents are aligned.
 
-2. **Current State**: Design is solid; 13 gaps identified and resolved. Now need to update 4 design documents to reflect these resolutions.
+2. **Current State**: All design documents reviewed and updated. ARCHITECTURE.md, IMPLEMENTATION_PLAN.md, and all user design documents are consistent.
 
-3. **Key Insight**: User values simplicity and ADHD-friendly language. Deferred many features (max_daily_tasks, timer customization, notes, break reminders) to Phase 2+ to keep MVP focused.
+3. **Key Insight**: User values simplicity and ADHD-friendly language. Deferred many features (max_daily_tasks, timer customization, notes, break reminders, recurring tasks) to Phase 2+ to keep MVP focused.
 
 4. **Critical Decisions**:
    - Single chime timer at 100% only (no 80% warning)
    - Reuse Morning Planning View for mid-day adjustments (no separate view)
-   - Points-based estimation, not time-based
+   - Points-based estimation (points_estimate), not time-based
    - One-at-a-time deferred item processing
    - "Done for now" instead of "Skip"
+   - Flat project list (no area entity)
+   - Task hierarchy via parent_task_id (no separate subtask table)
+   - Child tasks must share parent's project_id (enforced in service layer)
+   - Project status is simple active/inactive (no priority)
 
-5. **Next Phase**: After documents are updated, either Phase 7 (design refinement) or Phase 1 (implementation).
+5. **Next Phase**: Ready for implementation (Phase 1: Foundation).
 
 6. **Communication Style**: User is clear, decisive, prefers direct feedback and gap-based discussion. Values working incrementally and getting user feedback before moving forward.
 
 ---
 
-**Status**: Ready for Phase 6 execution. All planning complete.
+**Status**: Design phase complete. All documents aligned. Ready for implementation.

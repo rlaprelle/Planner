@@ -6,7 +6,7 @@
 
 ## Critical Views (Must-Build for MVP)
 
-These are the 5-7 most important screens users see daily.
+These are the 6 most important screens/interactions users see daily.
 
 ### 1. Morning Planning View
 
@@ -32,14 +32,15 @@ These are the 5-7 most important screens users see daily.
 - Empty time blocks to fill
 - User drags tasks from top panel into these blocks
 - System auto-suggests break blocks between work blocks
-- Shows current task count vs max_daily_tasks limit
 - "Confirm plan" button at bottom
+- **No hard task limit** (max_daily_tasks removed from MVP)
 
 **User Flow**:
 1. User internally reflects on "What are my 1-3 top priorities today?" (grounding exercise, internal thinking)
 2. User browses tasks in the table and selects which ones they want to work on
 3. User clicks "Add to calendar" to auto-place selected tasks on the calendar below
 4. User manually drags tasks around the calendar to arrange them in desired order
+5. When accessed mid-day: completed blocks shown greyed out, remaining blocks still editable
 
 **End state**: DailyReflection created with TimeBlocks for the day
 
@@ -65,8 +66,8 @@ These are the 5-7 most important screens users see daily.
 - Action buttons: "Complete", "Extend", "Done for now"
 
 **At end of time block**:
-- Gentle chime + "Time's up. Good work!"
-- (Customizable reminders like water/food/break → Phase 2+)
+- **Single gentle chime** at 100% + "Time's up. Good work!"
+- No 80% warning, no customizable reminders (Phase 2+)
 
 **End state**: User chooses Complete/Extend/Done for now, actual_minutes recorded
 
@@ -197,40 +198,6 @@ After saving:
 
 ---
 
-### 7. Plan Adjustment View
-
-**Purpose**: Execute mid-day plan changes (Use Case 5)
-**When**: User clicks "Reassess plan" during the day
-**Layout**: Modal or panel showing today's remaining plan
-
-**Content**:
-- Current time blocks (completed ones greyed out)
-- Remaining time blocks with tasks
-- Dropdown: "What's changed?"
-  - Task blocked
-  - New request
-  - Feeling overwhelmed
-  - Low energy
-  - Other
-
-**System suggestions** (based on selection):
-- "Swap Task A for Task X?"
-- "Remove one task to recover energy?"
-- "Take a longer break?"
-
-**Trade-offs shown**:
-- "If you skip Task C, you'll miss the 3pm deadline"
-- "If you pivot to Task X, Task A stays unscheduled for today"
-
-**Actions**:
-- "Make this change" → plan updates, celebration shown
-- "Keep current plan"
-- Optional: Add note to task ("Blocked, will revisit tomorrow")
-
-**End state**: Plan adjusted, user encouraged, clear about trade-offs
-
----
-
 ## State Transitions
 
 How the app flows between views:
@@ -240,12 +207,10 @@ Dashboard
 ├── Morning Planning (top/bottom split)
 │   └── confirm → creates DailyReflection
 │       └── navigate to Dashboard or Active Work
+│   └── (mid-day: reopen via sidebar to adjust plan)
 ├── Active Work Session (from time block)
-│   └── Complete/Extend/Done → updates session
+│   └── Complete/Extend/Done for now → updates session
 │       └── back to Dashboard or next block
-├── Plan Adjustment (from "Reassess" button)
-│   └── confirm change → updates DailyReflection
-│       └── back to Dashboard
 ├── Quick Capture Modal (Ctrl+Space)
 │   └── Enter → creates DeferredItem
 │       └── back to previous screen
@@ -275,7 +240,7 @@ Dashboard
 
 5. **Quick Capture Modal**: Stays in focus, minimal friction, disappears immediately after save.
 
-6. **Plan Adjustment with Trade-offs**: Shows consequences of changes so user is conscious of what they're deprioritizing.
+6. **Plan Adjustment via Morning Planning**: Reuse the same view for mid-day adjustments — no separate view needed. Completed blocks shown greyed out for context.
 
 ---
 
@@ -284,12 +249,11 @@ Dashboard
 **Top-level navigation** (sidebar or bottom nav):
 - Dashboard (home)
 - Today (morning planning + active work)
-- Areas (view/manage areas)
 - Projects (view/manage projects)
 - Tasks (browse all tasks)
 - Inbox (deferred items, anytime review)
 
-**Within-screen navigation**: Modal/panel overlays for details, quick capture, plan adjustment
+**Within-screen navigation**: Modal/panel overlays for details, quick capture
 
 ---
 
@@ -308,9 +272,8 @@ Dashboard
 | View | Purpose | Frequency | Key Interaction |
 |---|---|---|---|
 | Dashboard | Daily overview, status | Every open | See streak, deadlines, current task |
-| Morning Planning | Create day's plan | 1x/day | Drag tasks to calendar |
-| Active Work Session | Focus on task with support | Multiple/day | Start/complete/extend/done |
+| Morning Planning | Create/adjust day's plan | 1x/day + as needed | Drag tasks to calendar |
+| Active Work Session | Focus on task with support | Multiple/day | Start/complete/extend/done for now |
 | Evening Clean-up | Process inbox & reflect | 1x/day | Convert/defer/dismiss items |
-| Plan Adjustment | Adapt plan mid-day | As needed | Swap tasks, show trade-offs |
 | Quick Capture | Jot thought | Many/day | Type + Enter |
 | Task Details | View/edit task | As needed | Edit fields, manage subtasks |

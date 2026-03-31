@@ -181,27 +181,23 @@
 - id (UUID), email, password_hash, display_name, timezone
 - created_at, updated_at
 
-**area** (labeled category for projects)
-- id, user_id, name, description, color (hex), icon, sort_order, is_active, archived_at
-
-**project** (concrete project)
-- id, area_id, user_id, name, description
-- status (NOT_STARTED/IN_PROGRESS/ON_HOLD/COMPLETED/CANCELLED)
-- priority (1-5), due_date, archived_at
+**project** (concrete project, flat list)
+- id, user_id, name, description
+- color (hex), icon
+- is_active (boolean, default true)
+- sort_order, archived_at
 - created_at, updated_at
 
-**task** (actionable work item)
-- id, project_id, user_id, title, description
+**task** (actionable work item, supports hierarchy via parent_task_id)
+- id, project_id (required, non-nullable), user_id, title, description
+- parent_task_id (nullable; null for top-level tasks, references parent for child tasks)
+- **Rule**: Child tasks must have the same project_id as their parent. Enforced in service layer; cascades on parent project change.
 - status (TODO/IN_PROGRESS/BLOCKED/DONE/SKIPPED)
-- priority (1-5), points (1-5 complexity), actual_minutes (time spent)
+- priority (1-5), points_estimate (1-5 complexity), actual_minutes (time spent)
 - energy_level (LOW/MEDIUM/HIGH), due_date
-- is_recurring, recurrence_rule (iCal RRULE)
+- sort_order (for ordering within parent)
 - blocked_by_task_id (self-reference: "blocked by another task")
-- archived_at, created_at, updated_at
-
-**subtask** (child task for breaking down work)
-- id, task_id, title, is_done, sort_order, completed_at
-- created_at, updated_at
+- archived_at, completed_at, created_at, updated_at
 
 **deferred_item** (quick capture)
 - id, user_id, raw_text
@@ -228,9 +224,6 @@
 - sort_order (chronological)
 - created_at, updated_at
 
-**recurring_template** (future: recurring task definition)
-- id, user_id, source_task_id, recurrence_rule, next_generation_date, is_active
-
 ---
 
 ## Task Ordering Logic (Morning Planning)
@@ -254,7 +247,7 @@ Tasks within each project column are ordered:
 - `POST /api/v1/auth/refresh` - Rotate refresh token
 
 ### Core CRUD
-- Areas, Projects, Tasks, Subtasks, Deferred Items (standard REST operations)
+- Projects, Tasks, Deferred Items (standard REST operations)
 
 ### Daily Workflows
 - `GET /api/v1/schedule/today` - Today's plan with time blocks
@@ -314,7 +307,7 @@ Tasks within each project column are ordered:
 | "Done for now" instead of "Skip" | Psychologically more supportive; acknowledges work done without total completion pressure |
 | Reuse Morning Planning for mid-day adjustment | Simpler UX; no separate "Plan Adjustment View" with complex diffing |
 | No task limit in MVP | Simplifies MVP; max_daily_tasks as Phase 2+ feature for those who need guardrails |
-| Separate Subtask table (not Task hierarchy) | Simpler implementation; flattened display in UI |
+| Task hierarchy via parent_task_id (not separate subtask table) | Subtasks are full tasks with their own priority, points, due date; supports flexible breakdown |
 | No notes during work (Phase 2+) | MVP focus on completion; notes can be added post-session in reflection |
 
 ---
@@ -334,9 +327,9 @@ Tasks within each project column are ordered:
 | Phase | Timeline | Scope | Validates |
 |-------|----------|-------|-----------|
 | **Phase 1: Foundation** | Week 1 | Auth, DB, skeleton UIs | System works end-to-end |
-| **Phase 2: Core CRUD** | Week 2 | Areas, Projects, Tasks, Subtasks | Data hierarchy works |
-| **Phase 3: Deferred Items** | Week 3 | Quick capture, inbox, processing | Distraction handling works |
-| **Phase 4: Daily Planning** | Week 3-4 | Morning ritual, time blocks, suggestions | Planning flow works |
+| **Phase 2: Core CRUD** | Week 2 | Projects, Tasks | Data hierarchy works |
+| **Phase 3: Deferred Items & Evening Ritual** | Week 3 | Quick capture, inbox, processing, evening clean-up (reflection form, streak) | Distraction handling + daily closure works |
+| **Phase 4: Daily Planning** | Week 3-4 | Morning ritual, time blocks, active work session, suggestions | Planning + execution flow works |
 
 **Total MVP timeline**: ~4 weeks to validate core vision.
 
@@ -347,7 +340,6 @@ Tasks within each project column are ordered:
 | Risk | Mitigation |
 |------|-----------|
 | Timezone handling | Store UTC; use user.timezone for display; convert plan_date boundaries in queries |
-| Recurring task scale | Daily @Scheduled job, idempotent (check existing instances before creating) |
 | Drag-and-drop optimism | TanStack Query onMutate for optimistic reorder, onError for rollback |
 | JWT security | Refresh token in HttpOnly cookie (not localStorage); rotate on each refresh |
 | Scope creep | Build phases 1-4 first; validate core loop before extras |
@@ -357,9 +349,10 @@ Tasks within each project column are ordered:
 ## Document References
 
 - `docs/planning/user_design/USER_WISHES.md` - User's original vision
-- `docs/planning/user_design/USE_CASES.md` - 5 core MVP use cases (in progress of updates)
-- `docs/planning/user_design/CORE_WORKFLOWS.md` - 6 views, detailed flows (in progress of updates)
-- `docs/planning/user_design/INFORMATION_ARCHITECTURE.md` - Entity definitions, task ordering (in progress of updates)
+- `docs/planning/user_design/USE_CASES.md` - 5 core MVP use cases
+- `docs/planning/user_design/CORE_WORKFLOWS.md` - 6 views, detailed flows
+- `docs/planning/user_design/INFORMATION_ARCHITECTURE.md` - Entity definitions, task ordering
 - `docs/planning/user_design/WIREFRAMES.md` - ASCII wireframes for all views
-- `docs/planning/user_design/DEFERRED_WORK.md` - Phase 2+ features with rationale (in progress of updates)
+- `docs/planning/user_design/DEFERRED_WORK.md` - Phase 2+ features with rationale
+- `docs/planning/user_design/USER_DESIGN_CHECKLIST.md` - Design phase checklist
 - `docs/IMPLEMENTATION_PLAN.md` - Current progress and next steps

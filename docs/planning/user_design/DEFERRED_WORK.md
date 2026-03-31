@@ -73,12 +73,22 @@
   - Show "You estimated 3 pts, took 2 hours" insights
   - Learn patterns over time (e.g., "Your estimates are usually 2x too optimistic")
   - Suggest adjusted estimates based on history
-- **Why deferred**: MVP just captures estimated_minutes and actual_minutes; no analysis
-- **Estimated effort**: Low-Medium (mostly data analysis)
+  - Requires adding `estimated_minutes` to Task (MVP uses points only + actual_minutes)
+- **Why deferred**: MVP uses points-based estimation only; no time-based estimates or accuracy analysis
+- **Estimated effort**: Low-Medium (mostly data analysis + schema addition)
 - **Priority**: Medium (useful for improvement, not essential)
 
+### Daily Task Limits (max_daily_tasks)
+- **Description**: Optional daily task limit as a guardrail against over-scheduling
+  - User sets a soft cap on how many tasks to schedule per day
+  - System warns (but doesn't block) when limit is reached
+  - Configurable per user in settings
+- **Why deferred**: MVP has no hard task limit; simplifies planning and avoids unnecessary constraints for users who don't need them
+- **Estimated effort**: Low (settings field + UI indicator in Morning Planning)
+- **Priority**: Medium (helpful for some ADHD users who tend to over-schedule)
+
 ### Cross-Day Task Rescheduling
-- **Description**: Move tasks between days via Plan Adjustment View or other mechanisms
+- **Description**: Move tasks between days via Morning Planning View or other mechanisms
   - "Move Task A to tomorrow"
   - Bulk rescheduling for overwhelmed days
 - **Why deferred**: MVP doesn't support moving tasks between days; plan adjustment reuses Morning Planning (today only)
@@ -151,9 +161,9 @@
    - Clean API boundaries for future LLM integration
 
 2. **Database Schema Readiness**: Phase 1 schema should support Phase 2+ features
-   - `Task.estimated_minutes` and `actual_minutes` for estimation learning
+   - `Task.actual_minutes` for time tracking (estimation learning will add `estimated_minutes` in Phase 2+)
    - `Task.is_recurring` and `recurrence_rule` for recurring tasks (even if not used in MVP)
-   - `DeferredItem.deferral_count` to track deferred behavior patterns
+   - `DeferredItem.deferral_count` and `deferred_until_date` to track deferred behavior patterns
    - `DailyReflection.energy_rating`, `mood_rating` for weekly trends
 
 3. **API Design**: Ensure API endpoints can support future customization

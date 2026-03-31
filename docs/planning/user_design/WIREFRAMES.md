@@ -49,7 +49,7 @@
 │  │ ☰ LUNCH / BREAK                                      │  │
 │  └───────────────────────────────────────────────────────┘  │
 │                                                              │
-│  Tasks: 2 / 5 limit                                         │
+│  Tasks: 2 selected                                           │
 │                                                              │
 │                                [Confirm plan]               │
 │                                                              │
@@ -96,7 +96,7 @@
 │    └──────────────┴──────────────┴──────────────┘           │
 │                                                              │
 │                                                              │
-│                  [Notes for next time?]                     │
+│                                                              │
 │                                                              │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
@@ -108,6 +108,7 @@
 - [Extend]: Extend time (prompts for duration: 15min, 30min, 1hr, custom)
 - [Done for now]: Stop working, block incomplete
 - Timer updates every second
+- **Single gentle chime at 100%** (no 80% warning, no customizable reminders — Phase 2+)
 - No notes field in MVP (add notes later via Task Details if needed — Phase 2+)
 
 ---

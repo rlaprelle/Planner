@@ -15,19 +15,13 @@ These are the core user journeys that happen in every day/week.
 **Goal**: Ground themselves, review the day, and create a clear plan for what to work on
 
 **Flow**:
-1. User opens app → sees welcome prompt "Ready to plan your day?"
-2. Step 1: "What are your 1-3 top priorities today?" (user types free text)
-3. Step 2: "How many work sessions can you realistically do today?" (user sees their max_daily_tasks limit as a soft suggestion)
-4. Step 3: "Pull up suggested tasks" or "manually pick tasks"
-   - If suggested: system shows top tasks by deadline/priority/points
-   - If manual: user browses their task list
-5. Step 4: "Arrange them into time blocks" (visual drag-and-drop)
-   - Show available hours (user can set work hours in settings)
-   - Auto-suggest break blocks between work
-   - User places tasks into blocks
-6. Step 5: Review and confirm plan
-   - "Here's your day. Feel good?" → Save or adjust
-7. System creates today's DailyReflection with TimeBlocks
+1. User opens app → navigates to Morning Planning
+2. User internally reflects: "What are my 1-3 top priorities today?" (grounding exercise, internal thinking)
+3. User browses tasks table (grouped by project, ordered by deadline then priority)
+4. User selects tasks they want to work on today
+5. User clicks "Add to calendar" → selected tasks auto-placed on today's timeline
+6. User drags tasks around calendar to arrange them
+7. User confirms plan → DailyReflection created with TimeBlocks
 
 **End state**: User has a visual plan for the day, feels grounded, knows what to work on
 
@@ -101,23 +95,22 @@ These are the core user journeys that happen in every day/week.
 
 **Actor**: User
 **Trigger**: User clicks "Start" on a time block during the day
-**Goal**: Focus on work with gentle support (timer, break reminders)
+**Goal**: Focus on single task with gentle support
 
 **Flow**:
 1. User clicks "Start" on a time block
-2. Active task view appears:
+2. Active Work Session view appears:
    - Task title prominent
-   - Timer starts (countdown or countup depending on user preference)
-   - Child tasks displayed as checklist
+   - Timer starts
+   - Progress bar shows % of time elapsed
+   - Child tasks displayed as interactive checklist
 3. User works...
-4. At 100% of time: gentle chime, "Time's up. Good work!"
+4. At 100% of time: **gentle chime** + "Time's up. Good work!"
 5. User can:
-   - Click "Complete" → marks time block done, updates task.actual_minutes
-   - Click "Extend 10 min" → adds time
-   - Click "Skip" → marks incomplete, asks for notes ("What happened?")
-7. System suggests: "Break time! Take 5 minutes?"
-   - If yes: opens break block
-   - If no: user can start next task
+   - Click "Complete" → marks task done, updates task.actual_minutes
+   - Click "Extend" → adds time block duration
+   - Click "Done for now" → marks incomplete, ready to defer/reschedule
+6. Backend updates TimeBlock with actual_start, actual_end, was_completed
 
 **End state**: Work is tracked, actual time is recorded, user feels the work they did
 
@@ -129,33 +122,24 @@ These are the core user journeys that happen in every day/week.
 
 **Actor**: User
 **Trigger**: Something changes (task blocked, new urgent request, energy drops) → user realizes plan needs adjustment
-**Goal**: Consciously change the plan while being aware of trade-offs
+**Goal**: Reassess and adjust plan based on reality
 
 **Flow**:
-1. User realizes their plan isn't working (blocked on Task A, new request for Task X, feeling exhausted)
-2. User clicks "Reassess plan" or "Adjust today"
-3. System shows current plan:
-   - Remaining time blocks
-   - Completed blocks (greyed out)
-   - Incomplete blocks
-4. System prompts: "What's changed?"
-   - Task blocked?
-   - New request?
-   - Feeling overwhelmed?
-   - Low energy?
-5. Based on selection, system suggests adjustments:
-   - "Swap Task A for Task X?"
-   - "Remove one task to recover energy?"
-   - "Take a longer break?"
-6. User sees trade-offs:
-   - "If you skip Task C, you'll miss the 3pm deadline"
-   - "If you pivot to Task X, Task A moves to tomorrow"
-7. User approves changes
-8. Plan updates, user can capture deferred note: "Blocked on A because..."
+1. User realizes plan needs adjustment mid-day
+2. User accesses Morning Planning view via **sidebar menu option** (or quick action)
+3. Morning Planning View shows:
+   - All today's time blocks
+   - **Completed blocks greyed out** (visual reference of what happened)
+   - Remaining blocks still editable
+4. User drags/rearranges remaining blocks as needed
+5. User confirms updated plan
+6. Plan saves and updates
 
-**End state**: Plan is adjusted consciously, user is aware of trade-offs
+**Key Design**: Reuses Morning Planning View (no separate Plan Adjustment View). Same drag-and-drop interaction as morning planning.
 
-**Duration**: 2-5 minutes
+**End state**: Plan is adjusted, user has clear view of remaining day
+
+**Duration**: 5-10 minutes
 
 ---
 
@@ -199,7 +183,7 @@ These are the core user journeys that happen in every day/week.
 
 These are moments where the user makes conscious choices:
 
-1. **Morning**: How many tasks today? Which tasks matter most?
+1. **Morning**: Which tasks matter most? How do I arrange my day?
 2. **Mid-day capture**: Do I need to switch tasks? Will I handle this later?
 3. **Mid-day reassess**: Should I change my plan? What are the trade-offs?
 4. **Evening process**: Do I convert this to a real task or dismiss it?

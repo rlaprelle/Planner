@@ -8,24 +8,30 @@
 
 ### Entities
 
-**Project**
-- id, name, description
+**app_user**
+- id (UUID), email, password_hash, display_name, timezone
+- created_at, updated_at
+
+**Project** (flat list)
+- id, user_id, name, description
 - color (hex), icon
-- sort_order, is_active, archived_at
+- is_active (boolean, default true)
+- sort_order, archived_at
 - created_at, updated_at
 
 **Task** (supports hierarchy via parent_task_id)
-- id, title, description
-- project_id (which project this belongs to; nullable for subtasks)
-- parent_task_id (for subtasks, references parent task; null for top-level tasks)
+- id, project_id (required, non-nullable), user_id, title, description
+- parent_task_id (nullable; null for top-level tasks, references parent for child tasks)
+- **Rule**: Child tasks must have the same project_id as their parent. Enforced in service layer; cascades on parent project change.
 - status (TODO, IN_PROGRESS, BLOCKED, DONE, SKIPPED)
 - priority (1-5)
-- points_estimate (1-5 or higher, deliberately vague)
+- points_estimate (1-5 complexity, deliberately vague)
+- actual_minutes (time spent)
+- energy_level (LOW/MEDIUM/HIGH)
 - due_date
 - sort_order (for ordering within parent)
-- created_at, completed_at, archived_at
 - blocked_by_task_id (self-reference for dependencies)
-- is_recurring, recurrence_rule (future)
+- archived_at, completed_at, created_at, updated_at
 
 **DailyReflection**
 - id, user_id, reflection_date (unique per user per date)
@@ -41,7 +47,6 @@
 - start_time, end_time (clock times: 9:00 AM, 10:30 AM, etc.)
 - actual_start, actual_end (timestamps when user actually started/ended)
 - was_completed (boolean: completed or done for now/skipped)
-- notes (optional: user notes about what happened)
 - sort_order (chronological order within the day)
 - created_at, updated_at
 
@@ -49,8 +54,9 @@
 - id, user_id, raw_text
 - is_processed, captured_at, processed_at
 - resolved_task_id, resolved_project_id (nullable)
+- deferred_until_date (nullable, for re-queueing to future evening ritual: 1 day / 1 week / 1 month)
 - deferral_count (how many times deferred)
-- created_at
+- created_at, updated_at
 
 ---
 
@@ -104,7 +110,6 @@ Tasks within each project column are ordered:
 **Actions**:
 - Check off subtasks
 - "Complete" / "Extend" / "Done for now" buttons
-- Customizable reminders (water, food, break) appear as notifications
 - Click task title to see full details (optional)
 
 ---
@@ -232,38 +237,11 @@ Tasks within each project column are ordered:
 
 ---
 
-### 7. Plan Adjustment View
-
-**Essential Information**:
-- Current time blocks (completed greyed out)
-- Remaining time blocks with task names
-- "What's changed?" dropdown:
-  - Task blocked
-  - New request
-  - Feeling overwhelmed
-  - Low energy
-  - Other
-- System suggestions based on selection
-- Trade-offs display ("If you skip X, you'll miss Y deadline")
-
-**Hidden/Secondary**:
-- Task details (only names shown)
-- Full project view
-- Historical data
-
-**Actions**:
-- Select what changed
-- Accept/reject suggestion
-- Optional note field
-- "Make this change" button
-
----
-
 ## Navigation Structure
 
 ### Primary Navigation (Sidebar or Bottom Nav)
 - **Dashboard** — Home/overview
-- **Today** — Morning planning + active work + plan adjustment
+- **Today** — Morning planning + active work (mid-day adjustments reuse Morning Planning view)
 - **Projects** — View/manage projects
 - **Tasks** — Browse all tasks (future, or searchable from morning planning)
 - **Inbox** — Deferred items, anytime review
@@ -285,7 +263,6 @@ Tasks within each project column are ordered:
 | Dashboard | **Medium** | Overview of day + upcoming + streak, but not cluttered |
 | Task Details | **High** | User clicked for details, can handle full information |
 | Quick Capture | **Minimal** | Zero friction: just a text box |
-| Plan Adjustment | **Medium** | Show current plan + options, but focused on change |
 
 ---
 
@@ -319,14 +296,14 @@ Tasks within each project column are ordered:
 
 **For Users**:
 - "Project" — A bucket for related work (e.g., "Auth System", "Dental Care")
-- "Task" — A unit of work that can be broken down
-- "Subtask" — A small step within a task
+- "Task" — A unit of work that can be broken down into child tasks
+- "Subtask" — A child task (same entity as task, linked via parent_task_id)
 - "Time Block" — A scheduled period to work on a task
 - "Deferred Item" — A quick note captured for later processing
 - "Daily Plan" — Your schedule for today
 
 **For Developers**:
-- `project_id` / `task_id` / `daily_plan_id` — Foreign keys
+- `project_id` / `task_id` / `parent_task_id` / `daily_plan_id` — Foreign keys
 - `time_block` vs `TimeBlock` — Database vs code entity
 - `is_processed`, `is_done` — Boolean flags
 - `deferral_count` — Integer counter
@@ -335,16 +312,20 @@ Tasks within each project column are ordered:
 
 ## Entity Relationships
 
-For a given user on a given date:
 ```
-User + Date
-├── TimeBlocks (multiple)
-│   ├── One per scheduled work/break/buffer block
-│   └── Reference task_id (nullable for breaks)
-└── DailyReflection (one)
-    ├── Energy/mood ratings
-    ├── Reflection notes
-    └── is_finalized flag
+app_user
+├── Projects (multiple)
+│   └── Tasks (multiple, top-level: parent_task_id is null)
+│       └── Child Tasks (via parent_task_id, recursive)
+├── DeferredItems (multiple, unprocessed captures)
+└── Per date:
+    ├── TimeBlocks (multiple)
+    │   ├── One per scheduled work/break/buffer block
+    │   └── Reference task_id (nullable for breaks)
+    └── DailyReflection (one)
+        ├── Energy/mood ratings
+        ├── Reflection notes
+        └── is_finalized flag
 ```
 
 ## Information Hierarchy Summary

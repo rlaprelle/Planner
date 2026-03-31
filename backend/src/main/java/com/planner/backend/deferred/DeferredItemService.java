@@ -56,7 +56,7 @@ public class DeferredItemService {
                 request.dueDate(), null);
         TaskResponse created = taskService.create(user, request.projectId(), taskReq);
         Task task = taskRepository.findById(created.id())
-                .orElseThrow(() -> new DeferredItemNotFoundException("Task not found after creation"));
+                .orElseThrow(() -> new IllegalStateException("Newly created task could not be reloaded: " + created.id()));
         item.setProcessed(true);
         item.setProcessedAt(Instant.now());
         item.setResolvedTask(task);
@@ -85,5 +85,9 @@ public class DeferredItemService {
     private DeferredItem findOwnedItem(AppUser user, UUID itemId) {
         return repository.findByIdAndUserId(user, itemId)
                 .orElseThrow(() -> new DeferredItemNotFoundException("Deferred item not found: " + itemId));
+    }
+
+    public static class DeferredItemNotFoundException extends RuntimeException {
+        public DeferredItemNotFoundException(String message) { super(message); }
     }
 }

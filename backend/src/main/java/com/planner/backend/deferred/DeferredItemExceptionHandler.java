@@ -1,15 +1,15 @@
 package com.planner.backend.deferred;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(assignableTypes = DeferredItemController.class)
 public class DeferredItemExceptionHandler {
 
-    @ExceptionHandler(DeferredItemNotFoundException.class)
-    public ResponseEntity<String> handleNotFound(DeferredItemNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    @ExceptionHandler(DeferredItemService.DeferredItemNotFoundException.class)
+    ProblemDetail handleNotFound(DeferredItemService.DeferredItemNotFoundException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 }

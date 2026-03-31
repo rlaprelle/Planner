@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1/schedule/today")
 public class DailyReflectionController {
 
     private final DailyReflectionService service;
@@ -19,7 +21,7 @@ public class DailyReflectionController {
         this.service = service;
     }
 
-    @PostMapping("/api/v1/schedule/today/reflect")
+    @PostMapping("/reflect")
     public ResponseEntity<ReflectionResponse> reflect(
             @AuthenticationPrincipal AppUser user,
             @Valid @RequestBody ReflectionRequest request) {

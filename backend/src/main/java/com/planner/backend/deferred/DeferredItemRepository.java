@@ -13,6 +13,7 @@ public interface DeferredItemRepository extends JpaRepository<DeferredItem, UUID
 
     @Query("""
             SELECT d FROM DeferredItem d
+            JOIN FETCH d.user
             WHERE d.user = :user
               AND d.isProcessed = false
               AND (d.deferredUntilDate IS NULL OR d.deferredUntilDate <= :today)

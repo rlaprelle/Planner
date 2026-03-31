@@ -1,8 +1,11 @@
 package com.planner.backend.deferred;
 
 import com.planner.backend.auth.AppUser;
+import com.planner.backend.deferred.dto.ConvertToTaskRequest;
+import com.planner.backend.deferred.dto.DeferRequest;
 import com.planner.backend.deferred.dto.DeferredItemCreateRequest;
 import com.planner.backend.deferred.dto.DeferredItemResponse;
+import com.planner.backend.task.dto.TaskResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class DeferredItemController {
@@ -31,5 +35,28 @@ public class DeferredItemController {
     public ResponseEntity<List<DeferredItemResponse>> listPending(
             @AuthenticationPrincipal AppUser user) {
         return ResponseEntity.ok(service.listPending(user));
+    }
+
+    @PostMapping("/api/v1/deferred/{id}/convert")
+    public ResponseEntity<TaskResponse> convert(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable UUID id,
+            @Valid @RequestBody ConvertToTaskRequest request) {
+        return ResponseEntity.ok(service.convert(user, id, request));
+    }
+
+    @PostMapping("/api/v1/deferred/{id}/defer")
+    public ResponseEntity<DeferredItemResponse> defer(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable UUID id,
+            @Valid @RequestBody DeferRequest request) {
+        return ResponseEntity.ok(service.defer(user, id, request));
+    }
+
+    @PatchMapping("/api/v1/deferred/{id}/dismiss")
+    public ResponseEntity<DeferredItemResponse> dismiss(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(service.dismiss(user, id));
     }
 }

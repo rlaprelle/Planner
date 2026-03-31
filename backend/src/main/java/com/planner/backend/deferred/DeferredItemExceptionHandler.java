@@ -1,9 +1,15 @@
 package com.planner.backend.deferred;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-// No domain exceptions in this slice.
-// Exceptions for convert/defer/dismiss will be added in the Evening Ritual slice.
-@RestControllerAdvice
+@RestControllerAdvice(assignableTypes = DeferredItemController.class)
 public class DeferredItemExceptionHandler {
+
+    @ExceptionHandler(DeferredItemNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(DeferredItemNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }

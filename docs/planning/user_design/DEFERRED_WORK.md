@@ -12,6 +12,12 @@
 - **Estimated effort**: Medium (settings view + notification system enhancements)
 - **Priority**: High (users will want these after MVP)
 
+### Quick Capture Brain-Dump Mode
+- **Description**: After saving a capture, keep the modal open and ready for another entry instead of auto-dismissing — useful when the user is in a "brain dump" flow with multiple thoughts to offload at once
+- **Why deferred**: MVP auto-dismisses after ~1 second (frictionless single-thought capture); brain-dump mode is a useful enhancement but not core
+- **Estimated effort**: Very Low (change dismiss behavior + add a "capture another" affordance or just don't auto-close)
+- **Priority**: Medium (valuable for ADHD users who have bursts of ideas)
+
 ### Notes Capture During Active Work
 - **Description**: Capture notes/context when ending a work session (at completion or "Done for now" moment)
   - Prompt: "Notes for next time?" or "Any blockers to record?"

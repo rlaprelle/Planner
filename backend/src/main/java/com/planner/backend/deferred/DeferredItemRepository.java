@@ -24,4 +24,12 @@ public interface DeferredItemRepository extends JpaRepository<DeferredItem, UUID
 
     @Query("SELECT d FROM DeferredItem d WHERE d.id = :id AND d.user = :user")
     Optional<DeferredItem> findByIdAndUserId(@Param("user") AppUser user, @Param("id") UUID id);
+
+    @Query("""
+            SELECT COUNT(d) FROM DeferredItem d
+            WHERE d.user.id = :userId
+              AND d.isProcessed = false
+              AND (d.deferredUntilDate IS NULL OR d.deferredUntilDate <= :today)
+            """)
+    long countPendingForUser(@Param("userId") UUID userId, @Param("today") LocalDate today);
 }

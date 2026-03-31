@@ -87,6 +87,16 @@ public class AuthService {
         return new AuthResult(new AuthResponse(accessToken), refreshCookie);
     }
 
+    public ResponseCookie buildClearRefreshCookie() {
+        return ResponseCookie.from(REFRESH_COOKIE_NAME, "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/api/v1/auth/refresh")
+                .sameSite("Strict")
+                .maxAge(0)
+                .build();
+    }
+
     private ResponseCookie buildRefreshCookie(String refreshToken) {
         return ResponseCookie.from(REFRESH_COOKIE_NAME, refreshToken)
                 .httpOnly(true)

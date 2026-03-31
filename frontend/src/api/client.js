@@ -51,3 +51,21 @@ export async function authFetch(url, options = {}) {
 
   return res
 }
+
+export async function handleResponse(res) {
+  if (!res.ok) {
+    let message = `HTTP ${res.status}`
+    try {
+      const body = await res.json()
+      message = body.message || body.error || message
+    } catch {
+      // ignore parse errors
+    }
+    const err = new Error(message)
+    err.status = res.status
+    throw err
+  }
+  // 204 No Content
+  if (res.status === 204) return null
+  return res.json()
+}

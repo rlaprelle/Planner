@@ -46,4 +46,11 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, result.refreshCookie().toString())
                 .body(result.authResponse());
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, authService.buildClearRefreshCookie().toString())
+                .build();
+    }
 }

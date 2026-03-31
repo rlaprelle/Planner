@@ -21,8 +21,8 @@ Stand up the dev environment with auth. No business logic.
 
 **Frontend:**
 - [x] React app with Vite (Tailwind CSS, Radix UI configured)
-- [ ] Login/register pages
-- [ ] Auth context: store access token, handle refresh, protect routes
+- [x] Login/register pages
+- [x] Auth context: store access token, handle refresh, protect routes
 
 **Done when:** Register, log in, and call a protected endpoint from the React app.
 
@@ -31,17 +31,17 @@ Stand up the dev environment with auth. No business logic.
 ## Slice 1: Core CRUD (Projects + Tasks)
 
 **Backend:**
-- [ ] Flyway migrations for `project` and `task` tables
-- [ ] Project REST: create, list, get, update, archive
-- [ ] Task REST: create, list (by project), get, update, archive, change status
-- [ ] `parent_task_id` support: create child tasks, enforce same `project_id` as parent in service layer, cascade project changes to children
-- [ ] Task ordering: by deadline group (TODAY > THIS WEEK > no deadline), then priority (highest first) within each group
+- [x] Flyway migrations for `project` and `task` tables
+- [x] Project REST: create, list, get, update, archive
+- [x] Task REST: create, list (by project), get, update, archive, change status
+- [x] `parent_task_id` support: create child tasks, enforce same `project_id` as parent in service layer, cascade project changes to children
+- [x] Task ordering: by deadline group (TODAY > THIS WEEK > no deadline), then priority (highest first) within each group
 
 **Frontend:**
-- [ ] Sidebar navigation: Dashboard, Today, Projects, Inbox
-- [ ] Projects list view: create, edit, archive, color/icon display
-- [ ] Task list view within a project: create, edit, archive tasks
-- [ ] Task Details panel: all fields editable (title, description, project, status, priority, points_estimate, energy_level, due_date), child task management (add, remove, reorder, check off)
+- [x] Sidebar navigation: Dashboard, Today, Projects, Inbox
+- [x] Projects list view: create, edit, archive, color/icon display
+- [x] Task list view within a project: create, edit, archive tasks
+- [x] Task Details panel: all fields editable (title, description, project, status, priority, points_estimate, energy_level, due_date), child task management (add, remove, reorder, check off)
 
 **Done when:** Create projects, create tasks within them, create child tasks, browse and edit everything from the UI.
 
@@ -50,16 +50,16 @@ Stand up the dev environment with auth. No business logic.
 ## Slice 2: Quick Capture
 
 **Backend:**
-- [ ] Flyway migration for `deferred_item` table
-- [ ] `POST /api/v1/deferred` — create deferred item (raw_text only)
-- [ ] `GET /api/v1/deferred` — list unprocessed items (`is_processed = false` and `deferred_until_date <= today` or null)
+- [x] Flyway migration for `deferred_item` table
+- [x] `POST /api/v1/deferred` — create deferred item (raw_text only)
+- [x] `GET /api/v1/deferred` — list unprocessed items (`is_processed = false` and `deferred_until_date <= today` or null)
 
 **Frontend:**
-- [ ] Floating capture button visible on all views
-- [ ] Ctrl+Space global hotkey
-- [ ] Quick Capture Modal: text input, Enter to save, Escape to cancel
-- [ ] Visual checkmark + audio chime confirmation on save
-- [ ] Deferred inbox badge in sidebar showing unprocessed count
+- [x] Floating capture button visible on all views
+- [x] Ctrl+Space global hotkey
+- [x] Quick Capture Modal: text input, Enter to save, Escape to cancel
+- [x] Visual checkmark + audio chime confirmation on save
+- [x] Deferred inbox badge in sidebar showing unprocessed count
 
 **Done when:** Hit Ctrl+Space from any view, type a thought, hit Enter, see confirmation, see inbox count increment.
 

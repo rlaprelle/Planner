@@ -70,6 +70,8 @@ public class TaskService {
     }
 
     public TaskResponse update(AppUser user, UUID id, TaskUpdateRequest request) {
+        // Note: parentTaskId is intentionally not mutable via PUT.
+        // Parent-child relationships are set at creation time only (Slice 1 design decision).
         Task task = findOwnedTask(user, id);
 
         task.setTitle(request.title());
@@ -85,7 +87,7 @@ public class TaskService {
         if (request.projectId() != null && !request.projectId().equals(task.getProject().getId())) {
             Project newProject = findOwnedProject(user, request.projectId());
             task.setProject(newProject);
-            cascadeProjectToChildren(task.getId(), newProject);
+            cascadeProjectToChildren(task.getId(), user.getId(), newProject);
         }
 
         List<TaskResponse> children = buildChildResponses(task.getId(), user);
@@ -95,8 +97,11 @@ public class TaskService {
     public TaskResponse archive(AppUser user, UUID id) {
         Task task = findOwnedTask(user, id);
         task.setArchivedAt(Instant.now());
-        List<TaskResponse> children = buildChildResponses(task.getId(), user);
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), children);
+        // Cascade archive to direct children
+        List<Task> children = taskRepository.findByParentTaskIdAndUserId(task.getId(), user.getId());
+        Instant now = task.getArchivedAt();
+        children.forEach(child -> child.setArchivedAt(now));
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
     }
 
     public TaskResponse changeStatus(AppUser user, UUID id, TaskStatusRequest request) {
@@ -113,20 +118,21 @@ public class TaskService {
 
     // --- Private helpers ---
 
-    private void cascadeProjectToChildren(UUID parentTaskId, Project project) {
-        List<Task> children = taskRepository.findByParentTaskId(parentTaskId);
+    private void cascadeProjectToChildren(UUID parentTaskId, UUID userId, Project project) {
+        List<Task> children = taskRepository.findByParentTaskIdAndUserId(parentTaskId, userId);
         for (Task child : children) {
             child.setProject(project);
         }
     }
 
     private List<TaskResponse> buildChildResponses(UUID parentTaskId, AppUser user) {
-        List<Task> children = taskRepository.findByParentTaskIdAndArchivedAtIsNull(parentTaskId);
+        List<Task> children = taskRepository.findByParentTaskIdAndUserIdAndArchivedAtIsNull(parentTaskId, user.getId());
         return sortAndMap(children, user);
     }
 
     private List<TaskResponse> sortAndMap(List<Task> tasks, AppUser user) {
         LocalDate today = LocalDate.now();
+        // Rolling 7-day window (not calendar week boundary) — intentional for ADHD-friendly "next 7 days" UX
         LocalDate endOfWeek = today.plusDays(7);
 
         Comparator<Task> comparator = Comparator
@@ -169,7 +175,7 @@ public class TaskService {
 
     private Project findOwnedProject(AppUser user, UUID projectId) {
         return projectRepository.findByIdAndUserId(projectId, user.getId())
-                .orElseThrow(() -> new TaskNotFoundException("Project not found: " + projectId));
+                .orElseThrow(() -> new TaskValidationException("Project not found or not accessible: " + projectId));
     }
 
     public static class TaskNotFoundException extends RuntimeException {

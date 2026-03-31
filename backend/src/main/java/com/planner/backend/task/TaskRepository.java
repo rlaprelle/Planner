@@ -12,7 +12,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     List<Task> findByProjectIdAndUserIdAndParentTaskIsNullAndArchivedAtIsNull(UUID projectId, UUID userId);
 
-    List<Task> findByParentTaskIdAndArchivedAtIsNull(UUID parentTaskId);
+    List<Task> findByParentTaskIdAndUserIdAndArchivedAtIsNull(UUID parentTaskId, UUID userId);
 
-    List<Task> findByParentTaskId(UUID parentTaskId);
+    List<Task> findByParentTaskIdAndUserId(UUID parentTaskId, UUID userId);
 }

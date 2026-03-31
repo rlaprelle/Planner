@@ -8,6 +8,7 @@ import { RegisterPage } from '@/pages/RegisterPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { TodayPage } from '@/pages/TodayPage'
 import { ProjectsPage } from '@/pages/ProjectsPage'
+import ProjectDetailPage from '@/pages/ProjectDetailPage'
 import { InboxPage } from '@/pages/InboxPage'
 
 const queryClient = new QueryClient({
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/today" element={<TodayPage />} />
                 <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
                 <Route path="/inbox" element={<InboxPage />} />
               </Route>
             </Route>

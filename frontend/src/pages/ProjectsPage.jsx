@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -100,6 +100,14 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
   const [icon, setIcon] = useState(project?.icon ?? '')
   const [nameError, setNameError] = useState('')
 
+  useEffect(() => {
+    setName(project?.name ?? '')
+    setDescription(project?.description ?? '')
+    setColor(project?.color ?? DEFAULT_COLOR)
+    setIcon(project?.icon ?? '')
+    setNameError('')
+  }, [project])
+
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
@@ -114,6 +122,8 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
 
   function handleSubmit(e) {
     e.preventDefault()
+    mutation.reset()
+    if (mutation.isPending) return
     if (!name.trim()) {
       setNameError('Name is required.')
       return
@@ -288,7 +298,7 @@ function ProjectRow({ project, onEdit, onArchive }) {
     <div className="flex items-center gap-4 px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all group">
       {/* Color swatch */}
       <div
-        className="w-3 h-10 rounded-full flex-shrink-0"
+        className="w-4 h-4 rounded flex-shrink-0"
         style={{ backgroundColor: color }}
         aria-hidden="true"
       />

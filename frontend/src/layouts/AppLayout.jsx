@@ -22,25 +22,6 @@ const NAV_ITEMS = [
     ),
   },
   {
-    label: 'Today',
-    to: '/today',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        aria-hidden="true">
-        <circle cx="12" cy="12" r="4" />
-        <line x1="12" y1="2" x2="12" y2="4" />
-        <line x1="12" y1="20" x2="12" y2="22" />
-        <line x1="2" y1="12" x2="4" y2="12" />
-        <line x1="20" y1="12" x2="22" y2="12" />
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-      </svg>
-    ),
-  },
-  {
     label: 'Projects',
     to: '/projects',
     icon: (
@@ -60,6 +41,50 @@ const NAV_ITEMS = [
         aria-hidden="true">
         <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
         <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Today',
+    to: '/today',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <circle cx="12" cy="12" r="4" />
+        <line x1="12" y1="2" x2="12" y2="4" />
+        <line x1="12" y1="20" x2="12" y2="22" />
+        <line x1="2" y1="12" x2="4" y2="12" />
+        <line x1="20" y1="12" x2="22" y2="12" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </svg>
+    ),
+  },
+]
+
+const RITUAL_ITEMS = [
+  {
+    label: 'Start Day',
+    to: '/start-day',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+      </svg>
+    ),
+  },
+  {
+    label: 'End Day',
+    to: '/end-day',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
       </svg>
     ),
   },
@@ -86,6 +111,25 @@ function NavItem({ item, badge = 0 }) {
           {badge > 99 ? '99+' : badge}
         </span>
       )}
+    </NavLink>
+  )
+}
+
+function RitualItem({ item }) {
+  return (
+    <NavLink
+      to={item.to}
+      className={({ isActive }) =>
+        [
+          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1',
+          isActive
+            ? 'bg-indigo-100 text-indigo-800'
+            : 'text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800',
+        ].join(' ')
+      }
+    >
+      {item.icon}
+      {item.label}
     </NavLink>
   )
 }
@@ -121,6 +165,14 @@ export function AppLayout() {
               item={item}
               badge={item.to === '/inbox' ? inboxCount : 0}
             />
+          ))}
+
+          <div className="pt-3 pb-1">
+            <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Daily rituals</p>
+          </div>
+
+          {RITUAL_ITEMS.map((item) => (
+            <RitualItem key={item.to} item={item} />
           ))}
         </div>
 

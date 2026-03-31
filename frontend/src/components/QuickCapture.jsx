@@ -6,17 +6,36 @@ import { createDeferredItem } from '@/api/deferred'
 function playChime() {
   try {
     const ctx = new AudioContext()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.frequency.value = 880
-    osc.type = 'sine'
-    gain.gain.setValueAtTime(0.3, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2)
-    osc.start(ctx.currentTime)
-    osc.stop(ctx.currentTime + 0.2)
-    osc.onended = () => ctx.close()
+    const t = ctx.currentTime
+    const duration = 3.0
+
+    // Fundamental ~280 Hz — deep bowl tone
+    const osc1 = ctx.createOscillator()
+    const gain1 = ctx.createGain()
+    osc1.connect(gain1)
+    gain1.connect(ctx.destination)
+    osc1.frequency.value = 280
+    osc1.type = 'sine'
+    gain1.gain.setValueAtTime(0, t)
+    gain1.gain.linearRampToValueAtTime(0.35, t + 0.015)   // sharp strike
+    gain1.gain.exponentialRampToValueAtTime(0.001, t + duration)
+    osc1.start(t)
+    osc1.stop(t + duration)
+
+    // Upper partial ~770 Hz (2.75× fundamental — inharmonic, typical of metal bowls)
+    const osc2 = ctx.createOscillator()
+    const gain2 = ctx.createGain()
+    osc2.connect(gain2)
+    gain2.connect(ctx.destination)
+    osc2.frequency.value = 280 * 2.756
+    osc2.type = 'sine'
+    gain2.gain.setValueAtTime(0, t)
+    gain2.gain.linearRampToValueAtTime(0.12, t + 0.015)
+    gain2.gain.exponentialRampToValueAtTime(0.001, t + duration * 0.6)
+    osc2.start(t)
+    osc2.stop(t + duration)
+
+    osc1.onended = () => ctx.close()
   } catch {
     // AudioContext unavailable (e.g. in test environments) — silently ignore
   }

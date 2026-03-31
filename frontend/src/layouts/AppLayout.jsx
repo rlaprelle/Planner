@@ -83,7 +83,7 @@ function NavItem({ item, badge = 0 }) {
       {item.label}
       {badge > 0 && (
         <span className="ml-auto bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
-          {badge}
+          {badge > 99 ? '99+' : badge}
         </span>
       )}
     </NavLink>
@@ -97,6 +97,7 @@ export function AppLayout() {
   const { data: deferredItems = [] } = useQuery({
     queryKey: ['deferred'],
     queryFn: getDeferredItems,
+    staleTime: 60_000,
   })
   const inboxCount = deferredItems.length
 

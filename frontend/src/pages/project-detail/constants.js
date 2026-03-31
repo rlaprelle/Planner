@@ -34,23 +34,6 @@ export const DEADLINE_GROUP_LABELS = {
   NO_DEADLINE: 'No Deadline',
 }
 
-// Status color classes
-export const STATUS_COLORS = {
-  TODO: 'text-gray-500',
-  IN_PROGRESS: 'text-blue-500',
-  BLOCKED: 'text-red-500',
-  DONE: 'text-green-500',
-  SKIPPED: 'text-gray-400',
-}
-
-export const STATUS_BG_COLORS = {
-  TODO: 'bg-gray-100 text-gray-600',
-  IN_PROGRESS: 'bg-blue-100 text-blue-700',
-  BLOCKED: 'bg-red-100 text-red-700',
-  DONE: 'bg-green-100 text-green-700',
-  SKIPPED: 'bg-gray-100 text-gray-500',
-}
-
 // Priority dot colors
 export const PRIORITY_DOT_COLORS = {
   1: 'bg-gray-300',

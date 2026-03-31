@@ -1,24 +1,6 @@
-import { authFetch } from './client'
+import { authFetch, handleResponse } from './client'
 
 const BASE = '/api/v1/projects'
-
-async function handleResponse(res) {
-  if (!res.ok) {
-    let message = `HTTP ${res.status}`
-    try {
-      const body = await res.json()
-      message = body.message || body.error || message
-    } catch {
-      // ignore parse errors
-    }
-    const err = new Error(message)
-    err.status = res.status
-    throw err
-  }
-  // 204 No Content
-  if (res.status === 204) return null
-  return res.json()
-}
 
 export async function getProjects() {
   const res = await authFetch(BASE)

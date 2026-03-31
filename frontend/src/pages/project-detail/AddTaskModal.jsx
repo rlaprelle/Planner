@@ -2,6 +2,7 @@ import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createTask } from '@/api/tasks'
+import { PRIORITY_OPTIONS } from './constants'
 import { PlusIcon } from './icons'
 
 export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = null, parentTitle = null }) {
@@ -109,11 +110,9 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-white"
               >
                 <option value="">— none —</option>
-                <option value="1">1 — Lowest</option>
-                <option value="2">2 — Low</option>
-                <option value="3">3 — Medium</option>
-                <option value="4">4 — High</option>
-                <option value="5">5 — Highest</option>
+                {PRIORITY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
               </select>
             </div>
 

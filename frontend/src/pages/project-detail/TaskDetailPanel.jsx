@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Dialog from '@radix-ui/react-dialog'
 import { updateTask, archiveTask, updateTaskStatus } from '@/api/tasks'
@@ -80,7 +80,7 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
 
 // ─── Child task row inside detail panel ──────────────────────────────────────
 
-function ChildTaskItem({ child, projectId, onStatusChange }) {
+function ChildTaskItem({ child, projectId }) {
   const isDone = child.status === 'DONE'
   const queryClient = useQueryClient()
 
@@ -94,7 +94,6 @@ function ChildTaskItem({ child, projectId, onStatusChange }) {
   function handleToggle() {
     const newStatus = isDone ? 'TODO' : 'DONE'
     statusMutation.mutate({ taskId: child.id, status: newStatus })
-    onStatusChange?.(child.id, newStatus)
   }
 
   return (
@@ -139,6 +138,11 @@ export function TaskDetailPanel({ task, projectName, projectId, onClose }) {
   const [energyLevel, setEnergyLevel] = useState(task.energyLevel ?? '')
   const [dueDate, setDueDate] = useState(task.dueDate ?? '')
 
+  const fieldsRef = useRef({})
+  useEffect(() => {
+    fieldsRef.current = { title, description, status, priority, pointsEstimate, energyLevel, dueDate }
+  }, [title, description, status, priority, pointsEstimate, energyLevel, dueDate])
+
   const updateMutation = useMutation({
     mutationFn: (data) => updateTask(task.id, data),
     onSuccess: () => {
@@ -157,14 +161,15 @@ export function TaskDetailPanel({ task, projectName, projectId, onClose }) {
 
   // Build the full payload for a save — we always send the full task shape
   function buildPayload(overrides = {}) {
+    const f = fieldsRef.current
     return {
-      title,
-      description: description || null,
-      status,
-      priority: Number(priority),
-      pointsEstimate: pointsEstimate ? Number(pointsEstimate) : null,
-      energyLevel: energyLevel || null,
-      dueDate: dueDate || null,
+      title: f.title?.trim() || task.title,
+      description: f.description || null,
+      status: f.status,
+      priority: f.priority,
+      pointsEstimate: f.pointsEstimate || null,
+      energyLevel: f.energyLevel || null,
+      dueDate: f.dueDate || null,
       ...overrides,
     }
   }

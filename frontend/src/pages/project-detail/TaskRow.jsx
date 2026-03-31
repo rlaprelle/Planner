@@ -105,18 +105,16 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
         <PriorityDot priority={task.priority} />
 
         {/* Title — click opens detail panel */}
-        <span
+        <button
+          type="button"
           className={[
-            'flex-1 min-w-0 text-sm truncate cursor-pointer select-none',
+            'flex-1 min-w-0 text-sm truncate text-left cursor-pointer select-none bg-transparent border-0 p-0 focus:outline-none',
             isDone ? 'line-through text-gray-400' : 'text-gray-800',
           ].join(' ')}
           onClick={() => onSelect(task)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && onSelect(task)}
         >
           {task.title}
-        </span>
+        </button>
 
         {/* Due date badge */}
         {task.dueDate && task.deadlineGroup !== 'NO_DEADLINE' && (

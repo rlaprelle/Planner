@@ -50,16 +50,16 @@ Stand up the dev environment with auth. No business logic.
 ## Slice 2: Quick Capture
 
 **Backend:**
-- [ ] Flyway migration for `deferred_item` table
-- [ ] `POST /api/v1/deferred` — create deferred item (raw_text only)
-- [ ] `GET /api/v1/deferred` — list unprocessed items (`is_processed = false` and `deferred_until_date <= today` or null)
+- [x] Flyway migration for `deferred_item` table
+- [x] `POST /api/v1/deferred` — create deferred item (raw_text only)
+- [x] `GET /api/v1/deferred` — list unprocessed items (`is_processed = false` and `deferred_until_date <= today` or null)
 
 **Frontend:**
-- [ ] Floating capture button visible on all views
-- [ ] Ctrl+Space global hotkey
-- [ ] Quick Capture Modal: text input, Enter to save, Escape to cancel
-- [ ] Visual checkmark + audio chime confirmation on save
-- [ ] Deferred inbox badge in sidebar showing unprocessed count
+- [x] Floating capture button visible on all views
+- [x] Ctrl+Space global hotkey
+- [x] Quick Capture Modal: text input, Enter to save, Escape to cancel
+- [x] Visual checkmark + audio chime confirmation on save
+- [x] Deferred inbox badge in sidebar showing unprocessed count
 
 **Done when:** Hit Ctrl+Space from any view, type a thought, hit Enter, see confirmation, see inbox count increment.
 

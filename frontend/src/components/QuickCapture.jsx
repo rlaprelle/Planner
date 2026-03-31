@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createDeferredItem } from '@/api/deferred'
@@ -29,6 +29,7 @@ export function QuickCapture() {
   const [error, setError] = useState(null)
 
   const queryClient = useQueryClient()
+  const timeoutRef = useRef(null)
 
   const mutation = useMutation({
     mutationFn: () => createDeferredItem(text.trim()),
@@ -36,7 +37,7 @@ export function QuickCapture() {
       queryClient.invalidateQueries({ queryKey: ['deferred'] })
       playChime()
       setConfirmed(true)
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setOpen(false)
         setConfirmed(false)
         setText('')
@@ -47,6 +48,12 @@ export function QuickCapture() {
       setError("Couldn't save — try again.")
     },
   })
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
 
   // Ctrl+Space global hotkey — toggles modal open/closed
   useEffect(() => {
@@ -115,6 +122,9 @@ export function QuickCapture() {
               <Dialog.Title className="text-base font-semibold text-gray-900 mb-3">
                 Quick capture
               </Dialog.Title>
+              <Dialog.Description className="sr-only">
+                Type a quick thought to save it to your inbox.
+              </Dialog.Description>
 
               <textarea
                 autoFocus

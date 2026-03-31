@@ -161,11 +161,9 @@ public class TaskService {
     }
 
     private int deadlineGroupOrder(LocalDate dueDate, LocalDate today, LocalDate endOfWeek) {
-        return switch (computeDeadlineGroup(dueDate, today, endOfWeek)) {
-            case TODAY -> 0;
-            case THIS_WEEK -> 1;
-            case NO_DEADLINE -> 2;
-        };
+        // Use ordinal directly — DeadlineGroup is declared TODAY(0), THIS_WEEK(1), NO_DEADLINE(2)
+        // Avoids the synthetic $1 class the compiler generates for enum switch expressions
+        return computeDeadlineGroup(dueDate, today, endOfWeek).ordinal();
     }
 
     private Task findOwnedTask(AppUser user, UUID id) {

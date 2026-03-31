@@ -1,6 +1,53 @@
 # Planner
 
-ADHD-friendly daily work management tool. Design phase complete, implementation not yet started.
+ADHD-friendly daily work management tool. Slices 1–3 complete (auth, projects/tasks, deferred items, daily reflection, stats endpoints).
+
+## Quick Start
+
+```bash
+# Start everything (DB via Docker, backend via Maven, frontend via Vite)
+./start.sh
+
+# Or individually:
+docker compose up -d                       # PostgreSQL on :5432
+cd backend && mvn spring-boot:run          # Backend on :8080
+cd frontend && npm install && npm run dev  # Frontend on :5173
+```
+
+- Backend health: http://localhost:8080/actuator/health
+- Vite proxies `/api/*` → `http://localhost:8080`
+
+## Testing
+
+```bash
+cd backend && mvn test   # Integration tests (require live PostgreSQL)
+cd frontend && npm run lint
+```
+
+- Backend tests are integration tests that hit a real database — no mocks
+
+## Environment
+
+All have working defaults for local dev:
+- `PLANNER_DB_URL` — defaults to `jdbc:postgresql://localhost:5432/planner`
+- `PLANNER_DB_USER` / `PLANNER_DB_PASSWORD` — defaults to `planner`
+- `JWT_SECRET` — defaults to a dev key (override in production)
+
+## Project Structure
+
+```
+backend/src/main/java/com/planner/backend/
+  auth/       — JWT login, register, refresh
+  task/       — Task CRUD, status, energy level
+  project/    — Project CRUD
+  deferred/   — Deferred items (inbox)
+  reflection/ — Daily reflection
+  stats/      — Points/completion stats
+frontend/src/
+  pages/      — Route-level components
+  components/ — Shared UI (QuickCapture, deferred/, AppLayout)
+  api/        — TanStack Query + authFetch wrappers
+```
 
 ## Tech Stack
 
@@ -39,14 +86,8 @@ The spec is a checklist. Always check off items as they are completed.
 
 ## Design Principles
 
-- UIs should be simple and intuitive with minimal distractions.
-- Feedback should focus on progress and completion, not on failures.
-- The goal of the tool is to encourage the user to make informed decisions about how to spend their time. It should never question or second-guess the users decisions.
-- The workflow should be a suggestion and not a restriction. The user should always be able to override the workflow and make their own decisions.
-- The tool should be a tool for the user, not a tool that controls the user.
-- The tool should be a tool that helps the user to be more productive, not a tool that makes the user feel bad about themselves.
-- Instead of asking "Why haven't you done this yet?", ask "Is this still important to you?" and "What would help you do this?"
-- The tool should encourage the user to be kind to themselves and to not be too hard on themselves.
-- The task list should be small and focused. This means that deciding NOT to do something is a victory.
-- The tool should act as a supportive assistant, not a demanding manager. It should never question or challenge the user's decisions.
-- Never delete anything. Always archive instead.
+- Be supportive, not judgemental. Never question the user's decisions. Ask "Is this still important?" not "Why haven't you done this?"
+- The goal is to encourage the user to make informed decisions about how to spend their time, not to steer them toward a particular decision.
+- Deciding NOT to do something is a victory. Keep task lists small and focused.
+- Prefer archive over delete.
+- The workflow is a suggestion, not a restriction.

@@ -1,6 +1,9 @@
 import { NavLink } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
+import { getDeferredItems } from '@/api/deferred'
+import { QuickCapture } from '@/components/QuickCapture'
 
 const NAV_ITEMS = [
   {
@@ -62,7 +65,7 @@ const NAV_ITEMS = [
   },
 ]
 
-function NavItem({ item }) {
+function NavItem({ item, badge = 0 }) {
   return (
     <NavLink
       to={item.to}
@@ -78,6 +81,11 @@ function NavItem({ item }) {
     >
       {item.icon}
       {item.label}
+      {badge > 0 && (
+        <span className="ml-auto bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
+          {badge}
+        </span>
+      )}
     </NavLink>
   )
 }
@@ -85,6 +93,12 @@ function NavItem({ item }) {
 export function AppLayout() {
   const { user, logout } = useAuth()
   const displayName = user?.displayName || user?.email || 'User'
+
+  const { data: deferredItems = [] } = useQuery({
+    queryKey: ['deferred'],
+    queryFn: getDeferredItems,
+  })
+  const inboxCount = deferredItems.length
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -101,12 +115,17 @@ export function AppLayout() {
         {/* Nav links */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
           {NAV_ITEMS.map((item) => (
-            <NavItem key={item.to} item={item} />
+            <NavItem
+              key={item.to}
+              item={item}
+              badge={item.to === '/inbox' ? inboxCount : 0}
+            />
           ))}
         </div>
 
-        {/* User + logout */}
+        {/* Quick capture + user + logout */}
         <div className="px-4 py-4 border-t border-gray-100 space-y-2">
+          <QuickCapture />
           <p className="text-xs text-gray-500 truncate" title={displayName}>
             {displayName}
           </p>

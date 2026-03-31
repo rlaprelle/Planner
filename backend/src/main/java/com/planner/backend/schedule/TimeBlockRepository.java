@@ -37,6 +37,7 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
             SELECT COUNT(tb) FROM TimeBlock tb
             WHERE tb.user.id = :userId
               AND tb.blockDate = :blockDate
+              AND tb.task IS NOT NULL
               AND tb.task.status = com.planner.backend.task.TaskStatus.DONE
             """)
     long countCompletedByUserIdAndBlockDate(@Param("userId") UUID userId, @Param("blockDate") LocalDate blockDate);

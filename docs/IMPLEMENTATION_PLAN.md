@@ -21,16 +21,21 @@
 
 ---
 
-## Implementation Roadmap
+## Implementation Plan
 
-| Phase | Timeline | Scope | Validates |
-|-------|----------|-------|-----------|
-| **Phase 1: Foundation** | Week 1 | Auth, DB, skeleton UIs | System works end-to-end |
-| **Phase 2: Core CRUD** | Week 2 | Projects, Tasks | Data hierarchy works |
-| **Phase 3: Deferred Items & Evening Ritual** | Week 3 | Quick capture, inbox, processing, evening clean-up (reflection form, streak) | Distraction handling + daily closure works |
-| **Phase 4: Daily Planning** | Week 3-4 | Morning ritual, time blocks, active work session, suggestions | Planning + execution flow works |
+Vertical slices, built sequentially. Each slice delivers a complete feature end-to-end (backend + frontend).
 
-**Total MVP timeline**: ~4 weeks to validate core vision.
+| Slice | Name | Summary |
+|-------|------|---------|
+| 0 | Foundation | Dev environment, Docker Compose, auth (JWT) |
+| 1 | Core CRUD | Projects, tasks, child tasks, task details |
+| 2 | Quick Capture | Deferred items, Ctrl+Space modal, inbox badge |
+| 3 | Evening Clean-up | Process items (convert/defer/dismiss), reflection, streak |
+| 4 | Morning Planning | Task browser, visual timeline, drag-and-drop, dashboard |
+| 5 | Active Work Session | Focus mode, timer, chime, child task checklist |
+| 6 | Polish & Stats | Weekly summary, intelligent celebration, UI polish |
+
+Full spec: [`docs/planning/2026-03-30-implementation-plan-design.md`](planning/2026-03-30-implementation-plan-design.md)
 
 ---
 

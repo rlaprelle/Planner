@@ -6,7 +6,8 @@ A daily mindfulness and work management tool designed for ADHD brains.
 
 ### Architecture & Implementation
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Data model, API endpoints, tech stack
-- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — Design decisions, implementation roadmap
+- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — Design decisions, implementation plan
+- [`docs/planning/2026-03-30-implementation-plan-design.md`](docs/planning/2026-03-30-implementation-plan-design.md) — Detailed vertical slice spec (Slices 0-6)
 
 ### User Design Documents
 - [`docs/planning/user_design/USER_WISHES.md`](docs/planning/user_design/USER_WISHES.md) — Original vision

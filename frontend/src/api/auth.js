@@ -43,3 +43,12 @@ export async function refreshToken() {
   })
   return handleResponse(res)
 }
+
+export async function logout() {
+  // Clears the HttpOnly refresh token cookie server-side (maxAge=0).
+  // Fire-and-forget — caller should clear client state regardless of outcome.
+  await fetch(`${BASE}/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  })
+}

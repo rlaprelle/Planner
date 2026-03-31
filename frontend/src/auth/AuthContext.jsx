@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useCallback } from 'react'
-import { login as apiLogin, refreshToken } from '@/api/auth'
+import { login as apiLogin, logout as apiLogout, refreshToken } from '@/api/auth'
 import { setAuthToken, setTokenRefreshedCallback, setAuthFailureCallback } from '@/api/client'
 
 export const AuthContext = createContext(null)
@@ -45,7 +45,12 @@ export function AuthProvider({ children }) {
     setUser(data.user ?? { email })
   }, [storeToken])
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await apiLogout()
+    } catch {
+      // Server call failed — proceed with client-side cleanup anyway
+    }
     setToken(null)
     setUser(null)
     setAuthToken(null)

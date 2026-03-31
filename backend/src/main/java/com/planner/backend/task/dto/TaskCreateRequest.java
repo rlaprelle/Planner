@@ -1,0 +1,22 @@
+package com.planner.backend.task.dto;
+
+import com.planner.backend.task.EnergyLevel;
+import com.planner.backend.task.TaskStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+public record TaskCreateRequest(
+        @NotBlank @Size(max = 255) String title,
+        String description,
+        UUID parentTaskId,
+        TaskStatus status,
+        Short priority,
+        Short pointsEstimate,
+        Integer actualMinutes,
+        EnergyLevel energyLevel,
+        LocalDate dueDate,
+        Integer sortOrder
+) {}

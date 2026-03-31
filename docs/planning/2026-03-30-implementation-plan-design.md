@@ -4,6 +4,8 @@
 
 Vertical slices — each slice delivers a complete user-facing feature end-to-end (backend + frontend). Built solo, sequentially. No slice depends on anything not already built in a prior slice.
 
+Tasks should be checked off when they are completed.
+
 ---
 
 ## Slice 0: Foundation

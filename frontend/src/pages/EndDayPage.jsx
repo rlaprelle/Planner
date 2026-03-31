@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { getDeferredItems } from '@/api/deferred'
@@ -145,10 +145,15 @@ export function EndDayPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [phase, setPhase] = useState(1)
   const [showCelebration, setShowCelebration] = useState(false)
+  // Capture total at load time so stale query cache doesn't affect "remaining" calculation
+  const totalItemsRef = useRef(null)
+  if (!isLoading && totalItemsRef.current === null) {
+    totalItemsRef.current = items.length
+  }
 
   function handleItemDone() {
     queryClient.invalidateQueries({ queryKey: ['deferred'] })
-    const remaining = items.length - (currentIndex + 1)
+    const remaining = totalItemsRef.current - (currentIndex + 1)
     if (remaining <= 0) {
       setShowCelebration(true)
       setTimeout(() => {

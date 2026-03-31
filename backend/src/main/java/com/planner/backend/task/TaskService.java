@@ -79,7 +79,7 @@ public class TaskService {
         if (request.pointsEstimate() != null) task.setPointsEstimate(request.pointsEstimate());
         if (request.actualMinutes() != null) task.setActualMinutes(request.actualMinutes());
         if (request.energyLevel() != null) task.setEnergyLevel(request.energyLevel());
-        task.setDueDate(request.dueDate());
+        task.setDueDate(request.dueDate()); // intentionally unconditional — allows clearing due date
         if (request.sortOrder() != null) task.setSortOrder(request.sortOrder());
 
         if (request.projectId() != null && !request.projectId().equals(task.getProject().getId())) {
@@ -150,9 +150,8 @@ public class TaskService {
 
     private DeadlineGroup computeDeadlineGroup(LocalDate dueDate, LocalDate today, LocalDate endOfWeek) {
         if (dueDate == null || dueDate.isAfter(endOfWeek)) return DeadlineGroup.NO_DEADLINE;
-        if (dueDate.isEqual(today)) return DeadlineGroup.TODAY;
-        if (dueDate.isAfter(today) && !dueDate.isAfter(endOfWeek)) return DeadlineGroup.THIS_WEEK;
-        return DeadlineGroup.NO_DEADLINE;
+        if (!dueDate.isAfter(today)) return DeadlineGroup.TODAY;  // today AND overdue
+        return DeadlineGroup.THIS_WEEK;  // after today and within 7 days
     }
 
     private int deadlineGroupOrder(LocalDate dueDate, LocalDate today, LocalDate endOfWeek) {

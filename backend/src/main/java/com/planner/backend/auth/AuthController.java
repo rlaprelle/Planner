@@ -4,6 +4,7 @@ import com.planner.backend.auth.dto.AuthResponse;
 import com.planner.backend.auth.dto.LoginRequest;
 import com.planner.backend.auth.dto.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthService.AuthResult result = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, result.refreshCookie().toString())
@@ -31,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthService.AuthResult result = authService.login(request);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, result.refreshCookie().toString())

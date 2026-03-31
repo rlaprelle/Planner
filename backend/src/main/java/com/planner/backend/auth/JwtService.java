@@ -3,6 +3,7 @@ package com.planner.backend.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,17 @@ public class JwtService {
 
     @Value("${app.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
+
+    @PostConstruct
+    public void validateKey() {
+        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException(
+                "JWT secret must be at least 32 characters (256 bits). " +
+                "Set the JWT_SECRET environment variable.");
+        }
+        // Pre-warm the key to catch any JJWT issues at startup
+        getSigningKey();
+    }
 
     public String generateAccessToken(String email) {
         return buildToken(email, accessTokenExpiration);

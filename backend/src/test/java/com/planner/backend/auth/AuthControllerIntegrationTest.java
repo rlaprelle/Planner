@@ -78,6 +78,7 @@ class AuthControllerIntegrationTest {
         Cookie refreshCookie = result.getResponse().getCookie(AuthService.REFRESH_COOKIE_NAME);
         assertThat(refreshCookie).isNotNull();
         assertThat(refreshCookie.isHttpOnly()).isTrue();
+        assertThat(refreshCookie.getSecure()).isTrue();
         assertThat(refreshCookie.getValue()).isNotBlank();
     }
 
@@ -171,6 +172,6 @@ class AuthControllerIntegrationTest {
                         .header("Authorization", "Bearer " + accessToken))
                 .andReturn();
 
-        assertThat(result.getResponse().getStatus()).isNotEqualTo(401);
+        assertThat(result.getResponse().getStatus()).isEqualTo(404);
     }
 }

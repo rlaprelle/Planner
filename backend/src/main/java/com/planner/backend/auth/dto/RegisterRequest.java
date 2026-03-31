@@ -1,9 +1,13 @@
 package com.planner.backend.auth.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record RegisterRequest(
-        String email,
-        String password,
-        String displayName,
+        @NotBlank @Email String email,
+        @NotBlank @Size(min = 8) String password,
+        @NotBlank String displayName,
         String timezone
 ) {
     public RegisterRequest {

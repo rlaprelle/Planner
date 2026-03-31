@@ -56,14 +56,14 @@ public class ProjectService {
         if (request.sortOrder() != null) {
             project.setSortOrder(request.sortOrder());
         }
-        return ProjectResponse.from(projectRepository.save(project));
+        return ProjectResponse.from(project);
     }
 
     public ProjectResponse archive(AppUser user, UUID id) {
         Project project = findOwnedProject(user, id);
         project.setActive(false);
         project.setArchivedAt(Instant.now());
-        return ProjectResponse.from(projectRepository.save(project));
+        return ProjectResponse.from(project);
     }
 
     private Project findOwnedProject(AppUser user, UUID id) {

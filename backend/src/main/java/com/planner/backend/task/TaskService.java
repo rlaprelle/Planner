@@ -69,6 +69,17 @@ public class TaskService {
         return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), children);
     }
 
+    @Transactional(readOnly = true)
+    public List<TaskResponse> listCompletedToday(AppUser user) {
+        Instant startOfDay = LocalDate.now(java.time.ZoneOffset.UTC)
+                .atStartOfDay(java.time.ZoneOffset.UTC)
+                .toInstant();
+        List<Task> tasks = taskRepository.findCompletedTodayForUser(user.getId(), startOfDay);
+        return tasks.stream()
+                .map(t -> TaskResponse.from(t, computeDeadlineGroup(t.getDueDate()), List.of()))
+                .toList();
+    }
+
     public TaskResponse update(AppUser user, UUID id, TaskUpdateRequest request) {
         // Note: parentTaskId is intentionally not mutable via PUT.
         // Parent-child relationships are set at creation time only (Slice 1 design decision).

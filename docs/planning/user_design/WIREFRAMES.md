@@ -349,13 +349,6 @@
 │                                                              │
 │  [+ Add child task]                                         │
 │                                                              │
-│  Notes                                                      │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │ Got blocked on API response yesterday.              │  │
-│  │ Might be cache issue. Check Redis first.            │  │
-│  │                                                      │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                              │
 │                                                              │
 │  [Mark Done]  [Save]  [Delete]                              │
 │                                                              │

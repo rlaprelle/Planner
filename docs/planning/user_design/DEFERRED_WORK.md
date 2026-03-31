@@ -87,6 +87,15 @@
 - **Estimated effort**: Low (settings field + UI indicator in Morning Planning)
 - **Priority**: Medium (helpful for some ADHD users who tend to over-schedule)
 
+### Task Notes
+- **Description**: Timestamped notes attached to tasks for tracking work-in-progress context, blockers, and next steps
+  - Notes live in their own table (each note is its own entity)
+  - Displayed chronologically on the Task Details view
+  - Can be added during or after work sessions
+- **Why deferred**: MVP uses task description only; separate notes system adds complexity
+- **Estimated effort**: Low-Medium (new table + UI component on Task Details)
+- **Priority**: Medium (valuable for ongoing context, especially across sessions)
+
 ### Cross-Day Task Rescheduling
 - **Description**: Move tasks between days via Morning Planning View or other mechanisms
   - "Move Task A to tomorrow"
@@ -130,9 +139,9 @@
 - ✅ Visual time blocking (drag-and-drop calendar)
 - ✅ Active work session (timer with single chime at end)
 - ✅ Task management (create, read, update, delete tasks and child tasks)
-- ✅ Project organization (organize tasks by project/area)
+- ✅ Project organization (organize tasks by project)
 - ✅ Points-based estimation (1-5 scale, deliberately vague)
-- ✅ Basic streak tracking (consecutive days of morning planning)
+- ✅ Basic streak tracking (consecutive days with both planning and reflection)
 - ✅ Weekly/monthly summaries (stats view, not full review ceremony)
 - ✅ Multidimensional celebration (recognize effort, impact, difficulty)
 - ✅ Deadline tracking (visual indicators: TODAY, THIS WEEK)
@@ -162,7 +171,7 @@
 
 2. **Database Schema Readiness**: Phase 1 schema should support Phase 2+ features
    - `Task.actual_minutes` for time tracking (estimation learning will add `estimated_minutes` in Phase 2+)
-   - `Task.is_recurring` and `recurrence_rule` for recurring tasks (even if not used in MVP)
+   - Recurring task fields (`is_recurring`, `recurrence_rule`) can be added to Task in Phase 2+
    - `DeferredItem.deferral_count` and `deferred_until_date` to track deferred behavior patterns
    - `DailyReflection.energy_rating`, `mood_rating` for weekly trends
 

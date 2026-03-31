@@ -97,7 +97,7 @@ For full project vision, design principles, and user flows, see the [user design
 - `POST /api/v1/schedule/today/reflect` - Save energy/mood/notes, finalize day
 
 ### Stats
-- `GET /api/v1/stats/streak` - Consecutive planned days
+- `GET /api/v1/stats/streak` - Consecutive days with both planning (TimeBlocks) and reflection (finalized DailyReflection)
 - `GET /api/v1/stats/weekly-summary` - Tasks completed, effort, mood trends
 
 ---

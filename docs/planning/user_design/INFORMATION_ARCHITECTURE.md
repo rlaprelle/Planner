@@ -192,19 +192,18 @@ Tasks within each project column are ordered:
 
 **Essential Information** (when user clicks on a task):
 - Task title
-- Project (dropdown to change; only for top-level tasks)
-- Parent task (if this is a child task; dropdown to change or remove)
+- Project (dropdown to change; only for top-level tasks — child tasks inherit parent's project)
+- Parent task (if this is a child task)
 - Due date
 - Priority (1-5 dropdown, used for ordering)
 - Points estimate
+- Energy level (LOW/MEDIUM/HIGH)
 - Status (dropdown)
 - Description
 - Child tasks list (with add/remove/reorder)
-- Notes field (blockers, context, etc.)
 
 **Hidden/Secondary**:
 - Task history (created_at, last modified)
-- Task priority (not prominently shown, implied by deadline urgency)
 - Dependent tasks (future feature)
 - Time spent (actual_minutes, available after completion)
 
@@ -213,7 +212,6 @@ Tasks within each project column are ordered:
 - Add/remove/reorder child tasks
 - Mark done
 - Change status
-- Add notes
 - Close
 
 ---
@@ -243,7 +241,6 @@ Tasks within each project column are ordered:
 - **Dashboard** — Home/overview
 - **Today** — Morning planning + active work (mid-day adjustments reuse Morning Planning view)
 - **Projects** — View/manage projects
-- **Tasks** — Browse all tasks (future, or searchable from morning planning)
 - **Inbox** — Deferred items, anytime review
 
 ### Secondary Navigation (Within Views)

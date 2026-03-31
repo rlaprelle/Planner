@@ -42,7 +42,7 @@ These are the 6 most important screens/interactions users see daily.
 4. User manually drags tasks around the calendar to arrange them in desired order
 5. When accessed mid-day: completed blocks shown greyed out, remaining blocks still editable
 
-**End state**: DailyReflection created with TimeBlocks for the day
+**End state**: TimeBlocks created for the day
 
 ---
 
@@ -54,7 +54,7 @@ These are the 6 most important screens/interactions users see daily.
 
 **Header**:
 - Task title (prominent)
-- Timer (countdown or countup, depending on user setting)
+- Timer (countdown)
 - Progress bar (% of time elapsed)
 
 **Middle**:
@@ -162,16 +162,15 @@ After saving:
 - Points estimate
 - Due date
 - Priority (1-5)
+- Energy level (LOW/MEDIUM/HIGH)
 - Status (TODO / IN_PROGRESS / BLOCKED / DONE / SKIPPED)
 - Child tasks list (can add/remove/reorder)
-- Notes field (for storing work context, blockers, etc.)
 
 **Actions**:
 - Edit any field
 - Create/manage subtasks
 - Move to different project
 - Mark done
-- Add note
 
 ---
 
@@ -191,7 +190,7 @@ After saving:
 
 **Confirmation**:
 - Brief visual checkmark: "✓ Saved"
-- Optional soft chime (customizable)
+- Soft chime
 - Modal closes immediately
 
 **End state**: Deferred item created, user back to their work
@@ -250,7 +249,6 @@ Dashboard
 - Dashboard (home)
 - Today (morning planning + active work)
 - Projects (view/manage projects)
-- Tasks (browse all tasks)
 - Inbox (deferred items, anytime review)
 
 **Within-screen navigation**: Modal/panel overlays for details, quick capture

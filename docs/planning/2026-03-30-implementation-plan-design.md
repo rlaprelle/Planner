@@ -36,7 +36,7 @@ Stand up the dev environment with auth. No business logic.
 - [ ] Task ordering: by deadline group (TODAY > THIS WEEK > no deadline), then priority (highest first) within each group
 
 **Frontend:**
-- [ ] Sidebar navigation skeleton: Dashboard, Today, Projects, Inbox
+- [ ] Sidebar navigation: Dashboard, Today, Projects, Inbox
 - [ ] Projects list view: create, edit, archive, color/icon display
 - [ ] Task list view within a project: create, edit, archive tasks
 - [ ] Task Details panel: all fields editable (title, description, project, status, priority, points_estimate, energy_level, due_date), child task management (add, remove, reorder, check off)
@@ -71,7 +71,7 @@ Stand up the dev environment with auth. No business logic.
 - [ ] `PATCH /api/v1/deferred/{id}/dismiss` — marks processed
 - [ ] Flyway migration for `daily_reflection` table
 - [ ] `POST /api/v1/schedule/today/reflect` — create/update reflection (energy_rating, mood_rating, reflection_notes), set `is_finalized`
-- [ ] `GET /api/v1/stats/streak` — count consecutive days with finalized reflections
+- [ ] `GET /api/v1/stats/streak` — count consecutive days where TimeBlocks exist AND DailyReflection is finalized
 
 **Frontend:**
 - [ ] Evening Clean-up view — Phase 1: Deferred items stack (one card at a time, Convert/Defer/Dismiss)

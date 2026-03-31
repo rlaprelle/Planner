@@ -21,7 +21,7 @@ These are the core user journeys that happen in every day/week.
 4. User selects tasks they want to work on today
 5. User clicks "Add to calendar" → selected tasks auto-placed on today's timeline
 6. User drags tasks around calendar to arrange them
-7. User confirms plan → DailyReflection created with TimeBlocks
+7. User confirms plan → TimeBlocks created for the day
 
 **End state**: User has a visual plan for the day, feels grounded, knows what to work on
 
@@ -82,7 +82,7 @@ These are the core user journeys that happen in every day/week.
    - "Reflection notes" (optional free text)
    - "Completed tasks to celebrate?" (system shows completed blocks, user can add notes about significance)
 3. User hits Save
-4. System marks daily_plan as finalized
+4. System creates/updates DailyReflection, marks as finalized
 5. Streak counter updates: "7-day planning streak! 🎉"
 
 **End state**: Deferred items are processed, day is reflected on, user feels closure

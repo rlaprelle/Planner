@@ -80,6 +80,12 @@ public class TaskService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<TaskResponse> listSuggested(AppUser user, LocalDate date, int limit) {
+        List<Task> tasks = taskRepository.findSuggestedForUser(user.getId(), date);
+        return sortAndMap(tasks, user).stream().limit(limit).toList();
+    }
+
     public TaskResponse update(AppUser user, UUID id, TaskUpdateRequest request) {
         // Note: parentTaskId is intentionally not mutable via PUT.
         // Parent-child relationships are set at creation time only (Slice 1 design decision).

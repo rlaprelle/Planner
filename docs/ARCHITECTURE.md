@@ -111,15 +111,3 @@ For full project vision, design principles, and user flows, see the [user design
 | JWT security | Refresh token in HttpOnly cookie (not localStorage); rotate on each refresh |
 | Scope creep | Build phases 1-4 first; validate core loop before extras |
 
----
-
-## Document References
-
-- `docs/planning/user_design/USER_WISHES.md` - User's original vision
-- `docs/planning/user_design/USE_CASES.md` - 5 core MVP use cases
-- `docs/planning/user_design/CORE_WORKFLOWS.md` - 6 views, detailed flows
-- `docs/planning/user_design/INFORMATION_ARCHITECTURE.md` - Entity definitions, task ordering
-- `docs/planning/user_design/WIREFRAMES.md` - ASCII wireframes for all views
-- `docs/planning/user_design/DEFERRED_WORK.md` - Phase 2+ features with rationale
-- `docs/planning/user_design/USER_DESIGN_CHECKLIST.md` - Design phase checklist
-- `docs/IMPLEMENTATION_PLAN.md` - Current progress and next steps

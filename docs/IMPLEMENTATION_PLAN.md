@@ -34,22 +34,6 @@
 
 ---
 
-## File References
-
-### User Design Documents
-- `docs/planning/user_design/USER_WISHES.md` — Original vision
-- `docs/planning/user_design/USE_CASES.md` — 5 core use cases
-- `docs/planning/user_design/CORE_WORKFLOWS.md` — 6 views, detailed flows
-- `docs/planning/user_design/INFORMATION_ARCHITECTURE.md` — Entity definitions, task ordering
-- `docs/planning/user_design/WIREFRAMES.md` — ASCII wireframes
-- `docs/planning/user_design/DEFERRED_WORK.md` — Phase 2+ features
-- `docs/planning/user_design/USER_DESIGN_CHECKLIST.md` — Design phase checklist
-
-### Architecture & Implementation
-- `docs/ARCHITECTURE.md` — Data model, API endpoints, tech stack
-
----
-
 ## Notes for Next Agent
 
 1. **Context**: ADHD-friendly daily work planning tool. Design phase complete, all documents aligned.

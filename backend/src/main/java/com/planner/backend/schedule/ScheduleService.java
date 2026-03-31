@@ -93,7 +93,7 @@ public class ScheduleService {
         }
     }
 
-    public static class ScheduleValidationException extends RuntimeException {
-        public ScheduleValidationException(String message) { super(message); }
+    static class ScheduleValidationException extends RuntimeException {
+        ScheduleValidationException(String message) { super(message); }
     }
 }

@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(DailyReflectionController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, DailyReflectionExceptionHandler.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class})
 class DailyReflectionControllerIntegrationTest {
 
     @Autowired MockMvc mockMvc;

@@ -68,4 +68,10 @@ public class TaskController {
             @Valid @RequestBody TaskStatusRequest request) {
         return ResponseEntity.ok(taskService.changeStatus(user, id, request));
     }
+
+    @GetMapping("/api/v1/tasks/completed-today")
+    public ResponseEntity<List<TaskResponse>> listCompletedToday(
+            @AuthenticationPrincipal AppUser user) {
+        return ResponseEntity.ok(taskService.listCompletedToday(user));
+    }
 }

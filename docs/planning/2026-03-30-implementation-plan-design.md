@@ -68,21 +68,21 @@ Stand up the dev environment with auth. No business logic.
 ## Slice 3: Evening Clean-up
 
 **Backend:**
-- [ ] `POST /api/v1/deferred/{id}/convert` — accepts task creation payload (project_id, title, description, due_date, priority, points_estimate, child tasks), creates task, marks item processed, sets `resolved_task_id`
-- [ ] `POST /api/v1/deferred/{id}/defer` — sets `deferred_until_date`, increments `deferral_count`
-- [ ] `PATCH /api/v1/deferred/{id}/dismiss` — marks processed
-- [ ] Flyway migration for `daily_reflection` table
-- [ ] `POST /api/v1/schedule/today/reflect` — create/update reflection (energy_rating, mood_rating, reflection_notes), set `is_finalized`
-- [ ] `GET /api/v1/stats/streak` — count consecutive days where TimeBlocks exist AND DailyReflection is finalized
+- [x] `POST /api/v1/deferred/{id}/convert` — accepts task creation payload (project_id, title, description, due_date, priority, points_estimate, child tasks), creates task, marks item processed, sets `resolved_task_id`
+- [x] `POST /api/v1/deferred/{id}/defer` — sets `deferred_until_date`, increments `deferral_count`
+- [x] `PATCH /api/v1/deferred/{id}/dismiss` — marks processed
+- [x] Flyway migration for `daily_reflection` table
+- [x] `POST /api/v1/schedule/today/reflect` — create/update reflection (energy_rating, mood_rating, reflection_notes), set `is_finalized`
+- [x] `GET /api/v1/stats/streak` — count consecutive days where TimeBlocks exist AND DailyReflection is finalized
 
 **Frontend:**
-- [ ] Evening Clean-up view — Phase 1: Deferred items stack (one card at a time, Convert/Defer/Dismiss)
-- [ ] Convert form: project dropdown, pre-filled title, optional fields (description, due date, priority, points, child tasks toggle)
-- [ ] Defer options: 1 day / 1 week / 1 month
-- [ ] "Inbox Zero!" celebration when all items processed
-- [ ] Evening Clean-up view — Phase 2: Reflection form (energy slider, mood slider, reflection notes, completed tasks display)
-- [ ] Streak display after saving reflection
-- [ ] Sidebar link to Evening Clean-up
+- [x] Evening Clean-up view — Phase 1: Deferred items stack (one card at a time, Convert/Defer/Dismiss)
+- [x] Convert form: project dropdown, pre-filled title, optional fields (description, due date, priority, points, child tasks toggle)
+- [x] Defer options: 1 day / 1 week / 1 month
+- [x] "Inbox Zero!" celebration when all items processed
+- [x] Evening Clean-up view — Phase 2: Reflection form (energy slider, mood slider, reflection notes, completed tasks display)
+- [x] Streak display after saving reflection
+- [x] Sidebar link to Evening Clean-up
 
 **Done when:** Process all deferred items one at a time, complete the reflection form, see streak update.
 

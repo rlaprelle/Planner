@@ -15,9 +15,9 @@ function ProgressBar({ value, max }) {
   )
 }
 
-function Card({ children, className = '' }) {
+function Card({ children, className = '', ...rest }) {
   return (
-    <div className={`bg-white border border-gray-200 rounded-xl p-5 ${className}`}>
+    <div className={`bg-white border border-gray-200 rounded-xl p-5 ${className}`} {...rest}>
       {children}
     </div>
   )

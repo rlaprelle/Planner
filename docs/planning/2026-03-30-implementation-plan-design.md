@@ -91,20 +91,20 @@ Stand up the dev environment with auth. No business logic.
 ## Slice 4: Morning Planning
 
 **Backend:**
-- [ ] Flyway migration for `time_block` table
-- [ ] `POST /api/v1/schedule/today/plan` — create/replace time blocks atomically for a date
-- [ ] `GET /api/v1/schedule/today` — return today's time blocks with associated task data
-- [ ] `GET /api/v1/tasks/suggested?date=&limit=7` — ranked tasks using ordering logic
+- [x] Flyway migration for `time_block` table
+- [x] `POST /api/v1/schedule/today/plan` — create/replace time blocks atomically for a date
+- [x] `GET /api/v1/schedule/today` — return today's time blocks with associated task data
+- [x] `GET /api/v1/tasks/suggested?date=&limit=7` — ranked tasks using ordering logic
 
 **Frontend:**
-- [ ] Morning Planning view — top panel: task browser with project columns (horizontal scroll), deadline badges (TODAY / THIS WEEK), points display, selection checkboxes
-- [ ] Morning Planning view — bottom panel: visual calendar timeline (day's hours), "Add to calendar" auto-places selected tasks
-- [ ] Drag-and-drop (dnd-kit) to rearrange time blocks
-- [ ] Auto-suggested break blocks between work blocks
-- [ ] "Confirm plan" button saves time blocks
-- [ ] Mid-day adjustment: when reopened, completed blocks greyed out, remaining blocks editable
-- [ ] Dashboard / Home view: today-at-a-glance card, streak tracker, upcoming deadlines, deferred inbox badge, quick action buttons
-- [ ] Sidebar "Today" link
+- [x] Morning Planning view — top panel: task browser with project columns (horizontal scroll), deadline badges (TODAY / THIS WEEK), points display, selection checkboxes
+- [x] Morning Planning view — bottom panel: visual calendar timeline (day's hours), "Add to calendar" auto-places selected tasks
+- [x] Drag-and-drop (dnd-kit) to rearrange time blocks
+- [x] Auto-suggested break blocks between work blocks
+- [x] "Confirm plan" button saves time blocks
+- [x] Mid-day adjustment: when reopened, completed blocks greyed out, remaining blocks editable
+- [x] Dashboard / Home view: today-at-a-glance card, streak tracker, upcoming deadlines, deferred inbox badge, quick action buttons
+- [x] Sidebar "Today" link
 
 **Done when:** Browse tasks by project, select them, place on visual timeline, drag to rearrange, confirm plan, reopen mid-day to adjust. Dashboard shows today's overview.
 

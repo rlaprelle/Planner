@@ -1,6 +1,6 @@
 # Planner
 
-ADHD-friendly daily work management tool. Slices 1–3 complete (auth, projects/tasks, deferred items, daily reflection, stats endpoints).
+ADHD-friendly daily work management tool.
 
 ## Quick Start
 
@@ -20,11 +20,13 @@ cd frontend && npm install && npm run dev  # Frontend on :5173
 ## Testing
 
 ```bash
-cd backend && mvn test   # Integration tests (require live PostgreSQL)
-cd frontend && npm run lint
+cd backend && mvn test          # Integration tests (require live PostgreSQL)
+cd frontend && npm run lint     # Lint only — no frontend unit tests yet
+cd e2e && npx playwright test   # E2E regression suite (no backend required — all API mocked)
 ```
 
 - Backend tests are integration tests that hit a real database — no mocks
+- E2E tests mock all `/api/*` calls via `page.route()` — just needs Vite running (auto-started by Playwright)
 
 ## Environment
 
@@ -44,9 +46,11 @@ backend/src/main/java/com/planner/backend/
   reflection/ — Daily reflection
   stats/      — Points/completion stats
 frontend/src/
-  pages/      — Route-level components
-  components/ — Shared UI (QuickCapture, deferred/, AppLayout)
-  api/        — TanStack Query + authFetch wrappers
+  pages/           — Route-level components
+  pages/project-detail/ — Task list, detail panel, row components
+  layouts/         — App shell (AppLayout)
+  components/      — Shared UI (QuickCapture, deferred/)
+  api/             — TanStack Query + authFetch wrappers
 ```
 
 ## Tech Stack
@@ -69,7 +73,7 @@ frontend/src/
 
 Vertical slices, built sequentially. See `docs/planning/2026-03-30-implementation-plan-design.md` for the full spec.
 
-The spec is a checklist. Always check off items as they are completed.
+The spec is a checklist. Always check off items as they are completed. **Before pushing or creating a PR, verify all completed work is checked off in the spec** — this is easy to miss at the end of a session.
 
 ## Key Documents
 
@@ -91,3 +95,12 @@ The spec is a checklist. Always check off items as they are completed.
 - Deciding NOT to do something is a victory. Keep task lists small and focused.
 - Prefer archive over delete.
 - The workflow is a suggestion, not a restriction.
+
+## Frontend Design Principles
+
+1. **Calm over clever** — The interface should feel quiet and grounding. Avoid visual noise: competing colors, dense layouts, animated distractions. When in doubt, remove rather than add.
+2. **Soft shapes, soft colors** — Rounded corners (12-16px for containers, 8-12px for inline elements like badges and inputs). Muted tones from a soft lavender palette — dusty purples, warm grays, gentle off-whites. Avoid harsh borders, high-contrast outlines, and saturated colors except for intentional emphasis.
+3. **One thing at a time** — Favor progressive disclosure over showing everything at once. Surface the current step or task prominently; let secondary information recede or be available on demand. Reduce decision fatigue by narrowing what's visible.
+4. **Generous breathing room** — Relaxed whitespace and padding throughout. Elements should not feel crowded. Give each item space to be read without competing with its neighbors. Comfortable touch targets, spacious row heights.
+5. **Warm, not clinical** — The palette and tone should feel personal and inviting, not sterile or corporate. Slight warmth in backgrounds (tinted off-whites, not pure white), soft shadows over hard borders. The app should feel like opening a journal, not a spreadsheet.
+6. **Guide gently** — Use subtle visual hierarchy (tinted backgrounds, font weight, muted color shifts) to guide the eye toward what matters now, without demanding attention. Nothing should shout.

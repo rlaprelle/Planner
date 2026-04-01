@@ -1,6 +1,7 @@
 package com.planner.backend.stats;
 
 import com.planner.backend.auth.AppUser;
+import com.planner.backend.stats.dto.DashboardResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,5 +23,10 @@ public class StatsController {
     @GetMapping("/streak")
     public ResponseEntity<Map<String, Integer>> streak(@AuthenticationPrincipal AppUser user) {
         return ResponseEntity.ok(Map.of("streak", statsService.getStreak(user)));
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<DashboardResponse> dashboard(@AuthenticationPrincipal AppUser user) {
+        return ResponseEntity.ok(statsService.getDashboard(user));
     }
 }

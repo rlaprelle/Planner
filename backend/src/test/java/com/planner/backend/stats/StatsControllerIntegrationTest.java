@@ -5,6 +5,7 @@ import com.planner.backend.auth.AppUserRepository;
 import com.planner.backend.auth.JwtAuthFilter;
 import com.planner.backend.auth.JwtService;
 import com.planner.backend.auth.SecurityConfig;
+import com.planner.backend.stats.dto.DashboardResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -65,5 +67,25 @@ class StatsControllerIntegrationTest {
     void streak_noAuth_returns401() throws Exception {
         mockMvc.perform(get("/api/v1/stats/streak"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void dashboard_returnsAggregatedData() throws Exception {
+        DashboardResponse response = new DashboardResponse(
+                4, 1, 7,
+                List.of(new DashboardResponse.DeadlineSummary(
+                        java.util.UUID.randomUUID(), "Fix login", "Auth", "#6366f1",
+                        java.time.LocalDate.of(2026, 3, 31), "TODAY")),
+                3);
+
+        when(statsService.getDashboard(any(AppUser.class))).thenReturn(response);
+
+        mockMvc.perform(get("/api/v1/stats/dashboard")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.todayBlockCount").value(4))
+                .andExpect(jsonPath("$.streakDays").value(7))
+                .andExpect(jsonPath("$.upcomingDeadlines[0].taskTitle").value("Fix login"))
+                .andExpect(jsonPath("$.deferredItemCount").value(3));
     }
 }

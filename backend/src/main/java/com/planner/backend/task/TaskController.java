@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,5 +74,15 @@ public class TaskController {
     public ResponseEntity<List<TaskResponse>> listCompletedToday(
             @AuthenticationPrincipal AppUser user) {
         return ResponseEntity.ok(taskService.listCompletedToday(user));
+    }
+
+    @GetMapping("/api/v1/tasks/suggested")
+    public ResponseEntity<List<TaskResponse>> listSuggested(
+            @AuthenticationPrincipal AppUser user,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(defaultValue = "50") int limit) {
+        LocalDate targetDate = date != null ? date
+                : LocalDate.now(java.time.ZoneId.of(user.getTimezone()));
+        return ResponseEntity.ok(taskService.listSuggested(user, targetDate, limit));
     }
 }

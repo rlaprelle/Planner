@@ -148,8 +148,8 @@ class DeferredItemControllerIntegrationTest {
 
         com.planner.backend.task.dto.TaskResponse taskResp =
                 new com.planner.backend.task.dto.TaskResponse(
-                        UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                        "Buy oat milk", null, null,
+                        UUID.randomUUID(), UUID.randomUUID(), "Test Project", "#6366f1",
+                        UUID.randomUUID(), "Buy oat milk", null, null,
                         com.planner.backend.task.TaskStatus.TODO,
                         (short) 3, null, null, null, null, 0, null,
                         com.planner.backend.task.DeadlineGroup.NO_DEADLINE,

@@ -8,6 +8,7 @@ function ProgressBar({ value, max }) {
   return (
     <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
       <div
+        data-testid="progress-fill"
         className="h-full bg-indigo-500 rounded-full transition-all"
         style={{ width: `${pct}%` }}
       />

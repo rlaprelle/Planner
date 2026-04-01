@@ -10,7 +10,7 @@ test.describe('Dashboard', () => {
     await expect(page.getByText('1 / 3')).toBeVisible()
 
     // Progress bar fill should have non-zero width (33%)
-    const progressFill = page.locator('.bg-indigo-500.rounded-full')
+    const progressFill = page.locator('[data-testid="progress-fill"]')
     const width = await progressFill.evaluate(el => (el as HTMLElement).style.width)
     expect(width).not.toBe('0%')
     expect(width).not.toBe('')

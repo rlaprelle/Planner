@@ -71,7 +71,7 @@ export const TASKS = [
     updatedAt: '2026-03-31T00:00:00Z',
     children: [],
   },
-]
+] as const
 
 export const BLOCKS = [
   {
@@ -90,7 +90,7 @@ export const BLOCKS = [
     sortOrder: 1,
     task: { id: 'task-2', title: 'Review PR', status: 'TODO', pointsEstimate: 2 },
   },
-]
+] as const
 
 export const DASHBOARD = {
   todayBlockCount: 3,
@@ -98,4 +98,4 @@ export const DASHBOARD = {
   streakDays: 5,
   upcomingDeadlines: [] as unknown[],
   deferredItemCount: 0,
-}
+} as const

@@ -7,6 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: 'http://localhost:5173',
+    viewport: { width: 1280, height: 720 },
     trace: 'on-first-retry',
   },
   projects: [

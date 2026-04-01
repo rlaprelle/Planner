@@ -21,8 +21,8 @@ test.describe('Start Day', () => {
 
     // The TaskCard renders an input[type="checkbox"] alongside the task title
     // Find the checkbox that is in the same card as "Write tests"
-    const taskCardDiv = page.getByText('Write tests').locator('..').locator('..')
-    await taskCardDiv.locator('input[type="checkbox"]').check()
+    const checkbox = page.getByText('Write tests').locator('xpath=ancestor::div[.//input[@type="checkbox"]]').first().locator('input[type="checkbox"]')
+    await checkbox.check()
 
     await page.getByRole('button', { name: '+ Add to calendar' }).click()
 

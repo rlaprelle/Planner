@@ -31,6 +31,7 @@ export function TimeBlockGrid({
   blocks,
   onBlocksChange,
   onRemoveBlock,
+  dropPreview,
   gridRef,
   minutesToPercent,
   durationToPercent,
@@ -118,6 +119,19 @@ export function TimeBlockGrid({
             startResize={startResize}
           />
         ))}
+
+        {/* Ghost preview while dragging a task card over the grid */}
+        {dropPreview && (
+          <div
+            className="absolute rounded border-2 border-dashed border-indigo-400 bg-indigo-200/40 pointer-events-none"
+            style={{
+              left: `${minutesToPercent(dropPreview.startMinutes)}%`,
+              width: `${durationToPercent(dropPreview.endMinutes - dropPreview.startMinutes)}%`,
+              top: '3px',
+              bottom: '3px',
+            }}
+          />
+        )}
       </div>
     </div>
   )

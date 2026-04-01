@@ -24,6 +24,13 @@
 - **Effort**: Low (add modal/form, store in task.notes)
 - **Priority**: Medium
 
+### Configurable Work Day Hours
+- **Description**: Allow users to set their own work day start and end times for the Morning Planning calendar. MVP defaults to 8 AM – 5 PM. Time blocks cannot be placed outside these hours. Settings would live in the Settings/Preferences view.
+- **Rationale**: ADHD users have highly variable schedules — night owls, part-time workers, and caregivers may have very different productive windows. A fixed 8–5 window may not fit their reality.
+- **Effort**: Low (settings field + pass bounds to calendar component)
+- **Priority**: Medium
+- **Affects**: Morning Planning calendar bounds, `GET /api/v1/schedule/today` (return configured hours), Settings view
+
 ### Settings/Preferences View
 - **Description**: Dedicated settings screen for user preferences: timer type (countdown vs countup), work hours (start/end times), max_daily_tasks (daily task limit), reminder toggles and intervals, visual/audio confirmation preferences, streak criteria. MVP uses reasonable defaults.
 - **Rationale**: Allows users to tailor the tool to their personal workflow once they've established habits with the defaults.

@@ -13,6 +13,8 @@ import java.util.UUID;
 public record TaskResponse(
         UUID id,
         UUID projectId,
+        String projectName,
+        String projectColor,
         UUID userId,
         String title,
         String description,
@@ -36,6 +38,8 @@ public record TaskResponse(
         return new TaskResponse(
                 task.getId(),
                 task.getProject().getId(),
+                task.getProject().getName(),
+                task.getProject().getColor(),
                 task.getUser().getId(),
                 task.getTitle(),
                 task.getDescription(),

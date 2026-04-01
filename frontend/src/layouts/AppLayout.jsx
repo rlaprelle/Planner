@@ -1,9 +1,11 @@
-import { NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/auth/useAuth'
 import { getDeferredItems } from '@/api/deferred'
 import { QuickCapture } from '@/components/QuickCapture'
+import { useActiveSession } from '@/contexts/ActiveSessionContext'
 
 const NAV_ITEMS = [
   {
@@ -90,6 +92,34 @@ const RITUAL_ITEMS = [
   },
 ]
 
+function HeaderTimer({ session, onClick }) {
+  const [remaining, setRemaining] = useState('')
+
+  useEffect(() => {
+    const tick = () => {
+      const ms = session.endTime - Date.now()
+      const abs = Math.abs(ms)
+      const m = Math.floor(abs / 60000)
+      const s = Math.floor((abs % 60000) / 1000)
+      const time = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+      setRemaining(ms < 0 ? `+${time}` : time)
+    }
+    tick()
+    const interval = setInterval(tick, 1000)
+    return () => clearInterval(interval)
+  }, [session.endTime])
+
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors mx-3 my-3"
+    >
+      <span className="truncate max-w-[150px]">{session.taskName}</span>
+      <span className="font-mono tabular-nums">{remaining}</span>
+    </button>
+  )
+}
+
 function NavItem({ item, badge = 0 }) {
   return (
     <NavLink
@@ -137,6 +167,8 @@ function RitualItem({ item }) {
 export function AppLayout() {
   const { user, logout } = useAuth()
   const displayName = user?.displayName || user?.email || 'User'
+  const { session } = useActiveSession()
+  const navigate = useNavigate()
 
   const { data: deferredItems = [] } = useQuery({
     queryKey: ['deferred'],
@@ -156,6 +188,14 @@ export function AppLayout() {
         <div className="px-5 py-5 border-b border-gray-100">
           <span className="text-lg font-semibold text-gray-900 tracking-tight">Planner</span>
         </div>
+
+        {/* Active session timer */}
+        {session && (
+          <HeaderTimer
+            session={session}
+            onClick={() => navigate(`/session/${session.blockId}`)}
+          />
+        )}
 
         {/* Nav links */}
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">

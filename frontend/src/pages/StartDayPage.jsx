@@ -91,6 +91,10 @@ export function StartDayPage() {
     }
   }
 
+  function handleRemoveBlock(blockId) {
+    setBlocks(gridBlocks.filter((b) => b.id !== blockId))
+  }
+
   function makeBlock(task, startMinutes, endMinutes, sortOrder) {
     return {
       id: `temp-${task.id}-${Date.now()}`,
@@ -264,6 +268,7 @@ export function StartDayPage() {
           <TimeBlockGrid
             blocks={gridBlocks}
             onBlocksChange={setBlocks}
+            onRemoveBlock={handleRemoveBlock}
             gridRef={gridRef}
             minutesToPercent={minutesToPercent}
             durationToPercent={durationToPercent}

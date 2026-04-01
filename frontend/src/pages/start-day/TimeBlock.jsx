@@ -17,6 +17,7 @@ export function TimeBlock({
   blockIndex,
   allBlocks,
   onBlocksChange,
+  onRemove,
   minutesToPercent,
   durationToPercent,
   startResize,
@@ -52,7 +53,7 @@ export function TimeBlock({
     <div
       ref={setNodeRef}
       style={style}
-      className={`rounded flex items-center overflow-hidden select-none border ${
+      className={`rounded flex items-center select-none border group ${
         isCompleted
           ? 'bg-gray-100 border-gray-200 text-gray-400'
           : 'bg-indigo-500 border-indigo-600 text-white'
@@ -68,6 +69,21 @@ export function TimeBlock({
           {startLabel}–{endLabel}
         </span>
       </div>
+
+      {/* Remove button — upper right */}
+      {!isCompleted && onRemove && (
+        <button
+          className="absolute top-0 right-0 w-4 h-4 rounded-bl bg-black/20 hover:bg-red-500 text-white/80 hover:text-white flex items-center justify-center text-[10px] leading-none opacity-0 group-hover:opacity-100 transition-all z-10"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove(block.id)
+          }}
+          aria-label={`Remove ${block.task?.title ?? 'block'} from plan`}
+        >
+          ×
+        </button>
+      )}
 
       {/* Resize handle — right edge */}
       {!isCompleted && (

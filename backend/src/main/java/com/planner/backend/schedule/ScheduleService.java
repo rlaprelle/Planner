@@ -8,6 +8,7 @@ import com.planner.backend.task.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -95,6 +96,17 @@ public class ScheduleService {
                 throw new ScheduleValidationException("Blocks must not overlap");
             }
         }
+    }
+
+    public TimeBlockResponse startBlock(AppUser user, UUID blockId) {
+        TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
+            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+        if (block.getActualStart() != null) {
+            throw new ScheduleValidationException("Time block already started");
+        }
+        block.setActualStart(Instant.now());
+        timeBlockRepository.save(block);
+        return TimeBlockResponse.from(block);
     }
 
     static class ScheduleValidationException extends RuntimeException {

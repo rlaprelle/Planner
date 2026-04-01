@@ -17,7 +17,7 @@ export async function mockSuggestedTasks(page: Page, tasks = TASKS) {
 }
 
 export async function mockScheduleToday(page: Page, blocks = BLOCKS) {
-  await page.route('**/api/v1/schedule/today', route =>
+  await page.route(/\/api\/v1\/schedule\/today(?!\/)/, route =>
     route.fulfill({ json: blocks })
   )
 }

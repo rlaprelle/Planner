@@ -3,6 +3,7 @@ package com.planner.backend.schedule.dto;
 import com.planner.backend.schedule.TimeBlock;
 import com.planner.backend.task.TaskStatus;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -13,6 +14,9 @@ public record TimeBlockResponse(
         LocalTime startTime,
         LocalTime endTime,
         int sortOrder,
+        Instant actualStart,
+        Instant actualEnd,
+        boolean wasCompleted,
         TaskSummary task
 ) {
     public record TaskSummary(
@@ -45,6 +49,9 @@ public record TimeBlockResponse(
                 block.getStartTime(),
                 block.getEndTime(),
                 block.getSortOrder(),
+                block.getActualStart(),
+                block.getActualEnd(),
+                block.isWasCompleted(),
                 taskSummary
         );
     }

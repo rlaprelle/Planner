@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
@@ -41,4 +42,7 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
               AND tb.task.status = com.planner.backend.task.TaskStatus.DONE
             """)
     long countCompletedByUserIdAndBlockDate(@Param("userId") UUID userId, @Param("blockDate") LocalDate blockDate);
+
+    @Query("SELECT tb FROM TimeBlock tb LEFT JOIN FETCH tb.task t LEFT JOIN FETCH t.project WHERE tb.id = :id AND tb.user.id = :userId")
+    Optional<TimeBlock> findByIdAndUserId(@Param("id") UUID id, @Param("userId") UUID userId);
 }

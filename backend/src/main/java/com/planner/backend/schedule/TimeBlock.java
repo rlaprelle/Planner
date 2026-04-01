@@ -4,6 +4,7 @@ import com.planner.backend.auth.AppUser;
 import com.planner.backend.task.Task;
 import jakarta.persistence.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -36,6 +37,15 @@ public class TimeBlock {
     @Column(name = "sort_order", nullable = false)
     private int sortOrder = 0;
 
+    @Column(name = "actual_start")
+    private Instant actualStart;
+
+    @Column(name = "actual_end")
+    private Instant actualEnd;
+
+    @Column(name = "was_completed", nullable = false)
+    private boolean wasCompleted = false;
+
     public TimeBlock() {}
 
     public TimeBlock(AppUser user, LocalDate blockDate, Task task, LocalTime startTime, LocalTime endTime, int sortOrder) {
@@ -54,4 +64,13 @@ public class TimeBlock {
     public LocalTime getStartTime() { return startTime; }
     public LocalTime getEndTime() { return endTime; }
     public int getSortOrder() { return sortOrder; }
+
+    public Instant getActualStart() { return actualStart; }
+    public void setActualStart(Instant actualStart) { this.actualStart = actualStart; }
+
+    public Instant getActualEnd() { return actualEnd; }
+    public void setActualEnd(Instant actualEnd) { this.actualEnd = actualEnd; }
+
+    public boolean isWasCompleted() { return wasCompleted; }
+    public void setWasCompleted(boolean wasCompleted) { this.wasCompleted = wasCompleted; }
 }

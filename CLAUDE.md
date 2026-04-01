@@ -1,6 +1,6 @@
 # Planner
 
-ADHD-friendly daily work management tool. Slices 1–3 complete (auth, projects/tasks, deferred items, daily reflection, stats endpoints).
+ADHD-friendly daily work management tool. Slices 1–4 complete (auth, projects/tasks, deferred items, daily reflection, stats endpoints, morning planning, dashboard).
 
 ## Quick Start
 
@@ -20,12 +20,13 @@ cd frontend && npm install && npm run dev  # Frontend on :5173
 ## Testing
 
 ```bash
-cd backend && mvn test   # Integration tests (require live PostgreSQL)
-cd frontend && npm run lint
+cd backend && mvn test          # Integration tests (require live PostgreSQL)
+cd frontend && npm run lint     # Lint only — no frontend unit tests yet
+cd e2e && npx playwright test   # E2E regression suite (no backend required — all API mocked)
 ```
 
 - Backend tests are integration tests that hit a real database — no mocks
-- No frontend unit tests yet — lint only
+- E2E tests mock all `/api/*` calls via `page.route()` — just needs Vite running (auto-started by Playwright)
 
 ## Environment
 
@@ -72,7 +73,7 @@ frontend/src/
 
 Vertical slices, built sequentially. See `docs/planning/2026-03-30-implementation-plan-design.md` for the full spec.
 
-The spec is a checklist. Always check off items as they are completed.
+The spec is a checklist. Always check off items as they are completed. **Before pushing or creating a PR, verify all completed work is checked off in the spec** — this is easy to miss at the end of a session.
 
 ## Key Documents
 

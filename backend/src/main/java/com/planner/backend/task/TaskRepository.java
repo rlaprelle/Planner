@@ -53,13 +53,11 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             JOIN FETCH t.project p
             WHERE t.user.id = :userId
               AND t.dueDate IS NOT NULL
-              AND t.dueDate >= :today
               AND t.status != com.planner.backend.task.TaskStatus.DONE
               AND t.archivedAt IS NULL
               AND t.parentTask IS NULL
             ORDER BY t.dueDate ASC
             """)
     List<Task> findUpcomingDeadlines(@Param("userId") UUID userId,
-                                      @Param("today") LocalDate today,
                                       org.springframework.data.domain.Pageable pageable);
 }

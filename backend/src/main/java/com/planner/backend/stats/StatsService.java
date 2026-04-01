@@ -46,7 +46,7 @@ public class StatsService {
 
         int streak = computeStreak(user, true);
 
-        List<Task> upcoming = taskRepository.findUpcomingDeadlines(user.getId(), today, PageRequest.of(0, 5));
+        List<Task> upcoming = taskRepository.findUpcomingDeadlines(user.getId(), PageRequest.of(0, 5));
         LocalDate endOfWeek = today.plusDays(7);
         List<DashboardResponse.DeadlineSummary> deadlines = upcoming.stream()
                 .map(t -> new DashboardResponse.DeadlineSummary(

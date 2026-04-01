@@ -73,6 +73,7 @@ export function TimeBlock({
       {!isCompleted && (
         <div
           className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/20 rounded-r"
+          onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => startResize(e, block, blockIndex, allBlocks, onBlocksChange)}
         />
       )}

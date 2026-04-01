@@ -19,7 +19,8 @@ export function RegisterPage() {
     setError(null)
     setIsSubmitting(true)
     try {
-      await register(email, password, displayName)
+      const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      await register(email, password, displayName, browserTimezone)
     } catch (err) {
       if (err.status === 409) {
         setError('An account with that email already exists.')

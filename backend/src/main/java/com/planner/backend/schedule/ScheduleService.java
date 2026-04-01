@@ -43,7 +43,11 @@ public class ScheduleService {
     public List<TimeBlockResponse> savePlan(AppUser user, SavePlanRequest request) {
         validateBlocks(request.blocks());
 
-        timeBlockRepository.deleteByUserIdAndBlockDate(user.getId(), request.blockDate());
+        // Use the same server-computed date as getToday() and the dashboard,
+        // so save and load always agree on which date "today" is.
+        LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
+
+        timeBlockRepository.deleteByUserIdAndBlockDate(user.getId(), today);
 
         List<TimeBlock> toSave = new ArrayList<>();
         for (int i = 0; i < request.blocks().size(); i++) {
@@ -51,7 +55,7 @@ public class ScheduleService {
             Task task = taskRepository.findByIdAndUserId(entry.taskId(), user.getId())
                     .orElseThrow(() -> new ScheduleValidationException(
                             "Task not found: " + entry.taskId()));
-            toSave.add(new TimeBlock(user, request.blockDate(), task, entry.startTime(), entry.endTime(), i));
+            toSave.add(new TimeBlock(user, today, task, entry.startTime(), entry.endTime(), i));
         }
 
         return timeBlockRepository.saveAll(toSave)

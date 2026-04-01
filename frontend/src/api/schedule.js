@@ -1,4 +1,4 @@
-import { authFetch, handleResponse } from './client'
+import { authFetch, handleResponse, getAuthToken } from './client'
 
 const BASE = '/api/v1'
 
@@ -22,9 +22,11 @@ export async function getSuggestedTasks(date, limit = 50) {
 }
 
 export async function startTimeBlock(blockId) {
+  console.log('[session] startTimeBlock', blockId, 'token present:', !!getAuthToken())
   const res = await authFetch(`${BASE}/time-blocks/${blockId}/start`, {
     method: 'PATCH',
   })
+  console.log('[session] startTimeBlock response:', res.status)
   return handleResponse(res)
 }
 

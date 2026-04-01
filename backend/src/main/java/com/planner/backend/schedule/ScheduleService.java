@@ -109,6 +109,69 @@ public class ScheduleService {
         return TimeBlockResponse.from(block);
     }
 
+    public TimeBlockResponse completeBlock(AppUser user, UUID blockId) {
+        TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
+            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+        if (block.getActualStart() == null) {
+            throw new ScheduleValidationException("Time block has not been started");
+        }
+
+        Instant now = Instant.now();
+        block.setActualEnd(now);
+        block.setWasCompleted(true);
+        timeBlockRepository.save(block);
+
+        if (block.getTask() != null) {
+            long elapsedMinutes = java.time.Duration.between(block.getActualStart(), now).toMinutes();
+            var task = block.getTask();
+            int current = task.getActualMinutes() != null ? task.getActualMinutes() : 0;
+            task.setActualMinutes(current + (int) elapsedMinutes);
+            task.setStatus(com.planner.backend.task.TaskStatus.DONE);
+            task.setCompletedAt(now);
+            taskRepository.save(task);
+        }
+
+        return TimeBlockResponse.from(block);
+    }
+
+    public TimeBlockResponse doneForNow(AppUser user, UUID blockId) {
+        TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
+            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+        if (block.getActualStart() == null) {
+            throw new ScheduleValidationException("Time block has not been started");
+        }
+
+        Instant now = Instant.now();
+        block.setActualEnd(now);
+        block.setWasCompleted(false);
+        timeBlockRepository.save(block);
+
+        if (block.getTask() != null) {
+            long elapsedMinutes = java.time.Duration.between(block.getActualStart(), now).toMinutes();
+            var task = block.getTask();
+            int current = task.getActualMinutes() != null ? task.getActualMinutes() : 0;
+            task.setActualMinutes(current + (int) elapsedMinutes);
+            taskRepository.save(task);
+        }
+
+        return TimeBlockResponse.from(block);
+    }
+
+    public TimeBlockResponse extendBlock(AppUser user, UUID blockId, int durationMinutes) {
+        TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
+            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+
+        LocalTime newStart = block.getEndTime();
+        LocalTime newEnd = newStart.plusMinutes(durationMinutes);
+
+        TimeBlock extension = new TimeBlock(
+            block.getUser(), block.getBlockDate(), block.getTask(),
+            newStart, newEnd, block.getSortOrder() + 1
+        );
+        timeBlockRepository.save(extension);
+        return TimeBlockResponse.from(extension);
+    }
+
     static class ScheduleValidationException extends RuntimeException {
         ScheduleValidationException(String message) { super(message); }
     }

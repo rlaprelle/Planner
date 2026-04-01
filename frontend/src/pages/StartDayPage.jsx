@@ -202,6 +202,7 @@ export function StartDayPage() {
             scheduledTaskIds={scheduledTaskIds}
             onToggle={toggleTask}
             emptyMessage="No tasks to schedule — you're all caught up!"
+            section="all"
           />
           <div className="mt-3 flex items-center gap-3">
             <span className="text-xs text-gray-500">
@@ -232,6 +233,7 @@ export function StartDayPage() {
               scheduledTaskIds={scheduledTaskIds}
               onToggle={toggleTask}
               emptyMessage="Nothing due today"
+              section="due-today"
             />
           </section>
 
@@ -245,6 +247,7 @@ export function StartDayPage() {
               scheduledTaskIds={scheduledTaskIds}
               onToggle={toggleTask}
               emptyMessage="Nothing due this week"
+              section="due-week"
             />
           </section>
         </div>

@@ -14,9 +14,9 @@ const DEADLINE_BADGE = {
  *   isScheduled - task is already on the calendar (checkbox disabled)
  *   onToggle(taskId) - called when checkbox changes
  */
-export function TaskCard({ task, isSelected, isScheduled, onToggle }) {
+export function TaskCard({ task, isSelected, isScheduled, onToggle, section = 'default' }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: `task-card-${task.id}`,
+    id: `task-card-${section}-${task.id}`,
     data: { type: 'task-card', task },
     disabled: isScheduled,
   })

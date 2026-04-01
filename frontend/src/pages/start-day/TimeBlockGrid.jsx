@@ -30,6 +30,7 @@ function hourToPercent(h) {
 export function TimeBlockGrid({
   blocks,
   onBlocksChange,
+  onRemoveBlock,
   gridRef,
   minutesToPercent,
   durationToPercent,
@@ -111,6 +112,7 @@ export function TimeBlockGrid({
             blockIndex={i}
             allBlocks={blocks}
             onBlocksChange={onBlocksChange}
+            onRemove={onRemoveBlock}
             minutesToPercent={minutesToPercent}
             durationToPercent={durationToPercent}
             startResize={startResize}

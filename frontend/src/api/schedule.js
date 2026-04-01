@@ -20,3 +20,32 @@ export async function getSuggestedTasks(date, limit = 50) {
   const res = await authFetch(`${BASE}/tasks/suggested?${params}`)
   return handleResponse(res)
 }
+
+export async function startTimeBlock(blockId) {
+  const res = await authFetch(`${BASE}/time-blocks/${blockId}/start`, {
+    method: 'PATCH',
+  })
+  return handleResponse(res)
+}
+
+export async function completeTimeBlock(blockId) {
+  const res = await authFetch(`${BASE}/time-blocks/${blockId}/complete`, {
+    method: 'PATCH',
+  })
+  return handleResponse(res)
+}
+
+export async function doneForNowTimeBlock(blockId) {
+  const res = await authFetch(`${BASE}/time-blocks/${blockId}/done-for-now`, {
+    method: 'PATCH',
+  })
+  return handleResponse(res)
+}
+
+export async function extendTimeBlock(blockId, durationMinutes) {
+  const res = await authFetch(`${BASE}/time-blocks/${blockId}/extend`, {
+    method: 'POST',
+    body: JSON.stringify({ durationMinutes }),
+  })
+  return handleResponse(res)
+}

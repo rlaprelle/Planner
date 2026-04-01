@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getDashboard } from '@/api/dashboard'
+import { getScheduleToday } from '@/api/schedule'
 
 function ProgressBar({ value, max }) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0
@@ -53,6 +54,15 @@ export function DashboardPage() {
     queryFn: getDashboard,
   })
 
+  const TODAY = new Date().toISOString().slice(0, 10)
+  const { data: todayBlocks } = useQuery({
+    queryKey: ['schedule', TODAY],
+    queryFn: getScheduleToday,
+  })
+  const nextBlock = todayBlocks?.find(
+    (b) => b.task && b.task.status !== 'DONE' && !b.actualEnd
+  )
+
   if (isLoading) {
     return <div className="p-8 text-gray-400 text-sm">Loading…</div>
   }
@@ -83,6 +93,14 @@ export function DashboardPage() {
                 <span className="text-sm font-normal text-gray-500 ml-2">tasks done</span>
               </p>
               <ProgressBar value={todayCompletedCount} max={todayBlockCount} />
+              {nextBlock && (
+                <button
+                  onClick={() => navigate(`/session/${nextBlock.id}`)}
+                  className="mt-3 w-full px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 transition-colors"
+                >
+                  Start: {nextBlock.task.title}
+                </button>
+              )}
             </>
           ) : (
             <>

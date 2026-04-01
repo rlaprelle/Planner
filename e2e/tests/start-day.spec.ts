@@ -72,6 +72,7 @@ test.describe('Start Day', () => {
 
     // Wait for both elements to be visible before attempting drag
     await expect(taskCard).toBeVisible()
+    await expect(planSection).toBeVisible()
 
     const sourceBox = await taskCard.boundingBox()
     const targetBox = await planSection.boundingBox()

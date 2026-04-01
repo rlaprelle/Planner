@@ -10,7 +10,7 @@ import { TaskCard } from './TaskCard'
  *   onToggle(taskId) - toggle selection
  *   emptyMessage    - string shown when a project has no tasks matching this row's filter
  */
-export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onToggle, emptyMessage = 'Nothing here' }) {
+export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onToggle, emptyMessage = 'Nothing here', section = 'default' }) {
   // Group tasks by project, maintaining insertion order
   const projectMap = new Map()
   for (const task of tasks) {
@@ -54,6 +54,7 @@ export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onTog
                 isSelected={selectedTaskIds.has(task.id)}
                 isScheduled={scheduledTaskIds.has(task.id)}
                 onToggle={onToggle}
+                section={section}
               />
             ))}
           </div>

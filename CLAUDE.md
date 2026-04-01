@@ -1,6 +1,6 @@
 # Planner
 
-ADHD-friendly daily work management tool. Slices 1–4 complete (auth, projects/tasks, deferred items, daily reflection, stats endpoints, morning planning, dashboard).
+ADHD-friendly daily work management tool.
 
 ## Quick Start
 

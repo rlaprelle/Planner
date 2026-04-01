@@ -113,19 +113,19 @@ Stand up the dev environment with auth. No business logic.
 ## Slice 5: Active Work Session
 
 **Backend:**
-- [ ] `PATCH /api/v1/time-blocks/{id}/start` — record `actual_start`
-- [ ] `PATCH /api/v1/time-blocks/{id}/complete` — record `actual_end`, calculate and update `task.actual_minutes`, set `was_completed = true`
-- [ ] `PATCH /api/v1/time-blocks/{id}/done-for-now` — record `actual_end`, update `task.actual_minutes`, set `was_completed = false`
-- [ ] Extend: create new adjacent time block for same task
+- [x] `PATCH /api/v1/time-blocks/{id}/start` — record `actual_start`
+- [x] `PATCH /api/v1/time-blocks/{id}/complete` — record `actual_end`, calculate and update `task.actual_minutes`, set `was_completed = true`
+- [x] `PATCH /api/v1/time-blocks/{id}/done-for-now` — record `actual_end`, update `task.actual_minutes`, set `was_completed = false`
+- [x] Extend: create new adjacent time block for same task
 
 **Frontend:**
-- [ ] Active Work Session view — full-screen focus mode: task title, project name, countdown timer, progress bar
-- [ ] Child tasks as interactive checklist (check to mark done, completion animation)
-- [ ] Action buttons: Complete / Extend / Done for now
-- [ ] At 100%: gentle chime + "Time's up. Good work!" message
-- [ ] Extend prompts for duration (15min, 30min, 1hr)
-- [ ] Timer persists in header bar if user navigates away
-- [ ] Entry: click "Start" on a time block from Morning Planning or Dashboard
+- [x] Active Work Session view — full-screen focus mode: task title, project name, countdown timer, progress bar
+- [x] Child tasks as interactive checklist (check to mark done, completion animation)
+- [x] Action buttons: Complete / Extend / Done for now
+- [x] At 100%: gentle chime + "Time's up. Good work!" message
+- [x] Extend prompts for duration (15min, 30min, 1hr)
+- [x] Timer persists in header bar if user navigates away
+- [x] Entry: click "Start" on a time block from Morning Planning or Dashboard
 
 **Done when:** Start a time block, see timer count down, check off child tasks, hear chime at 100%, complete/extend/end the session.
 

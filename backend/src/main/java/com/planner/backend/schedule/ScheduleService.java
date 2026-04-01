@@ -100,9 +100,9 @@ public class ScheduleService {
 
     public TimeBlockResponse startBlock(AppUser user, UUID blockId) {
         TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
-            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+            .orElseThrow(() -> new BlockNotFoundException("Time block not found"));
         if (block.getActualStart() != null) {
-            throw new ScheduleValidationException("Time block already started");
+            throw new BlockAlreadyStartedException("Time block already started");
         }
         block.setActualStart(Instant.now());
         timeBlockRepository.save(block);
@@ -111,7 +111,7 @@ public class ScheduleService {
 
     public TimeBlockResponse completeBlock(AppUser user, UUID blockId) {
         TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
-            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+            .orElseThrow(() -> new BlockNotFoundException("Time block not found"));
         if (block.getActualStart() == null) {
             throw new ScheduleValidationException("Time block has not been started");
         }
@@ -136,7 +136,7 @@ public class ScheduleService {
 
     public TimeBlockResponse doneForNow(AppUser user, UUID blockId) {
         TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
-            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+            .orElseThrow(() -> new BlockNotFoundException("Time block not found"));
         if (block.getActualStart() == null) {
             throw new ScheduleValidationException("Time block has not been started");
         }
@@ -159,7 +159,7 @@ public class ScheduleService {
 
     public TimeBlockResponse extendBlock(AppUser user, UUID blockId, int durationMinutes) {
         TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
-            .orElseThrow(() -> new ScheduleValidationException("Time block not found"));
+            .orElseThrow(() -> new BlockNotFoundException("Time block not found"));
 
         LocalTime newStart = block.getEndTime();
         LocalTime newEnd = newStart.plusMinutes(durationMinutes);
@@ -174,5 +174,13 @@ public class ScheduleService {
 
     static class ScheduleValidationException extends RuntimeException {
         ScheduleValidationException(String message) { super(message); }
+    }
+
+    static class BlockNotFoundException extends RuntimeException {
+        BlockNotFoundException(String message) { super(message); }
+    }
+
+    static class BlockAlreadyStartedException extends RuntimeException {
+        BlockAlreadyStartedException(String message) { super(message); }
     }
 }

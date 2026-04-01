@@ -37,6 +37,7 @@ export function StartDayPage() {
   const [selectedTaskIds, setSelectedTaskIds] = useState(new Set())
   const [addWarning, setAddWarning] = useState(null)
   const [activeTaskCard, setActiveTaskCard] = useState(null) // for DragOverlay
+  const [dropPreview, setDropPreview] = useState(null) // { startMinutes, endMinutes } while dragging over grid
 
   // Initialise blocks from server once (mid-day replanning support)
   const gridBlocks = blocks ?? existingBlocks
@@ -129,14 +130,36 @@ export function StartDayPage() {
   // --- dnd-kit drag events ---
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
+  /** Snap a cursor clientX to a centered 1-hour block start time. */
+  function cursorToSnappedStart(clientX) {
+    const rawCenter = clientXToMinutes(clientX)
+    const rawStart = rawCenter - 30 // center the 1-hour block on cursor
+    return Math.max(DAY_START_MINUTES, Math.min(DAY_END_MINUTES - 60, snapTo15(rawStart)))
+  }
+
   function handleDragStart(event) {
     if (event.active.data.current?.type === 'task-card') {
       setActiveTaskCard(event.active.data.current.task)
     }
   }
 
+  function handleDragMove(event) {
+    const { active, over, delta } = event
+    if (active.data.current?.type !== 'task-card') return
+
+    if (!over || over.id !== 'time-block-grid') {
+      setDropPreview(null)
+      return
+    }
+
+    const currentX = event.activatorEvent.clientX + delta.x
+    const snapped = cursorToSnappedStart(currentX)
+    setDropPreview({ startMinutes: snapped, endMinutes: snapped + 60 })
+  }
+
   function handleDragEnd(event) {
     setActiveTaskCard(null)
+    setDropPreview(null)
     const { active, over, delta } = event
     if (!over || over.id !== 'time-block-grid') return
 
@@ -162,13 +185,8 @@ export function StartDayPage() {
       const task = activeData.task
       if (scheduledTaskIds.has(task.id)) return
 
-      // Use the final pointer position over the grid
       const dropClientX = event.activatorEvent.clientX + delta.x
-      const rawStart = clientXToMinutes(dropClientX)
-      const snapped = Math.max(
-        DAY_START_MINUTES,
-        Math.min(DAY_END_MINUTES - 60, snapTo15(rawStart))
-      )
+      const snapped = cursorToSnappedStart(dropClientX)
 
       const newBlock = makeBlock(task, snapped, snapped + 60, gridBlocks.length)
       const combined = [...gridBlocks, newBlock].sort((a, b) => a.startMinutes - b.startMinutes)
@@ -185,7 +203,7 @@ export function StartDayPage() {
   }
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragMove={handleDragMove} onDragEnd={handleDragEnd}>
       <div className="p-6 max-w-7xl mx-auto space-y-4">
 
         <h1 className="text-2xl font-semibold text-gray-900">
@@ -269,6 +287,7 @@ export function StartDayPage() {
             blocks={gridBlocks}
             onBlocksChange={setBlocks}
             onRemoveBlock={handleRemoveBlock}
+            dropPreview={dropPreview}
             gridRef={gridRef}
             minutesToPercent={minutesToPercent}
             durationToPercent={durationToPercent}

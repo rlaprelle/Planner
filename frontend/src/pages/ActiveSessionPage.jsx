@@ -23,6 +23,7 @@ export default function ActiveSessionPage() {
   const { startSession, clearSession } = useActiveSession()
   const [showExtendMenu, setShowExtendMenu] = useState(false)
   const [flash, setFlash] = useState(null)
+  const [error, setError] = useState(null)
 
   // Fetch today's schedule and find this block
   const { data: blocks } = useQuery({
@@ -55,6 +56,12 @@ export default function ActiveSessionPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['schedule'] })
     },
+    onError: (err) => {
+      // 409/422 "already started" is expected on revisit — ignore it
+      if (err.status === 409 || err.status === 422) return
+      console.error('Failed to start block:', err)
+      setError(`Failed to start session: ${err.message}`)
+    },
   })
 
   useEffect(() => {
@@ -80,6 +87,10 @@ export default function ActiveSessionPage() {
       setFlash('Nice work!')
       setTimeout(() => navigate(-1), 1500)
     },
+    onError: (err) => {
+      console.error('Failed to complete block:', err)
+      setError(`Failed to complete: ${err.message}`)
+    },
   })
 
   // Done for now mutation
@@ -91,6 +102,10 @@ export default function ActiveSessionPage() {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       navigate(-1)
     },
+    onError: (err) => {
+      console.error('Failed (done for now):', err)
+      setError(`Something went wrong: ${err.message}`)
+    },
   })
 
   // Extend mutation
@@ -101,6 +116,11 @@ export default function ActiveSessionPage() {
       queryClient.invalidateQueries({ queryKey: ['schedule'] })
       setShowExtendMenu(false)
       navigate(`/session/${newBlock.id}`, { replace: true })
+    },
+    onError: (err) => {
+      console.error('Failed to extend:', err)
+      setError(`Failed to extend: ${err.message}`)
+      setShowExtendMenu(false)
     },
   })
 
@@ -128,6 +148,19 @@ export default function ActiveSessionPage() {
       {flash && (
         <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl px-6 py-3 text-indigo-600 font-medium z-50">
           {flash}
+        </div>
+      )}
+
+      {/* Error message */}
+      {error && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-red-50 border border-red-200 shadow-lg rounded-xl px-6 py-3 text-red-700 text-sm z-50 max-w-md text-center">
+          <p>{error}</p>
+          <button
+            onClick={() => setError(null)}
+            className="mt-2 text-xs text-red-500 hover:text-red-700 underline"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 

@@ -99,3 +99,35 @@ export const DASHBOARD = {
   upcomingDeadlines: [] as unknown[],
   deferredItemCount: 0,
 } as const
+
+export const SESSION_BLOCK = {
+  id: 'block-session-1',
+  blockDate: '2026-04-01',
+  startTime: '09:00:00',
+  endTime: '09:45:00',
+  sortOrder: 0,
+  actualStart: null,
+  actualEnd: null,
+  wasCompleted: false,
+  task: {
+    id: 'task-1',
+    title: 'Write tests',
+    projectId: 'proj-1',
+    projectName: 'Work',
+    projectColor: '#6366f1',
+    status: 'TODO',
+    pointsEstimate: 2,
+  },
+}
+
+export const SESSION_TASK_DETAIL = {
+  id: 'task-1',
+  title: 'Write tests',
+  projectId: 'proj-1',
+  status: 'TODO',
+  children: [
+    { id: 'child-1', title: 'Unit tests', status: 'DONE', sortOrder: 0 },
+    { id: 'child-2', title: 'Integration tests', status: 'TODO', sortOrder: 1 },
+    { id: 'child-3', title: 'E2E tests', status: 'TODO', sortOrder: 2 },
+  ],
+}

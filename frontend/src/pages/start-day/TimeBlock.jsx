@@ -1,4 +1,5 @@
 import { useDraggable } from '@dnd-kit/core'
+import { useNavigate } from 'react-router-dom'
 
 /**
  * A single draggable, resizable time block on the calendar grid.
@@ -23,6 +24,7 @@ export function TimeBlock({
   startResize,
 }) {
   const isCompleted = block.task?.status === 'DONE'
+  const navigate = useNavigate()
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `calendar-block-${block.id}`,
@@ -69,6 +71,20 @@ export function TimeBlock({
           {startLabel}–{endLabel}
         </span>
       </div>
+
+      {/* Start button — appears on hover for incomplete blocks */}
+      {block.task?.status !== 'DONE' && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            navigate(`/session/${block.id}`)
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-white/80 hover:text-white text-xs font-medium bg-indigo-600/50 hover:bg-indigo-600/80 rounded px-2 py-0.5 shrink-0"
+        >
+          Start
+        </button>
+      )}
 
       {/* Remove button — upper right */}
       {!isCompleted && onRemove && (

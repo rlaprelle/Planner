@@ -12,4 +12,14 @@ public class ScheduleExceptionHandler {
     ProblemDetail handleValidation(ScheduleService.ScheduleValidationException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
+
+    @ExceptionHandler(ScheduleService.BlockNotFoundException.class)
+    ProblemDetail handleBlockNotFound(ScheduleService.BlockNotFoundException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(ScheduleService.BlockAlreadyStartedException.class)
+    ProblemDetail handleBlockAlreadyStarted(ScheduleService.BlockAlreadyStartedException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
 }

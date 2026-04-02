@@ -12,6 +12,8 @@ import ProjectDetailPage from '@/pages/ProjectDetailPage'
 import { InboxPage } from '@/pages/InboxPage'
 import { EndDayPage } from '@/pages/EndDayPage'
 import { StartDayPage } from '@/pages/StartDayPage'
+import { ActiveSessionProvider } from '@/contexts/ActiveSessionContext'
+import ActiveSessionPage from '@/pages/ActiveSessionPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,31 +27,37 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Public routes — no sidebar */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+      <ActiveSessionProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              {/* Public routes — no sidebar */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
-            {/* Protected routes — wrapped in AppLayout (sidebar + main area) */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AppLayout />}>
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/today" element={<TodayPage />} />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
-                <Route path="/inbox" element={<InboxPage />} />
-                <Route path="/end-day" element={<EndDayPage />} />
-                <Route path="/start-day" element={<StartDayPage />} />
+              {/* Protected routes */}
+              <Route element={<ProtectedRoute />}>
+                {/* Session page — full-screen, no sidebar */}
+                <Route path="/session/:blockId" element={<ActiveSessionPage />} />
+
+                {/* App routes — wrapped in AppLayout (sidebar + main area) */}
+                <Route element={<AppLayout />}>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/today" element={<TodayPage />} />
+                  <Route path="/projects" element={<ProjectsPage />} />
+                  <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
+                  <Route path="/inbox" element={<InboxPage />} />
+                  <Route path="/end-day" element={<EndDayPage />} />
+                  <Route path="/start-day" element={<StartDayPage />} />
+                </Route>
               </Route>
-            </Route>
 
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </ActiveSessionProvider>
     </QueryClientProvider>
   )
 }

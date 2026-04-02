@@ -33,6 +33,8 @@ public interface DeferredItemRepository extends JpaRepository<DeferredItem, UUID
             """)
     long countPendingForUser(@Param("userId") UUID userId, @Param("today") LocalDate today);
 
+    void deleteByResolvedProjectId(UUID projectId);
+
     long countByUserId(UUID userId);
     void deleteByUserId(UUID userId);
 }

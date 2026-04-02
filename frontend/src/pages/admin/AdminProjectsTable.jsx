@@ -5,11 +5,21 @@ import { AdminTable } from './components/AdminTable'
 import { AdminFormModal } from './components/AdminFormModal'
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog'
 
+function renderColorSwatch(color) {
+  if (!color) return '\u2014'
+  return (
+    <span className="inline-flex items-center gap-1">
+      <span className="w-3 h-3 rounded-full inline-block" style={{ background: color }} />
+      {color}
+    </span>
+  )
+}
+
 const COLUMNS = [
   { key: 'userEmail', label: 'User' },
   { key: 'name', label: 'Name' },
   { key: 'description', label: 'Description' },
-  { key: 'color', label: 'Color', render: (v) => v ? <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded-full inline-block" style={{ background: v }} />{v}</span> : '\u2014' },
+  { key: 'color', label: 'Color', render: renderColorSwatch },
   { key: 'isActive', label: 'Active' },
   { key: 'createdAt', label: 'Created' },
 ]
@@ -73,7 +83,7 @@ export default function AdminProjectsTable() {
         title={editItem ? 'Edit Project' : 'Create Project'} fields={formFields} initialValues={editItem}
         onSubmit={handleSubmit} isPending={createMutation.isPending || updateMutation.isPending} />
       <DeleteConfirmDialog open={!!deleteItem} onOpenChange={(open) => { if (!open) setDeleteItem(null) }}
-        entityName="project" item={deleteItem} onConfirm={() => deleteMutation.mutate(deleteItem.id)}
+        entityName="project" onConfirm={() => deleteMutation.mutate(deleteItem.id)}
         isPending={deleteMutation.isPending} />
     </div>
   )

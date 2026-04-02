@@ -9,6 +9,21 @@ function buildDefaults(fields, initialValues) {
   return defaults
 }
 
+function cleanFieldValue(field, rawValue) {
+  if (rawValue === '' && !field.required) return null
+  if (field.type === 'number' && rawValue !== '' && rawValue != null) return Number(rawValue)
+  if (field.type === 'checkbox') return Boolean(rawValue)
+  return rawValue
+}
+
+function cleanFormValues(fields, values) {
+  const cleaned = {}
+  fields.forEach(f => {
+    cleaned[f.name] = cleanFieldValue(f, values[f.name])
+  })
+  return cleaned
+}
+
 function FormContent({ fields, initialValues, onSubmit, isPending }) {
   const [values, setValues] = useState(() => buildDefaults(fields, initialValues))
 
@@ -18,20 +33,7 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const cleaned = {}
-    fields.forEach(f => {
-      const v = values[f.name]
-      if (v === '' && !f.required) {
-        cleaned[f.name] = null
-      } else if (f.type === 'number' && v !== '' && v != null) {
-        cleaned[f.name] = Number(v)
-      } else if (f.type === 'checkbox') {
-        cleaned[f.name] = Boolean(v)
-      } else {
-        cleaned[f.name] = v
-      }
-    })
-    onSubmit(cleaned)
+    onSubmit(cleanFormValues(fields, values))
   }
 
   return (

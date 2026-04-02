@@ -69,9 +69,7 @@ public class AdminDeferredItemService {
     private void applyFields(DeferredItem item, AdminDeferredItemRequest request) {
         if (request.isProcessed() != null) {
             item.setProcessed(request.isProcessed());
-            if (request.isProcessed()) {
-                item.setProcessedAt(Instant.now());
-            }
+            item.setProcessedAt(request.isProcessed() ? Instant.now() : null);
         }
         if (request.resolvedTaskId() != null) {
             item.setResolvedTask(taskRepository.findById(request.resolvedTaskId()).orElse(null));

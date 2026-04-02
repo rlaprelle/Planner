@@ -94,7 +94,7 @@ export default function AdminTasksTable() {
         title={editItem ? 'Edit Task' : 'Create Task'} fields={formFields} initialValues={editItem}
         onSubmit={handleSubmit} isPending={createMutation.isPending || updateMutation.isPending} />
       <DeleteConfirmDialog open={!!deleteItem} onOpenChange={(open) => { if (!open) setDeleteItem(null) }}
-        entityName="task" item={deleteItem} onConfirm={() => deleteMutation.mutate(deleteItem.id)}
+        entityName="task" onConfirm={() => deleteMutation.mutate(deleteItem.id)}
         isPending={deleteMutation.isPending} />
     </div>
   )

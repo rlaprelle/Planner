@@ -71,7 +71,7 @@ export default function AdminDeferredTable() {
         title={editItem ? 'Edit Deferred Item' : 'Create Deferred Item'} fields={formFields} initialValues={editItem}
         onSubmit={handleSubmit} isPending={createMutation.isPending || updateMutation.isPending} />
       <DeleteConfirmDialog open={!!deleteItem} onOpenChange={(open) => { if (!open) setDeleteItem(null) }}
-        entityName="deferred item" item={deleteItem} onConfirm={() => deleteMutation.mutate(deleteItem.id)}
+        entityName="deferred item" onConfirm={() => deleteMutation.mutate(deleteItem.id)}
         isPending={deleteMutation.isPending} />
     </div>
   )

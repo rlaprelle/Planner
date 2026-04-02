@@ -89,7 +89,6 @@ export default function AdminUsersTable() {
         open={!!deleteItem}
         onOpenChange={(open) => { if (!open) setDeleteItem(null) }}
         entityName="user"
-        item={deleteItem}
         dependentCounts={dependents}
         onConfirm={() => deleteMutation.mutate(deleteItem.id)}
         isPending={deleteMutation.isPending}

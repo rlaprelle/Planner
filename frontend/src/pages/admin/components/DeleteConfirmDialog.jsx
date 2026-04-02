@@ -1,6 +1,18 @@
 import * as Dialog from '@radix-ui/react-dialog'
 
-export function DeleteConfirmDialog({ open, onOpenChange, entityName, item: _item, dependentCounts, onConfirm, isPending }) {
+const DEPENDENT_TYPES = [
+  { key: 'projects', label: 'project' },
+  { key: 'tasks', label: 'task' },
+  { key: 'deferredItems', label: 'deferred item' },
+  { key: 'reflections', label: 'reflection' },
+  { key: 'timeBlocks', label: 'time block' },
+]
+
+function pluralize(count, singular) {
+  return `${count} ${singular}${count !== 1 ? 's' : ''}`
+}
+
+export function DeleteConfirmDialog({ open, onOpenChange, entityName, dependentCounts, onConfirm, isPending }) {
   const hasDependents = dependentCounts && Object.values(dependentCounts).some(v => v > 0)
 
   return (
@@ -19,21 +31,12 @@ export function DeleteConfirmDialog({ open, onOpenChange, entityName, item: _ite
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-sm">
               <p className="font-medium text-red-800 mb-1">This will also delete:</p>
               <ul className="text-red-700 space-y-0.5">
-                {dependentCounts.projects > 0 && (
-                  <li>{'\u2022'} {dependentCounts.projects} project{dependentCounts.projects !== 1 ? 's' : ''}</li>
-                )}
-                {dependentCounts.tasks > 0 && (
-                  <li>{'\u2022'} {dependentCounts.tasks} task{dependentCounts.tasks !== 1 ? 's' : ''}</li>
-                )}
-                {dependentCounts.deferredItems > 0 && (
-                  <li>{'\u2022'} {dependentCounts.deferredItems} deferred item{dependentCounts.deferredItems !== 1 ? 's' : ''}</li>
-                )}
-                {dependentCounts.reflections > 0 && (
-                  <li>{'\u2022'} {dependentCounts.reflections} reflection{dependentCounts.reflections !== 1 ? 's' : ''}</li>
-                )}
-                {dependentCounts.timeBlocks > 0 && (
-                  <li>{'\u2022'} {dependentCounts.timeBlocks} time block{dependentCounts.timeBlocks !== 1 ? 's' : ''}</li>
-                )}
+                {DEPENDENT_TYPES
+                  .filter(({ key }) => dependentCounts[key] > 0)
+                  .map(({ key, label }) => (
+                    <li key={key}>{'\u2022'} {pluralize(dependentCounts[key], label)}</li>
+                  ))
+                }
               </ul>
             </div>
           )}

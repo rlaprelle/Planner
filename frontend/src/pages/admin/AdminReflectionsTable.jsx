@@ -72,7 +72,7 @@ export default function AdminReflectionsTable() {
         title={editItem ? 'Edit Reflection' : 'Create Reflection'} fields={formFields} initialValues={editItem}
         onSubmit={handleSubmit} isPending={createMutation.isPending || updateMutation.isPending} />
       <DeleteConfirmDialog open={!!deleteItem} onOpenChange={(open) => { if (!open) setDeleteItem(null) }}
-        entityName="reflection" item={deleteItem} onConfirm={() => deleteMutation.mutate(deleteItem.id)}
+        entityName="reflection" onConfirm={() => deleteMutation.mutate(deleteItem.id)}
         isPending={deleteMutation.isPending} />
     </div>
   )

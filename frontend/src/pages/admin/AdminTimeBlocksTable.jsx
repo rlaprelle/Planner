@@ -76,7 +76,7 @@ export default function AdminTimeBlocksTable() {
         title={editItem ? 'Edit Time Block' : 'Create Time Block'} fields={formFields} initialValues={editItem}
         onSubmit={handleSubmit} isPending={createMutation.isPending || updateMutation.isPending} />
       <DeleteConfirmDialog open={!!deleteItem} onOpenChange={(open) => { if (!open) setDeleteItem(null) }}
-        entityName="time block" item={deleteItem} onConfirm={() => deleteMutation.mutate(deleteItem.id)}
+        entityName="time block" onConfirm={() => deleteMutation.mutate(deleteItem.id)}
         isPending={deleteMutation.isPending} />
     </div>
   )

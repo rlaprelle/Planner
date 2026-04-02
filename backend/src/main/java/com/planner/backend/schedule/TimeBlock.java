@@ -73,4 +73,10 @@ public class TimeBlock {
 
     public boolean isWasCompleted() { return wasCompleted; }
     public void setWasCompleted(boolean wasCompleted) { this.wasCompleted = wasCompleted; }
+
+    public void setBlockDate(LocalDate blockDate) { this.blockDate = blockDate; }
+    public void setTask(Task task) { this.task = task; }
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
+    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
+    public void setSortOrder(int sortOrder) { this.sortOrder = sortOrder; }
 }

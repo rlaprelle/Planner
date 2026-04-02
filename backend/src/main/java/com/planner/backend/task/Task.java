@@ -212,4 +212,6 @@ public class Task {
     public void setCompletedAt(Instant completedAt) {
         this.completedAt = completedAt;
     }
+
+    public void setUser(AppUser user) { this.user = user; }
 }

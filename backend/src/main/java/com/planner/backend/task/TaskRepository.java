@@ -62,6 +62,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
                                       org.springframework.data.domain.Pageable pageable);
 
     void deleteByProjectId(UUID projectId);
+    void deleteByParentTaskId(UUID parentTaskId);
 
     long countByUserId(UUID userId);
     void deleteByUserId(UUID userId);

@@ -130,7 +130,7 @@ export default function ActiveSessionPage() {
 
   if (!block) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-full bg-gray-50">
         <p className="text-gray-400">Loading session...</p>
       </div>
     )
@@ -143,7 +143,7 @@ export default function ActiveSessionPage() {
     extendMutation.isPending
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-50 to-indigo-50/30 px-4">
+    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-gray-50 to-indigo-50/30 px-4">
       {/* Flash message */}
       {flash && (
         <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl px-6 py-3 text-indigo-600 font-medium z-50">

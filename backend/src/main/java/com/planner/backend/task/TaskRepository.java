@@ -60,4 +60,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             """)
     List<Task> findUpcomingDeadlines(@Param("userId") UUID userId,
                                       org.springframework.data.domain.Pageable pageable);
+
+    long countByUserId(UUID userId);
+    void deleteByUserId(UUID userId);
 }

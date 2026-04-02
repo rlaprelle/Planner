@@ -11,4 +11,7 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     List<Project> findByUserIdAndIsActiveTrueOrderBySortOrderAsc(UUID userId);
 
     Optional<Project> findByIdAndUserId(UUID id, UUID userId);
+
+    long countByUserId(UUID userId);
+    void deleteByUserId(UUID userId);
 }

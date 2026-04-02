@@ -32,4 +32,7 @@ public interface DeferredItemRepository extends JpaRepository<DeferredItem, UUID
               AND (d.deferredUntilDate IS NULL OR d.deferredUntilDate <= :today)
             """)
     long countPendingForUser(@Param("userId") UUID userId, @Param("today") LocalDate today);
+
+    long countByUserId(UUID userId);
+    void deleteByUserId(UUID userId);
 }

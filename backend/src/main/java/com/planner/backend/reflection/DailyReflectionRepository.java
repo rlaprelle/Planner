@@ -20,4 +20,7 @@ public interface DailyReflectionRepository extends JpaRepository<DailyReflection
             ORDER BY r.reflectionDate DESC
             """)
     List<LocalDate> findFinalizedDatesDesc(@Param("user") AppUser user);
+
+    long countByUserId(UUID userId);
+    void deleteByUserId(UUID userId);
 }

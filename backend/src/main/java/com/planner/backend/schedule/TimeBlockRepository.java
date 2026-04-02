@@ -45,4 +45,9 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
 
     @Query("SELECT tb FROM TimeBlock tb LEFT JOIN FETCH tb.task t LEFT JOIN FETCH t.project WHERE tb.id = :id AND tb.user.id = :userId")
     Optional<TimeBlock> findByIdAndUserId(@Param("id") UUID id, @Param("userId") UUID userId);
+
+    void deleteByTaskId(UUID taskId);
+
+    long countByUserId(UUID userId);
+    void deleteByUserId(UUID userId);
 }

@@ -127,4 +127,6 @@ public class Project {
     public void setArchivedAt(Instant archivedAt) {
         this.archivedAt = archivedAt;
     }
+
+    public void setUser(AppUser user) { this.user = user; }
 }

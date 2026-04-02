@@ -110,4 +110,9 @@ public class AppUser implements UserDetails {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
+
+    public void setEmail(String email) { this.email = email; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+    public void setTimezone(String timezone) { this.timezone = timezone; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 }

@@ -84,4 +84,5 @@ public class DeferredItem {
     public void setResolvedProject(Project resolvedProject) { this.resolvedProject = resolvedProject; }
     public void setDeferredUntilDate(LocalDate deferredUntilDate) { this.deferredUntilDate = deferredUntilDate; }
     public void setDeferralCount(int deferralCount) { this.deferralCount = deferralCount; }
+    public void setRawText(String rawText) { this.rawText = rawText; }
 }

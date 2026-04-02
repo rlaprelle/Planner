@@ -14,6 +14,13 @@ import { EndDayPage } from '@/pages/EndDayPage'
 import { StartDayPage } from '@/pages/StartDayPage'
 import { ActiveSessionProvider } from '@/contexts/ActiveSessionContext'
 import ActiveSessionPage from '@/pages/ActiveSessionPage'
+import AdminPage from '@/pages/admin/AdminPage'
+import AdminUsersTable from '@/pages/admin/AdminUsersTable'
+import AdminProjectsTable from '@/pages/admin/AdminProjectsTable'
+import AdminTasksTable from '@/pages/admin/AdminTasksTable'
+import AdminDeferredTable from '@/pages/admin/AdminDeferredTable'
+import AdminReflectionsTable from '@/pages/admin/AdminReflectionsTable'
+import AdminTimeBlocksTable from '@/pages/admin/AdminTimeBlocksTable'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +41,17 @@ function App() {
               {/* Public routes — no sidebar */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+
+              {/* Admin routes — no auth, own layout */}
+              <Route path="/admin" element={<AdminPage />}>
+                <Route index element={<Navigate to="/admin/users" replace />} />
+                <Route path="users" element={<AdminUsersTable />} />
+                <Route path="projects" element={<AdminProjectsTable />} />
+                <Route path="tasks" element={<AdminTasksTable />} />
+                <Route path="deferred" element={<AdminDeferredTable />} />
+                <Route path="reflections" element={<AdminReflectionsTable />} />
+                <Route path="time-blocks" element={<AdminTimeBlocksTable />} />
+              </Route>
 
               {/* Protected routes */}
               <Route element={<ProtectedRoute />}>

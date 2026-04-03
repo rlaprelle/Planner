@@ -55,11 +55,9 @@ function App() {
 
               {/* Protected routes */}
               <Route element={<ProtectedRoute />}>
-                {/* Session page — full-screen, no sidebar */}
-                <Route path="/session/:blockId" element={<ActiveSessionPage />} />
-
                 {/* App routes — wrapped in AppLayout (sidebar + main area) */}
                 <Route element={<AppLayout />}>
+                  <Route path="/session/:blockId" element={<ActiveSessionPage />} />
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/today" element={<TodayPage />} />
                   <Route path="/projects" element={<ProjectsPage />} />

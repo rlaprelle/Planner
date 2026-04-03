@@ -1,19 +1,23 @@
-package com.planner.backend.stats;
+package com.echel.planner.backend.stats;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.deferred.DeferredItemRepository;
-import com.planner.backend.reflection.DailyReflectionRepository;
-import com.planner.backend.schedule.TimeBlockRepository;
-import com.planner.backend.stats.dto.DashboardResponse;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.DeferredItemRepository;
+import com.echel.planner.backend.reflection.DailyReflectionRepository;
+import com.echel.planner.backend.schedule.TimeBlockRepository;
+import com.echel.planner.backend.reflection.DailyReflection;
+import com.echel.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.stats.dto.WeeklySummaryResponse;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 @Service
 @Transactional(readOnly = true)
@@ -69,6 +73,43 @@ public class StatsService {
     }
 
     /**
+     * Computes rolling 7-day stats: tasks completed, points, focus minutes,
+     * streak, and mood/energy trends.
+     */
+    public WeeklySummaryResponse getWeeklySummary(AppUser user) {
+        ZoneId zone = ZoneId.of(user.getTimezone());
+        LocalDate today = LocalDate.now(zone);
+        LocalDate weekStart = today.minusDays(6);
+
+        Instant rangeStart = weekStart.atStartOfDay(zone).toInstant();
+        Instant rangeEnd = today.plusDays(1).atStartOfDay(zone).toInstant();
+
+        List<Task> completed = taskRepository.findCompletedInRange(user.getId(), rangeStart, rangeEnd);
+
+        int tasksCompleted = completed.size();
+        int totalPoints = completed.stream()
+                .mapToInt(t -> t.getPointsEstimate() != null ? t.getPointsEstimate() : 0)
+                .sum();
+        int totalFocusMinutes = completed.stream()
+                .mapToInt(t -> t.getActualMinutes() != null ? t.getActualMinutes() : 0)
+                .sum();
+
+        int streak = computeStreak(user, true);
+
+        List<DailyReflection> reflections = reflectionRepository.findFinalizedInDateRange(
+                user, weekStart, today);
+
+        String energyTrend = computeTrend(reflections, DailyReflection::getEnergyRating);
+        String moodTrend = computeTrend(reflections, DailyReflection::getMoodRating);
+
+        boolean hasActivity = tasksCompleted > 0 || totalFocusMinutes > 0;
+
+        return new WeeklySummaryResponse(
+                tasksCompleted, totalPoints, totalFocusMinutes,
+                streak, energyTrend, moodTrend, hasActivity);
+    }
+
+    /**
      * Counts consecutive finalized-reflection days ending today.
      * If allowYesterdayFallback is true and today has no reflection,
      * counts from yesterday — useful for dashboard display during the day.
@@ -98,5 +139,31 @@ public class StatsService {
         if (dueDate == null || dueDate.isAfter(endOfWeek)) return "NO_DEADLINE";
         if (!dueDate.isAfter(today)) return "TODAY";
         return "THIS_WEEK";
+    }
+
+    /**
+     * Splits reflections into an earlier and later half and compares average
+     * ratings. Returns "improving", "declining", "steady", or null if fewer
+     * than two data points.
+     */
+    private String computeTrend(List<DailyReflection> reflections,
+                                 ToIntFunction<DailyReflection> ratingExtractor) {
+        if (reflections.size() < 2) {
+            return null;
+        }
+        int mid = reflections.size() / 2;
+        double earlier = reflections.subList(0, mid).stream()
+                .mapToInt(ratingExtractor)
+                .average()
+                .orElse(0);
+        double later = reflections.subList(mid, reflections.size()).stream()
+                .mapToInt(ratingExtractor)
+                .average()
+                .orElse(0);
+
+        double diff = later - earlier;
+        if (diff > 0.5) return "improving";
+        if (diff < -0.5) return "declining";
+        return "steady";
     }
 }

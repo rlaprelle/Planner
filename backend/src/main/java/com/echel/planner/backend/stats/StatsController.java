@@ -1,7 +1,8 @@
-package com.planner.backend.stats;
+package com.echel.planner.backend.stats;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.stats.dto.WeeklySummaryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,5 +29,10 @@ public class StatsController {
     @GetMapping("/dashboard")
     public ResponseEntity<DashboardResponse> dashboard(@AuthenticationPrincipal AppUser user) {
         return ResponseEntity.ok(statsService.getDashboard(user));
+    }
+
+    @GetMapping("/weekly-summary")
+    public ResponseEntity<WeeklySummaryResponse> weeklySummary(@AuthenticationPrincipal AppUser user) {
+        return ResponseEntity.ok(statsService.getWeeklySummary(user));
     }
 }

@@ -1,6 +1,6 @@
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
-import com.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +20,18 @@ public interface DailyReflectionRepository extends JpaRepository<DailyReflection
             ORDER BY r.reflectionDate DESC
             """)
     List<LocalDate> findFinalizedDatesDesc(@Param("user") AppUser user);
+
+    @Query("""
+            SELECT r FROM DailyReflection r
+            WHERE r.user = :user
+              AND r.isFinalized = true
+              AND r.reflectionDate >= :start
+              AND r.reflectionDate <= :end
+            ORDER BY r.reflectionDate ASC
+            """)
+    List<DailyReflection> findFinalizedInDateRange(@Param("user") AppUser user,
+                                                    @Param("start") LocalDate start,
+                                                    @Param("end") LocalDate end);
 
     long countByUserId(UUID userId);
     void deleteByUserId(UUID userId);

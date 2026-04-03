@@ -1,5 +1,6 @@
-package com.planner.backend.task;
+package com.echel.planner.backend.task;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,7 +24,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     @Query("""
             SELECT t FROM Task t
             WHERE t.user.id = :userId
-              AND t.status = com.planner.backend.task.TaskStatus.DONE
+              AND t.status = com.echel.planner.backend.task.TaskStatus.DONE
               AND t.completedAt >= :startOfDay
               AND t.archivedAt IS NULL
             ORDER BY t.completedAt DESC
@@ -32,16 +33,28 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
                                          @Param("startOfDay") Instant startOfDay);
 
     @Query("""
+            SELECT t FROM Task t
+            WHERE t.user.id = :userId
+              AND t.status = com.echel.planner.backend.task.TaskStatus.DONE
+              AND t.completedAt >= :start
+              AND t.completedAt < :end
+              AND t.archivedAt IS NULL
+            """)
+    List<Task> findCompletedInRange(@Param("userId") UUID userId,
+                                    @Param("start") Instant start,
+                                    @Param("end") Instant end);
+
+    @Query("""
             SELECT DISTINCT t FROM Task t
             JOIN FETCH t.project p
             WHERE t.user.id = :userId
               AND t.status IN (
-                  com.planner.backend.task.TaskStatus.TODO,
-                  com.planner.backend.task.TaskStatus.IN_PROGRESS)
+                  com.echel.planner.backend.task.TaskStatus.TODO,
+                  com.echel.planner.backend.task.TaskStatus.IN_PROGRESS)
               AND t.archivedAt IS NULL
               AND t.parentTask IS NULL
               AND t.id NOT IN (
-                  SELECT tb.task.id FROM com.planner.backend.schedule.TimeBlock tb
+                  SELECT tb.task.id FROM com.echel.planner.backend.schedule.TimeBlock tb
                   WHERE tb.user.id = :userId
                     AND tb.blockDate = :date
                     AND tb.task IS NOT NULL)
@@ -53,13 +66,13 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             JOIN FETCH t.project p
             WHERE t.user.id = :userId
               AND t.dueDate IS NOT NULL
-              AND t.status != com.planner.backend.task.TaskStatus.DONE
+              AND t.status != com.echel.planner.backend.task.TaskStatus.DONE
               AND t.archivedAt IS NULL
               AND t.parentTask IS NULL
             ORDER BY t.dueDate ASC
             """)
     List<Task> findUpcomingDeadlines(@Param("userId") UUID userId,
-                                      org.springframework.data.domain.Pageable pageable);
+                                      Pageable pageable);
 
     void deleteByProjectId(UUID projectId);
     void deleteByParentTaskId(UUID parentTaskId);

@@ -1,11 +1,11 @@
-package com.planner.backend.stats;
+package com.echel.planner.backend.stats;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.stats.dto.DashboardResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +76,8 @@ class StatsControllerIntegrationTest {
                 List.of(new DashboardResponse.DeadlineSummary(
                         java.util.UUID.randomUUID(), "Fix login", "Auth", "#6366f1",
                         java.time.LocalDate.of(2026, 3, 31), "TODAY")),
-                3);
+                3,
+                List.of());
 
         when(statsService.getDashboard(any(AppUser.class))).thenReturn(response);
 

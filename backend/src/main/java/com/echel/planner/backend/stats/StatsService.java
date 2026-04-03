@@ -6,6 +6,7 @@ import com.echel.planner.backend.reflection.DailyReflectionRepository;
 import com.echel.planner.backend.schedule.TimeBlockRepository;
 import com.echel.planner.backend.reflection.DailyReflection;
 import com.echel.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.stats.dto.DashboardResponse.CelebrationTask;
 import com.echel.planner.backend.stats.dto.WeeklySummaryResponse;
 import com.echel.planner.backend.task.Task;
 import com.echel.planner.backend.task.TaskRepository;
@@ -16,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
@@ -47,7 +51,8 @@ public class StatsService {
     }
 
     public DashboardResponse getDashboard(AppUser user) {
-        LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
+        ZoneId zone = ZoneId.of(user.getTimezone());
+        LocalDate today = LocalDate.now(zone);
 
         long blockCount = timeBlockRepository.countByUserIdAndBlockDate(user.getId(), today);
         long completedCount = timeBlockRepository.countCompletedByUserIdAndBlockDate(user.getId(), today);
@@ -68,12 +73,15 @@ public class StatsService {
 
         long deferredCount = deferredItemRepository.countPendingForUser(user.getId(), today);
 
+        List<CelebrationTask> celebrations = buildCelebrations(user, zone);
+
         return new DashboardResponse(
                 (int) blockCount,
                 (int) completedCount,
                 streak,
                 deadlines,
-                (int) deferredCount);
+                (int) deferredCount,
+                celebrations);
     }
 
     /**
@@ -143,6 +151,58 @@ public class StatsService {
         if (dueDate == null || dueDate.isAfter(endOfWeek)) return "NO_DEADLINE";
         if (!dueDate.isAfter(today)) return "TODAY";
         return "THIS_WEEK";
+    }
+
+    /**
+     * Identifies today's completed tasks worth celebrating:
+     * high points (>= 5), high time (>= 120 min), or long-running (>= 7 days old).
+     */
+    private List<CelebrationTask> buildCelebrations(AppUser user, ZoneId zone) {
+        LocalDate today = LocalDate.now(zone);
+        Instant startOfDay = today.atStartOfDay(zone).toInstant();
+        List<Task> completed = taskRepository.findCompletedTodayForUser(user.getId(), startOfDay);
+
+        List<CelebrationTask> celebrations = new ArrayList<>();
+        for (Task t : completed) {
+            String reason = pickCelebrationReason(t);
+            if (reason != null) {
+                celebrations.add(new CelebrationTask(
+                        t.getId(),
+                        t.getTitle(),
+                        t.getProject().getName(),
+                        reason));
+            }
+        }
+
+        celebrations.sort(Comparator
+                .comparingInt((CelebrationTask c) -> {
+                    if (c.reason().contains("hour") || c.reason().contains("minute")) return 0;
+                    if (c.reason().contains("complexity")) return 1;
+                    return 2;
+                }));
+
+        return celebrations.size() > 3 ? celebrations.subList(0, 3) : celebrations;
+    }
+
+    private String pickCelebrationReason(Task task) {
+        if (task.getActualMinutes() != null && task.getActualMinutes() >= 120) {
+            int hours = task.getActualMinutes() / 60;
+            int mins = task.getActualMinutes() % 60;
+            if (mins == 0) {
+                return hours + (hours == 1 ? " hour" : " hours") + " of focused work";
+            }
+            return hours + "h " + mins + "m of focused work";
+        }
+        if (task.getPointsEstimate() != null && task.getPointsEstimate() >= 5) {
+            return "High complexity task";
+        }
+        if (task.getCreatedAt() != null && task.getCompletedAt() != null) {
+            long days = ChronoUnit.DAYS.between(task.getCreatedAt(), task.getCompletedAt());
+            if (days >= 7) {
+                return "On your list for " + days + " days";
+            }
+        }
+        return null;
     }
 
     /**

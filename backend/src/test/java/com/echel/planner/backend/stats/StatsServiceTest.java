@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -112,6 +113,10 @@ class StatsServiceTest {
         // Deferred items
         when(deferredItemRepository.countPendingForUser(user.getId(), today)).thenReturn(3L);
 
+        // Completed today — none qualifying for celebrations
+        when(taskRepository.findCompletedTodayForUser(eq(user.getId()), any(Instant.class)))
+                .thenReturn(List.of());
+
         DashboardResponse response = statsService.getDashboard(user);
 
         assertThat(response.todayBlockCount()).isEqualTo(4);
@@ -119,6 +124,7 @@ class StatsServiceTest {
         assertThat(response.streakDays()).isEqualTo(3);
         assertThat(response.deferredItemCount()).isEqualTo(3);
         assertThat(response.upcomingDeadlines()).isEmpty();
+        assertThat(response.celebrationTasks()).isEmpty();
     }
 
     @Test
@@ -136,6 +142,10 @@ class StatsServiceTest {
 
         when(taskRepository.findUpcomingDeadlines(eq(user.getId()), any(PageRequest.class)))
                 .thenReturn(List.of(task));
+
+        // Completed today — none qualifying for celebrations
+        when(taskRepository.findCompletedTodayForUser(eq(user.getId()), any(Instant.class)))
+                .thenReturn(List.of());
 
         DashboardResponse response = statsService.getDashboard(user);
 

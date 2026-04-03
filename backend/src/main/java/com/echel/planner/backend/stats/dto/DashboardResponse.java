@@ -1,4 +1,4 @@
-package com.planner.backend.stats.dto;
+package com.echel.planner.backend.stats.dto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,7 +9,8 @@ public record DashboardResponse(
         int todayCompletedCount,
         int streakDays,
         List<DeadlineSummary> upcomingDeadlines,
-        int deferredItemCount
+        int deferredItemCount,
+        List<CelebrationTask> celebrationTasks
 ) {
     public record DeadlineSummary(
             UUID taskId,
@@ -18,5 +19,12 @@ public record DashboardResponse(
             String projectColor,
             LocalDate dueDate,
             String deadlineGroup
+    ) {}
+
+    public record CelebrationTask(
+            UUID taskId,
+            String taskTitle,
+            String projectName,
+            String reason
     ) {}
 }

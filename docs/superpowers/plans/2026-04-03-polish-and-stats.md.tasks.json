@@ -1,0 +1,40 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-03-polish-and-stats.md",
+  "tasks": [
+    {
+      "id": 4,
+      "subject": "Task 1: Weekly Summary Backend",
+      "status": "pending",
+      "description": "**Goal:** Add repository queries, DTO, service method, and controller endpoint for GET /api/v1/stats/weekly-summary.\n\n**Files:**\n- Create: backend/src/main/java/com/echel/planner/backend/stats/dto/WeeklySummaryResponse.java\n- Modify: backend/src/main/java/com/echel/planner/backend/task/TaskRepository.java\n- Modify: backend/src/main/java/com/echel/planner/backend/reflection/DailyReflectionRepository.java\n- Modify: backend/src/main/java/com/echel/planner/backend/stats/StatsService.java\n- Modify: backend/src/main/java/com/echel/planner/backend/stats/StatsController.java\n\n**Verify:** cd backend && mvn test -Dtest=StatsControllerWeeklySummaryTest\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/stats/dto/WeeklySummaryResponse.java\", \"backend/src/main/java/com/echel/planner/backend/task/TaskRepository.java\", \"backend/src/main/java/com/echel/planner/backend/reflection/DailyReflectionRepository.java\", \"backend/src/main/java/com/echel/planner/backend/stats/StatsService.java\", \"backend/src/main/java/com/echel/planner/backend/stats/StatsController.java\"], \"verifyCommand\": \"cd backend && mvn test -Dtest=StatsControllerWeeklySummaryTest\", \"acceptanceCriteria\": [\"GET /api/v1/stats/weekly-summary returns correct stats\", \"Trend calculation works\", \"Empty state returns hasActivity: false\", \"Requires authentication\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 2: Celebration Logic Backend",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Add celebration task identification to the existing dashboard endpoint response.\n\n**Files:**\n- Modify: backend/src/main/java/com/echel/planner/backend/stats/dto/DashboardResponse.java\n- Modify: backend/src/main/java/com/echel/planner/backend/stats/StatsService.java\n\n**Verify:** cd backend && mvn test -Dtest=StatsControllerCelebrationTest\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/stats/dto/DashboardResponse.java\", \"backend/src/main/java/com/echel/planner/backend/stats/StatsService.java\"], \"verifyCommand\": \"cd backend && mvn test -Dtest=StatsControllerCelebrationTest\", \"acceptanceCriteria\": [\"Dashboard includes celebrationTasks array\", \"High points/time/age tasks qualify\", \"Max 3 results\", \"Human-readable reason strings\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 3: Dashboard Weekly Summary Banner",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Add getWeeklySummary() API function and full-width banner card above the existing dashboard grid.\n\n**Files:**\n- Modify: frontend/src/api/dashboard.js\n- Modify: frontend/src/pages/DashboardPage.jsx\n\n**Verify:** Start frontend, navigate to dashboard, confirm banner renders.\n\n```json:metadata\n{\"files\": [\"frontend/src/api/dashboard.js\", \"frontend/src/pages/DashboardPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run dev\", \"acceptanceCriteria\": [\"Banner above 2x2 grid\", \"Shows stats and trends\", \"Null trends omitted\", \"Empty state handled\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 4: Evening Reflection Celebration Callout",
+      "status": "pending",
+      "blockedBy": [5],
+      "description": "**Goal:** Show Notable today callout in End Day reflection phase.\n\n**Files:**\n- Modify: frontend/src/pages/EndDayPage.jsx\n\n**Verify:** Start frontend, navigate to End Day, confirm callout in Phase 2.\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/EndDayPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run dev\", \"acceptanceCriteria\": [\"Callout above reflection form\", \"Shows title/project/reason\", \"Hidden when no celebrations\", \"Soft lavender styling\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 5: Update Implementation Plan Checklist",
+      "status": "pending",
+      "blockedBy": [4, 5, 6, 7],
+      "description": "**Goal:** Check off completed Slice 6 items in the implementation plan spec.\n\n**Files:**\n- Modify: docs/planning/2026-03-30-implementation-plan-design.md\n\n**Verify:** Read spec and confirm checkboxes match work done.\n\n```json:metadata\n{\"files\": [\"docs/planning/2026-03-30-implementation-plan-design.md\"], \"verifyCommand\": \"cat docs/planning/2026-03-30-implementation-plan-design.md\", \"acceptanceCriteria\": [\"Completed items checked off\", \"UI polish remains unchecked\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-03T12:00:00Z"
+}

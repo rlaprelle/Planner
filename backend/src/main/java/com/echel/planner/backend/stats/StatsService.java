@@ -19,6 +19,10 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
+/**
+ * Computes user-facing statistics: planning streaks, daily dashboard data,
+ * and rolling weekly summaries.
+ */
 @Service
 @Transactional(readOnly = true)
 public class StatsService {

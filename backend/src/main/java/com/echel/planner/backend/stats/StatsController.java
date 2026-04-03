@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * REST endpoints for user statistics: streak, dashboard overview, and weekly summary.
+ */
 @RestController
 @RequestMapping("/api/v1/stats")
 public class StatsController {
@@ -31,6 +34,7 @@ public class StatsController {
         return ResponseEntity.ok(statsService.getDashboard(user));
     }
 
+    /** Returns rolling 7-day stats for the authenticated user. */
     @GetMapping("/weekly-summary")
     public ResponseEntity<WeeklySummaryResponse> weeklySummary(@AuthenticationPrincipal AppUser user) {
         return ResponseEntity.ok(statsService.getWeeklySummary(user));

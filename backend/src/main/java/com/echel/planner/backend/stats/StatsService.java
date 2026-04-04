@@ -176,7 +176,7 @@ public class StatsService {
 
         celebrations.sort(Comparator
                 .comparingInt((CelebrationTask c) -> {
-                    if (c.reason().contains("hour") || c.reason().contains("minute")) return 0;
+                    if (c.reason().contains("focused work")) return 0;
                     if (c.reason().contains("complexity")) return 1;
                     return 2;
                 }));

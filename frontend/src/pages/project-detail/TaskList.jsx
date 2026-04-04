@@ -24,7 +24,7 @@ export function TaskList({ tasks, projectId, selectedTask, onSelectTask }) {
   if (topLevel.length === 0) {
     return (
       <div className="py-16 text-center">
-        <p className="text-gray-400 text-sm">No tasks yet.</p>
+        <p className="text-ink-muted text-sm">No tasks yet.</p>
       </div>
     )
   }
@@ -39,7 +39,7 @@ export function TaskList({ tasks, projectId, selectedTask, onSelectTask }) {
 
         return (
           <section key={groupKey}>
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-2">
+            <h3 className="text-xs font-semibold text-ink-muted uppercase tracking-wider px-3 mb-2">
               {DEADLINE_GROUP_LABELS[groupKey]}
             </h3>
             <div className="space-y-0.5">

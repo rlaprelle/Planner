@@ -53,22 +53,22 @@ export default function ProjectDetailPage() {
       {/* Left panel — task list */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-edge bg-surface-raised flex-shrink-0">
           <div>
             <Link
               to="/projects"
-              className="text-xs text-indigo-600 hover:underline focus:outline-none focus:underline"
+              className="text-xs text-primary-500 hover:underline focus:outline-none focus:underline"
             >
               ← Projects
             </Link>
-            <h1 className="text-xl font-semibold text-gray-900 mt-0.5">
+            <h1 className="text-xl font-semibold text-ink-heading mt-0.5">
               {projectLoading ? '…' : (project?.name ?? 'Project')}
             </h1>
           </div>
           <button
             type="button"
             onClick={() => setAddTaskOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors flex-shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors flex-shrink-0"
           >
             <PlusIcon size={15} />
             Add task
@@ -80,7 +80,7 @@ export default function ProjectDetailPage() {
           {isLoading && <Spinner />}
 
           {!isLoading && tasksError && (
-            <div className="py-10 text-center text-sm text-red-500">
+            <div className="py-10 text-center text-sm text-error">
               Failed to load tasks. Please try again.
             </div>
           )}
@@ -98,7 +98,7 @@ export default function ProjectDetailPage() {
 
       {/* Right panel — task details */}
       {resolvedSelectedTask && (
-        <div className="w-96 flex-shrink-0 border-l border-gray-200 overflow-hidden">
+        <div className="w-96 flex-shrink-0 border-l border-edge overflow-hidden">
           <TaskDetailPanel
             key={resolvedSelectedTask.id}
             task={resolvedSelectedTask}

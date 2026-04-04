@@ -73,12 +73,24 @@ export function StartDayPage() {
     const toAdd = suggestedTasks.filter(
       (t) => selectedTaskIds.has(t.id) && !scheduledTaskIds.has(t.id)
     )
+    // Build a list of occupied ranges from event blocks so we can skip over them
+    const eventRanges = gridBlocks
+      .filter((b) => b.isEvent)
+      .map((b) => ({ start: b.startMinutes, end: b.endMinutes }))
+      .sort((a, b) => a.start - b.start)
+
     const lastEnd =
       gridBlocks.length > 0 ? Math.max(...gridBlocks.map((b) => b.endMinutes)) : DAY_START_MINUTES
 
     let currentStart = lastEnd
     const newBlocks = []
     for (const task of toAdd) {
+      // Skip over any event ranges that overlap with where we'd place the block
+      for (const range of eventRanges) {
+        if (currentStart < range.end && currentStart + 60 > range.start) {
+          currentStart = range.end
+        }
+      }
       if (currentStart + 60 > DAY_END_MINUTES) break
       newBlocks.push(makeBlock(task, currentStart, currentStart + 60, gridBlocks.length + newBlocks.length))
       currentStart += 60
@@ -93,6 +105,8 @@ export function StartDayPage() {
   }
 
   function handleRemoveBlock(blockId) {
+    const target = gridBlocks.find((b) => b.id === blockId)
+    if (target?.isEvent) return // events cannot be removed
     setBlocks(gridBlocks.filter((b) => b.id !== blockId))
   }
 
@@ -114,11 +128,13 @@ export function StartDayPage() {
     mutationFn: () =>
       savePlan(
         TODAY,
-        gridBlocks.map((b) => ({
-          taskId: b.task.id,
-          startTime: minutesToTime(b.startMinutes),
-          endTime: minutesToTime(b.endMinutes),
-        }))
+        gridBlocks
+          .filter((b) => !b.isEvent)
+          .map((b) => ({
+            taskId: b.task.id,
+            startTime: minutesToTime(b.startMinutes),
+            endTime: minutesToTime(b.endMinutes),
+          }))
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['schedule'] })
@@ -166,6 +182,8 @@ export function StartDayPage() {
     const activeData = active.data.current
 
     if (activeData.type === 'calendar-block') {
+      // Event blocks cannot be dragged
+      if (activeData.block.isEvent) return
       // Moving an existing block within the calendar
       const { block, blockIndex } = activeData
       const deltaMins = pixelDeltaToMinutes(delta.x)

@@ -1,0 +1,82 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-04-events.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Database Migration",
+      "status": "pending",
+      "description": "**Goal:** Create the `event` table and alter `time_block` and `deferred_item` tables.\n\n**Files:**\n- Create: `backend/src/main/resources/db/migration/V8__create_event.sql`\n\n**Verify:** `cd backend && mvn test` → all existing tests still pass\n\n```json:metadata\n{\"files\": [\"backend/src/main/resources/db/migration/V8__create_event.sql\"], \"verifyCommand\": \"cd backend && mvn test\", \"acceptanceCriteria\": [\"event table created\", \"time_block.event_id FK added\", \"check constraint enforces exactly one of task_id/event_id\", \"deferred_item.resolved_event_id added\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Event Entity, Repository, DTOs, and Service",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Create the Event JPA entity, repository, request/response DTOs, and service with CRUD operations.\n\n**Verify:** `cd backend && mvn test -Dtest=\"EventServiceTest\"` → all pass\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/event/Event.java\", \"backend/src/main/java/com/echel/planner/backend/event/EventRepository.java\", \"backend/src/main/java/com/echel/planner/backend/event/dto/EventCreateRequest.java\", \"backend/src/main/java/com/echel/planner/backend/event/dto/EventUpdateRequest.java\", \"backend/src/main/java/com/echel/planner/backend/event/dto/EventResponse.java\", \"backend/src/main/java/com/echel/planner/backend/event/EventService.java\", \"backend/src/test/java/com/echel/planner/backend/event/EventServiceTest.java\"], \"verifyCommand\": \"cd backend && mvn test -Dtest=EventServiceTest\", \"acceptanceCriteria\": [\"Event entity maps all migration columns\", \"Repository queries for ownership and date-based lookup\", \"Service CRUD with ownership checks and validation\", \"Unit tests cover success and error paths\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: Event Controller",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Create REST endpoints for Event CRUD and add exception handling.\n\n**Verify:** `cd backend && mvn test -Dtest=\"EventControllerIntegrationTest\"` → all pass\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/event/EventController.java\", \"backend/src/main/java/com/echel/planner/backend/event/EventExceptionHandler.java\", \"backend/src/test/java/com/echel/planner/backend/event/EventControllerIntegrationTest.java\"], \"verifyCommand\": \"cd backend && mvn test -Dtest=EventControllerIntegrationTest\", \"acceptanceCriteria\": [\"All 5 CRUD endpoints work\", \"404 for unknown events\", \"400 for validation errors\", \"Integration tests cover success and error paths\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 4: Deferred Item Conversion to Event",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add convert-to-event endpoint on deferred items.\n\n**Verify:** `cd backend && mvn test -Dtest=\"DeferredItemConvertToEventTest\"` → all pass\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/deferred/dto/ConvertToEventRequest.java\", \"backend/src/main/java/com/echel/planner/backend/deferred/DeferredItem.java\", \"backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemService.java\", \"backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemController.java\", \"backend/src/main/java/com/echel/planner/backend/deferred/dto/DeferredItemResponse.java\"], \"verifyCommand\": \"cd backend && mvn test -Dtest=DeferredItemConvertToEventTest\", \"acceptanceCriteria\": [\"convert-to-event endpoint creates Event and marks deferred item processed\", \"DeferredItemResponse includes resolvedEventId\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 5: TimeBlock Entity Changes and Schedule Service Updates",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add event relationship to TimeBlock, update schedule service to materialize events at plan time.\n\n**Verify:** `cd backend && mvn test` → all pass\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/schedule/TimeBlock.java\", \"backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockRepository.java\", \"backend/src/main/java/com/echel/planner/backend/schedule/dto/TimeBlockResponse.java\", \"backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java\"], \"verifyCommand\": \"cd backend && mvn test\", \"acceptanceCriteria\": [\"TimeBlock has event ManyToOne\", \"TimeBlockResponse includes EventSummary\", \"savePlan materializes events\", \"savePlan validates no overlaps with events\", \"Session methods reject event blocks\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 6: Admin Event CRUD (Backend)",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add admin CRUD endpoints for Events.\n\n**Verify:** `cd backend && mvn test -Dtest=\"AdminEvent*\"` → all pass\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/admin/AdminEventController.java\", \"backend/src/main/java/com/echel/planner/backend/admin/AdminEventService.java\", \"backend/src/main/java/com/echel/planner/backend/admin/dto/AdminEventRequest.java\", \"backend/src/main/java/com/echel/planner/backend/admin/dto/AdminEventResponse.java\"], \"verifyCommand\": \"cd backend && mvn test -Dtest=AdminEvent*\", \"acceptanceCriteria\": [\"Standard admin CRUD at /api/v1/admin/events\", \"Tests follow existing patterns\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 7: Frontend API Layer",
+      "status": "pending",
+      "blockedBy": [],
+      "description": "**Goal:** Add frontend API functions for events.\n\n**Verify:** `cd frontend && npm run lint` → no errors\n\n```json:metadata\n{\"files\": [\"frontend/src/api/events.js\", \"frontend/src/api/deferred.js\", \"frontend/src/api/admin.js\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Event CRUD API functions exported\", \"convertDeferredToEvent added\", \"Admin event CRUD functions added\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 8: Convert to Event Form (Frontend)",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** Add Convert to Event button and form to deferred items.\n\n**Verify:** `cd frontend && npm run lint` → no errors\n\n```json:metadata\n{\"files\": [\"frontend/src/components/deferred/ConvertToEventForm.jsx\", \"frontend/src/components/deferred/DeferredItemActions.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Convert to Event button alongside Convert to Task\", \"Form has project, title, date, start/end time, energy level fields\", \"Successful conversion marks item processed\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 9: Schedule Grid Event Support (Frontend)",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** Render event blocks as immovable on schedule grid, update pushBlocks.\n\n**Verify:** `cd frontend && npm run lint` → no errors\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/start-day/EventBlock.jsx\", \"frontend/src/pages/start-day/pushBlocks.js\", \"frontend/src/pages/start-day/TimeBlockGrid.jsx\", \"frontend/src/pages/StartDayPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Events auto-loaded and rendered\", \"Event blocks visually distinct\", \"pushBlocks rejects overlaps with events\", \"savePlan sends only task blocks\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 10: Admin Event CRUD Page (Frontend)",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** Add admin page for Event CRUD.\n\n**Verify:** `cd frontend && npm run lint` → no errors\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/admin/AdminEventsTable.jsx\", \"frontend/src/pages/admin/AdminPage.jsx\", \"frontend/src/App.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Events admin page with table and CRUD\", \"Accessible via admin sidebar\", \"Route wired up\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 11: E2E Tests",
+      "status": "pending",
+      "blockedBy": [7, 8],
+      "description": "**Goal:** Add Playwright E2E tests for Event functionality.\n\n**Verify:** `cd e2e && npx playwright test events` → all pass\n\n```json:metadata\n{\"files\": [\"e2e/fixtures/data.ts\", \"e2e/fixtures/mocks.ts\", \"e2e/tests/events.spec.ts\"], \"verifyCommand\": \"cd e2e && npx playwright test events\", \"acceptanceCriteria\": [\"Event blocks render on schedule grid\", \"Deferred items show Task and Event buttons\", \"Convert-to-event form works\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-04T12:00:00Z"
+}

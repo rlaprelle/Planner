@@ -1,6 +1,7 @@
 package com.echel.planner.backend.schedule.dto;
 
 import com.echel.planner.backend.schedule.TimeBlock;
+import com.echel.planner.backend.task.EnergyLevel;
 import com.echel.planner.backend.task.TaskStatus;
 
 import java.time.Instant;
@@ -17,7 +18,8 @@ public record TimeBlockResponse(
         Instant actualStart,
         Instant actualEnd,
         boolean wasCompleted,
-        TaskSummary task
+        TaskSummary task,
+        EventSummary event
 ) {
     public record TaskSummary(
             UUID id,
@@ -27,6 +29,15 @@ public record TimeBlockResponse(
             String projectColor,
             TaskStatus status,
             Short pointsEstimate
+    ) {}
+
+    public record EventSummary(
+            UUID id,
+            String title,
+            UUID projectId,
+            String projectName,
+            String projectColor,
+            EnergyLevel energyLevel
     ) {}
 
     public static TimeBlockResponse from(TimeBlock block) {
@@ -43,6 +54,20 @@ public record TimeBlockResponse(
                     t.getPointsEstimate()
             );
         }
+
+        EventSummary eventSummary = null;
+        if (block.getEvent() != null) {
+            var e = block.getEvent();
+            eventSummary = new EventSummary(
+                    e.getId(),
+                    e.getTitle(),
+                    e.getProject().getId(),
+                    e.getProject().getName(),
+                    e.getProject().getColor(),
+                    e.getEnergyLevel()
+            );
+        }
+
         return new TimeBlockResponse(
                 block.getId(),
                 block.getBlockDate(),
@@ -52,7 +77,8 @@ public record TimeBlockResponse(
                 block.getActualStart(),
                 block.getActualEnd(),
                 block.isWasCompleted(),
-                taskSummary
+                taskSummary,
+                eventSummary
         );
     }
 }

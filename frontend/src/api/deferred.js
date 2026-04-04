@@ -37,3 +37,11 @@ export async function dismissDeferredItem(id) {
   })
   return handleResponse(res)
 }
+
+export async function convertDeferredToEvent(id, payload) {
+  const res = await authFetch(`${BASE}/deferred/${id}/convert-to-event`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+  return handleResponse(res)
+}

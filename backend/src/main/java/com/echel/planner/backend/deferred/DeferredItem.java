@@ -1,6 +1,7 @@
 package com.echel.planner.backend.deferred;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.event.Event;
 import com.echel.planner.backend.project.Project;
 import com.echel.planner.backend.task.Task;
 import jakarta.persistence.*;
@@ -41,6 +42,10 @@ public class DeferredItem {
     @JoinColumn(name = "resolved_project_id")
     private Project resolvedProject;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resolved_event_id")
+    private Event resolvedEvent;
+
     @Column(name = "deferred_until_date")
     private LocalDate deferredUntilDate;
 
@@ -71,6 +76,7 @@ public class DeferredItem {
     public Instant getProcessedAt() { return processedAt; }
     public Task getResolvedTask() { return resolvedTask; }
     public Project getResolvedProject() { return resolvedProject; }
+    public Event getResolvedEvent() { return resolvedEvent; }
     public LocalDate getDeferredUntilDate() { return deferredUntilDate; }
     public int getDeferralCount() { return deferralCount; }
     public Instant getCreatedAt() { return createdAt; }
@@ -82,6 +88,7 @@ public class DeferredItem {
     public void setProcessedAt(Instant processedAt) { this.processedAt = processedAt; }
     public void setResolvedTask(Task resolvedTask) { this.resolvedTask = resolvedTask; }
     public void setResolvedProject(Project resolvedProject) { this.resolvedProject = resolvedProject; }
+    public void setResolvedEvent(Event resolvedEvent) { this.resolvedEvent = resolvedEvent; }
     public void setDeferredUntilDate(LocalDate deferredUntilDate) { this.deferredUntilDate = deferredUntilDate; }
     public void setDeferralCount(int deferralCount) { this.deferralCount = deferralCount; }
     public void setRawText(String rawText) { this.rawText = rawText; }

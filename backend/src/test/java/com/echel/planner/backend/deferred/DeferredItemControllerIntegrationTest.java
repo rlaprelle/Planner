@@ -69,7 +69,7 @@ class DeferredItemControllerIntegrationTest {
         DeferredItemCreateRequest req = new DeferredItemCreateRequest("Buy oat milk");
         DeferredItemResponse resp = new DeferredItemResponse(
                 UUID.randomUUID(), user.getId(), "Buy oat milk",
-                false, Instant.now(), null, null, null, null, 0,
+                false, Instant.now(), null, null, null, null, null, 0,
                 Instant.now(), Instant.now()
         );
         when(deferredItemService.create(any(AppUser.class), any(DeferredItemCreateRequest.class)))
@@ -109,7 +109,7 @@ class DeferredItemControllerIntegrationTest {
     void listPending_validAuth_returns200WithItems() throws Exception {
         DeferredItemResponse item = new DeferredItemResponse(
                 UUID.randomUUID(), user.getId(), "Call dentist",
-                false, Instant.now(), null, null, null, null, 0,
+                false, Instant.now(), null, null, null, null, null, 0,
                 Instant.now(), Instant.now()
         );
         when(deferredItemService.listPending(any(AppUser.class))).thenReturn(List.of(item));
@@ -182,7 +182,7 @@ class DeferredItemControllerIntegrationTest {
         DeferRequest req = new DeferRequest(DeferRequest.DeferDuration.ONE_DAY);
         DeferredItemResponse resp = new DeferredItemResponse(
                 itemId, user.getId(), "Buy oat milk",
-                false, Instant.now(), null, null, null,
+                false, Instant.now(), null, null, null, null,
                 java.time.LocalDate.now().plusDays(1), 1,
                 Instant.now(), Instant.now());
 
@@ -212,7 +212,7 @@ class DeferredItemControllerIntegrationTest {
         UUID itemId = UUID.randomUUID();
         DeferredItemResponse resp = new DeferredItemResponse(
                 itemId, user.getId(), "Old thought",
-                true, Instant.now(), Instant.now(), null, null, null, 0,
+                true, Instant.now(), Instant.now(), null, null, null, null, 0,
                 Instant.now(), Instant.now());
 
         when(deferredItemService.dismiss(any(AppUser.class), any(UUID.class))).thenReturn(resp);

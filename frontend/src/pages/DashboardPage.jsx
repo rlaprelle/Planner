@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { getDashboard } from '@/api/dashboard'
+import { getDashboard, getWeeklySummary } from '@/api/dashboard'
 import { getScheduleToday } from '@/api/schedule'
 
 function ProgressBar({ value, max }) {
@@ -28,6 +28,55 @@ function Card({ children, className = '', ...rest }) {
 function CardLabel({ children }) {
   return (
     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{children}</p>
+  )
+}
+
+function formatFocusTime(minutes) {
+  if (!minutes || minutes === 0) return '0m'
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  if (h === 0) return `${m}m`
+  if (m === 0) return `${h}h`
+  return `${h}h ${m}m`
+}
+
+function WeeklyBanner({ summary }) {
+  if (!summary) return null
+
+  if (!summary.hasActivity) {
+    return (
+      <Card className="mb-4">
+        <CardLabel>Your Week</CardLabel>
+        <p className="text-sm text-gray-500">No activity yet this week.</p>
+      </Card>
+    )
+  }
+
+  const trendParts = []
+  if (summary.streakDays > 0) {
+    trendParts.push(`${summary.streakDays}-day streak`)
+  }
+  if (summary.energyTrend) {
+    trendParts.push(`Energy: ${summary.energyTrend}`)
+  }
+  if (summary.moodTrend) {
+    trendParts.push(`Mood: ${summary.moodTrend}`)
+  }
+
+  return (
+    <Card className="mb-4">
+      <CardLabel>Your Week</CardLabel>
+      <p className="text-lg font-semibold text-gray-900">
+        {summary.tasksCompleted} {summary.tasksCompleted === 1 ? 'task' : 'tasks'} completed
+        <span className="text-gray-400 font-normal mx-2">·</span>
+        {summary.totalPoints} {summary.totalPoints === 1 ? 'point' : 'points'}
+        <span className="text-gray-400 font-normal mx-2">·</span>
+        {formatFocusTime(summary.totalFocusMinutes)} focused
+      </p>
+      {trendParts.length > 0 && (
+        <p className="mt-1 text-sm text-gray-500">{trendParts.join(' · ')}</p>
+      )}
+    </Card>
   )
 }
 
@@ -59,6 +108,11 @@ export function DashboardPage() {
     queryKey: ['schedule', TODAY],
     queryFn: getScheduleToday,
   })
+  const { data: weeklySummary } = useQuery({
+    queryKey: ['stats', 'weekly-summary'],
+    queryFn: getWeeklySummary,
+  })
+
   const nextBlock = todayBlocks?.find(
     (b) => b.task && b.task.status !== 'DONE' && !b.actualEnd
   )
@@ -80,6 +134,8 @@ export function DashboardPage() {
       )}
 
       <h1 className="text-2xl font-semibold text-gray-900 mb-6">Dashboard</h1>
+
+      <WeeklyBanner summary={weeklySummary} />
 
       <div className="grid grid-cols-2 gap-4 mb-6">
 

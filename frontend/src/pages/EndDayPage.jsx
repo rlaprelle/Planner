@@ -5,6 +5,7 @@ import { getDeferredItems } from '@/api/deferred'
 import { DeferredItemActions } from '@/components/deferred/DeferredItemActions'
 import { saveReflection, getStreak } from '@/api/reflection'
 import { getTodayCompletedTasks } from '@/api/tasks'
+import { getDashboard } from '@/api/dashboard'
 
 const ENERGY_LABELS = { 1: 'Drained', 2: 'Low', 3: 'Okay', 4: 'Good', 5: 'Energized' }
 const MOOD_LABELS = { 1: 'Rough', 2: 'Meh', 3: 'Okay', 4: 'Good', 5: 'Great' }
@@ -20,6 +21,13 @@ function Phase2() {
     queryKey: ['tasks', 'completed-today'],
     queryFn: getTodayCompletedTasks,
   })
+
+  const { data: dashboardData } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: getDashboard,
+  })
+
+  const celebrations = dashboardData?.celebrationTasks ?? []
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -72,6 +80,27 @@ function Phase2() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {celebrations.length > 0 && (
+        <div className="mb-6">
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            Notable today
+          </p>
+          <div className="space-y-2">
+            {celebrations.map((c) => (
+              <div
+                key={c.taskId}
+                className="bg-indigo-50/70 border border-indigo-100 rounded-lg px-4 py-3"
+              >
+                <p className="text-sm font-medium text-gray-800">{c.taskTitle}</p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {c.projectName} — {c.reason}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

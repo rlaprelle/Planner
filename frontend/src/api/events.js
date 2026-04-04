@@ -15,6 +15,11 @@ export async function createEvent(projectId, data) {
   return handleResponse(res)
 }
 
+export async function getEventsForDate(date) {
+  const res = await authFetch(`${BASE}/events/for-date?date=${date}`)
+  return handleResponse(res)
+}
+
 export async function getEvent(eventId) {
   const res = await authFetch(`${BASE}/events/${eventId}`)
   return handleResponse(res)

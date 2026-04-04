@@ -5,8 +5,9 @@ import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@
 import { format } from 'date-fns'
 
 import { getSuggestedTasks, getScheduleToday, savePlan } from '@/api/schedule'
+import { getEventsForDate } from '@/api/events'
 import { useTimeGrid, DAY_START_MINUTES, DAY_END_MINUTES } from './start-day/useTimeGrid'
-import { pushBlocks, toGridBlock, snapTo15, minutesToTime } from './start-day/pushBlocks'
+import { pushBlocks, toGridBlock, snapTo15, minutesToTime, timeToMinutes } from './start-day/pushBlocks'
 import { TimeBlockGrid } from './start-day/TimeBlockGrid'
 import { TaskBrowserRow } from './start-day/TaskBrowserRow'
 
@@ -32,6 +33,12 @@ export function StartDayPage() {
     select: (data) => data.map(toGridBlock),
   })
 
+  // Fetch events for today so they appear on the grid before savePlan materializes them
+  const { data: todayEvents = [] } = useQuery({
+    queryKey: ['events', 'for-date', TODAY],
+    queryFn: () => getEventsForDate(TODAY),
+  })
+
   // --- Local state ---
   const [blocks, setBlocks] = useState(null) // null = not yet initialised from server
   const [selectedTaskIds, setSelectedTaskIds] = useState(new Set())
@@ -39,8 +46,47 @@ export function StartDayPage() {
   const [activeTaskCard, setActiveTaskCard] = useState(null) // for DragOverlay
   const [dropPreview, setDropPreview] = useState(null) // { startMinutes, endMinutes } while dragging over grid
 
+  // Build event grid blocks from the events query (for days with no saved plan yet).
+  // If existingBlocks already contains materialized event TimeBlocks, skip duplicates.
+  const eventGridBlocks = useMemo(() => {
+    const materializedEventIds = new Set(
+      existingBlocks.filter((b) => b.isEvent).map((b) => b.event?.id)
+    )
+    return todayEvents
+      .filter((evt) => !materializedEventIds.has(evt.id))
+      .map((evt) => ({
+        id: `event-${evt.id}`,
+        blockDate: evt.blockDate,
+        startTime: evt.startTime,
+        endTime: evt.endTime,
+        startMinutes: timeToMinutes(evt.startTime),
+        endMinutes: timeToMinutes(evt.endTime),
+        sortOrder: 0,
+        actualStart: null,
+        actualEnd: null,
+        wasCompleted: false,
+        task: null,
+        event: {
+          id: evt.id,
+          title: evt.title,
+          projectId: evt.projectId,
+          projectName: evt.projectName,
+          projectColor: evt.projectColor,
+          energyLevel: evt.energyLevel,
+        },
+        isEvent: true,
+      }))
+  }, [todayEvents, existingBlocks])
+
+  // Merge server blocks with event blocks, sorted by start time
+  const serverBlocks = useMemo(() => {
+    const combined = [...existingBlocks, ...eventGridBlocks]
+    combined.sort((a, b) => a.startMinutes - b.startMinutes)
+    return combined
+  }, [existingBlocks, eventGridBlocks])
+
   // Initialise blocks from server once (mid-day replanning support)
-  const gridBlocks = blocks ?? existingBlocks
+  const gridBlocks = blocks ?? serverBlocks
 
   const scheduledTaskIds = useMemo(
     () => new Set(gridBlocks.map((b) => b.task?.id).filter(Boolean)),

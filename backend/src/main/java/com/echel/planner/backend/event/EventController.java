@@ -5,6 +5,8 @@ import com.echel.planner.backend.event.dto.EventCreateRequest;
 import com.echel.planner.backend.event.dto.EventResponse;
 import com.echel.planner.backend.event.dto.EventUpdateRequest;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.time.LocalDate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,6 +44,15 @@ public class EventController {
             @AuthenticationPrincipal AppUser user,
             @PathVariable UUID projectId) {
         return ResponseEntity.ok(eventService.listByProject(user, projectId));
+    }
+
+    /** Returns non-archived events for a specific date. Used by the schedule grid. */
+    @GetMapping("/api/v1/events/for-date")
+    public ResponseEntity<List<EventResponse>> listForDate(
+            @AuthenticationPrincipal AppUser user,
+            @RequestParam LocalDate date) {
+        List<Event> events = eventService.findForDate(user, date);
+        return ResponseEntity.ok(events.stream().map(EventResponse::from).toList());
     }
 
     /** Returns a single event by id. */

@@ -21,6 +21,7 @@ import AdminTasksTable from '@/pages/admin/AdminTasksTable'
 import AdminDeferredTable from '@/pages/admin/AdminDeferredTable'
 import AdminReflectionsTable from '@/pages/admin/AdminReflectionsTable'
 import AdminTimeBlocksTable from '@/pages/admin/AdminTimeBlocksTable'
+import AdminEventsTable from '@/pages/admin/AdminEventsTable'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +52,7 @@ function App() {
                 <Route path="deferred" element={<AdminDeferredTable />} />
                 <Route path="reflections" element={<AdminReflectionsTable />} />
                 <Route path="time-blocks" element={<AdminTimeBlocksTable />} />
+                <Route path="events" element={<AdminEventsTable />} />
               </Route>
 
               {/* Protected routes */}

@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/admin/deferred', label: 'Deferred Items' },
   { to: '/admin/reflections', label: 'Reflections' },
   { to: '/admin/time-blocks', label: 'Time Blocks' },
+  { to: '/admin/events', label: 'Events' },
 ]
 
 export default function AdminPage() {

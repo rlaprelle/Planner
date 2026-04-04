@@ -1,6 +1,6 @@
-package com.planner.backend.admin.dto;
+package com.echel.planner.backend.admin.dto;
 
-import com.planner.backend.schedule.TimeBlock;
+import com.echel.planner.backend.schedule.TimeBlock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;

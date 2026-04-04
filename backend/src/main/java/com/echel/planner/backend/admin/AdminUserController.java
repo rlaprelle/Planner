@@ -1,8 +1,8 @@
-package com.planner.backend.admin;
+package com.echel.planner.backend.admin;
 
-import com.planner.backend.admin.dto.AdminUserRequest;
-import com.planner.backend.admin.dto.AdminUserResponse;
-import com.planner.backend.admin.dto.DependentCountResponse;
+import com.echel.planner.backend.admin.dto.AdminUserRequest;
+import com.echel.planner.backend.admin.dto.AdminUserResponse;
+import com.echel.planner.backend.admin.dto.DependentCountResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

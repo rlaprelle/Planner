@@ -1,7 +1,7 @@
-package com.planner.backend.admin;
+package com.echel.planner.backend.admin;
 
-import com.planner.backend.admin.dto.AdminTimeBlockRequest;
-import com.planner.backend.admin.dto.AdminTimeBlockResponse;
+import com.echel.planner.backend.admin.dto.AdminTimeBlockRequest;
+import com.echel.planner.backend.admin.dto.AdminTimeBlockResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
-package com.planner.backend.admin.dto;
+package com.echel.planner.backend.admin.dto;
 
-import com.planner.backend.task.Task;
+import com.echel.planner.backend.task.Task;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;

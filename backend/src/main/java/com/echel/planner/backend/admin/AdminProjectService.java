@@ -1,13 +1,13 @@
-package com.planner.backend.admin;
+package com.echel.planner.backend.admin;
 
-import com.planner.backend.admin.dto.AdminProjectRequest;
-import com.planner.backend.admin.dto.AdminProjectResponse;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.deferred.DeferredItemRepository;
-import com.planner.backend.project.Project;
-import com.planner.backend.project.ProjectRepository;
-import com.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.admin.dto.AdminProjectRequest;
+import com.echel.planner.backend.admin.dto.AdminProjectResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.deferred.DeferredItemRepository;
+import com.echel.planner.backend.project.Project;
+import com.echel.planner.backend.project.ProjectRepository;
+import com.echel.planner.backend.task.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

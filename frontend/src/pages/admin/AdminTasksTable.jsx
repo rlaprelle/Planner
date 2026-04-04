@@ -1,9 +1,7 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { getTasks, createTask, updateTask, deleteTask, getUsers, getProjects } from '@/api/admin'
-import { AdminTable } from './components/AdminTable'
-import { AdminFormModal } from './components/AdminFormModal'
-import { DeleteConfirmDialog } from './components/DeleteConfirmDialog'
+import { useAdminCrud } from './hooks/useAdminCrud'
+import { AdminCrudPage } from './components/AdminCrudPage'
 
 const COLUMNS = [
   { key: 'userEmail', label: 'User' },
@@ -30,12 +28,6 @@ const ENERGY_OPTIONS = [
 ]
 
 export default function AdminTasksTable() {
-  const queryClient = useQueryClient()
-  const [formOpen, setFormOpen] = useState(false)
-  const [editItem, setEditItem] = useState(null)
-  const [deleteItem, setDeleteItem] = useState(null)
-
-  const { data: tasks = [], isLoading } = useQuery({ queryKey: ['admin', 'tasks'], queryFn: getTasks })
   const { data: users = [] } = useQuery({ queryKey: ['admin', 'users'], queryFn: getUsers })
   const { data: projects = [] } = useQuery({ queryKey: ['admin', 'projects'], queryFn: getProjects })
 
@@ -55,47 +47,10 @@ export default function AdminTasksTable() {
     { name: 'sortOrder', label: 'Sort Order', type: 'number', defaultValue: 0 },
   ]
 
-  const createMutation = useMutation({
-    mutationFn: (data) => createTask(data),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin', 'tasks'] }); setFormOpen(false) },
-  })
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => updateTask(id, data),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin', 'tasks'] }); setFormOpen(false); setEditItem(null) },
-  })
-  const deleteMutation = useMutation({
-    mutationFn: (id) => deleteTask(id),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin', 'tasks'] }); setDeleteItem(null) },
+  const crud = useAdminCrud({
+    queryKey: ['admin', 'tasks'],
+    listFn: getTasks, createFn: createTask, updateFn: updateTask, deleteFn: deleteTask,
   })
 
-  const handleEdit = (row) => { setEditItem(row); setFormOpen(true) }
-  const handleDelete = (row) => setDeleteItem(row)
-  const handleSubmit = (data) => {
-    if (editItem) {
-      updateMutation.mutate({ id: editItem.id, data })
-    } else {
-      createMutation.mutate(data)
-    }
-  }
-
-  if (isLoading) return <div className="text-gray-400 py-8 text-center">Loading...</div>
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold text-gray-900">Tasks</h1>
-        <button onClick={() => { setEditItem(null); setFormOpen(true) }}
-                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-          + Create Task
-        </button>
-      </div>
-      <AdminTable columns={COLUMNS} data={tasks} onEdit={handleEdit} onDelete={handleDelete} entityName="tasks" />
-      <AdminFormModal open={formOpen} onOpenChange={(open) => { setFormOpen(open); if (!open) setEditItem(null) }}
-        title={editItem ? 'Edit Task' : 'Create Task'} fields={formFields} initialValues={editItem}
-        onSubmit={handleSubmit} isPending={createMutation.isPending || updateMutation.isPending} />
-      <DeleteConfirmDialog open={!!deleteItem} onOpenChange={(open) => { if (!open) setDeleteItem(null) }}
-        entityName="task" onConfirm={() => deleteMutation.mutate(deleteItem.id)}
-        isPending={deleteMutation.isPending} />
-    </div>
-  )
+  return <AdminCrudPage title="Tasks" entityName="Task" columns={COLUMNS} fields={formFields} crud={crud} />
 }

@@ -1,4 +1,4 @@
-package com.planner.backend.admin.dto;
+package com.echel.planner.backend.admin.dto;
 
 public record DependentCountResponse(
         long projects,

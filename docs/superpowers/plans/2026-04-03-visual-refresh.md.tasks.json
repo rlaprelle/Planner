@@ -1,0 +1,68 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-03-visual-refresh.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: Foundation — Tailwind Config + Global Styles + Shared Components",
+      "status": "pending",
+      "description": "**Goal:** Establish the design token foundation that all other tasks depend on.\n\n**Files:**\n- Modify: `frontend/tailwind.config.js`\n- Modify: `frontend/src/index.css`\n- Create: `frontend/src/components/ui/Card.jsx`\n- Create: `frontend/src/components/ui/CardLabel.jsx`\n- Create: `frontend/src/components/ui/ProgressBar.jsx`\n\n**Verify:** `cd frontend && npm run dev` starts without errors\n\n```json:metadata\n{\"files\": [\"frontend/tailwind.config.js\", \"frontend/src/index.css\", \"frontend/src/components/ui/Card.jsx\", \"frontend/src/components/ui/CardLabel.jsx\", \"frontend/src/components/ui/ProgressBar.jsx\"], \"verifyCommand\": \"cd frontend && npx tailwindcss --help > /dev/null 2>&1 && echo OK\", \"acceptanceCriteria\": [\"Tailwind config has all color/shadow tokens\", \"index.css sets body defaults\", \"Shared components render with new tokens\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: App Shell — Sidebar + Quick Capture",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Apply warm palette to sidebar and quick capture modal.\n\n**Files:**\n- Modify: `frontend/src/layouts/AppLayout.jsx`\n- Modify: `frontend/src/components/QuickCapture.jsx`\n\n**Verify:** `cd frontend && npm run lint`\n\n```json:metadata\n{\"files\": [\"frontend/src/layouts/AppLayout.jsx\", \"frontend/src/components/QuickCapture.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Sidebar uses surface/edge/primary tokens\", \"Active nav items use surface-accent\", \"Quick capture modal uses new tokens\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Dashboard",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Transform dashboard with warm palette and time-based greeting.\n\n**Files:**\n- Modify: `frontend/src/pages/DashboardPage.jsx`\n\n**Verify:** `cd frontend && npm run lint`\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/DashboardPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Uses shared Card/CardLabel/ProgressBar\", \"Time-based greeting with user name\", \"Deadline badges use deadline-* tokens\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Auth Pages — Login + Register",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Apply warm palette to login and register pages.\n\n**Files:**\n- Modify: `frontend/src/pages/LoginPage.jsx`\n- Modify: `frontend/src/pages/RegisterPage.jsx`\n\n**Verify:** `cd frontend && npm run lint`\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/LoginPage.jsx\", \"frontend/src/pages/RegisterPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Page backgrounds use surface token\", \"Cards use shadow-modal\", \"Buttons use primary-* tokens\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Projects — List, Detail, Tasks",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Apply warm palette to projects page, project detail, task components.\n\n**Files:**\n- Modify: `frontend/src/pages/ProjectsPage.jsx`\n- Modify: `frontend/src/pages/ProjectDetailPage.jsx`\n- Modify: `frontend/src/pages/project-detail/TaskRow.jsx`\n- Modify: `frontend/src/pages/project-detail/TaskDetailPanel.jsx`\n- Modify: `frontend/src/pages/project-detail/TaskList.jsx`\n- Modify: `frontend/src/pages/project-detail/AddTaskModal.jsx`\n\n**Verify:** `cd frontend && npm run lint`\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/ProjectsPage.jsx\", \"frontend/src/pages/ProjectDetailPage.jsx\", \"frontend/src/pages/project-detail/TaskRow.jsx\", \"frontend/src/pages/project-detail/TaskDetailPanel.jsx\", \"frontend/src/pages/project-detail/TaskList.jsx\", \"frontend/src/pages/project-detail/AddTaskModal.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Project rows use shadow-card\", \"Modals use shadow-modal\", \"Task checkboxes use success color\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Start Day — Planning Page",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Apply warm palette to morning planning page.\n\n**Files:**\n- Modify: `frontend/src/pages/StartDayPage.jsx`\n- Modify: `frontend/src/pages/start-day/TimeBlockGrid.jsx`\n- Modify: `frontend/src/pages/start-day/TimeBlock.jsx`\n- Modify: `frontend/src/pages/start-day/TaskBrowserRow.jsx`\n- Modify: `frontend/src/pages/start-day/TaskCard.jsx`\n\n**Verify:** `cd frontend && npm run lint`\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/StartDayPage.jsx\", \"frontend/src/pages/start-day/TimeBlockGrid.jsx\", \"frontend/src/pages/start-day/TimeBlock.jsx\", \"frontend/src/pages/start-day/TaskBrowserRow.jsx\", \"frontend/src/pages/start-day/TaskCard.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Section containers use shadow-card\", \"Due Today/This Week use deadline tokens\", \"Time blocks use primary-500\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Active Session",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Apply warm palette to focus session page.\n\n**Files:**\n- Modify: `frontend/src/pages/ActiveSessionPage.jsx`\n- Modify: `frontend/src/pages/active-session/TimerCircle.jsx`\n- Modify: `frontend/src/pages/active-session/SubtaskChecklist.jsx`\n\n**Verify:** `cd frontend && npm run lint`\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/ActiveSessionPage.jsx\", \"frontend/src/pages/active-session/TimerCircle.jsx\", \"frontend/src/pages/active-session/SubtaskChecklist.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Page gradient uses surface/primary-50\", \"Timer SVG uses primary-200/500 hex\", \"Subtask checkboxes use primary tokens\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: End Day + Inbox + Remaining",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Apply warm palette to end-of-day, inbox, deferred components, today page.\n\n**Files:**\n- Modify: `frontend/src/pages/EndDayPage.jsx`\n- Modify: `frontend/src/pages/InboxPage.jsx`\n- Modify: `frontend/src/pages/TodayPage.jsx`\n- Modify: `frontend/src/components/deferred/DeferredItemActions.jsx`\n- Modify: `frontend/src/components/deferred/ConvertForm.jsx`\n\n**Verify:** `cd frontend && npm run lint`\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/EndDayPage.jsx\", \"frontend/src/pages/InboxPage.jsx\", \"frontend/src/pages/TodayPage.jsx\", \"frontend/src/components/deferred/DeferredItemActions.jsx\", \"frontend/src/components/deferred/ConvertForm.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"End Day backgrounds use surface token\", \"Celebration callout uses primary-50\", \"Inbox empty state updated\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: E2E Tests + Lint Verification",
+      "status": "pending",
+      "blockedBy": [1, 2, 3, 4, 5, 6, 7],
+      "description": "**Goal:** Verify E2E tests still pass and run final lint.\n\n**Files:** No modifications expected.\n\n**Verify:** `cd frontend && npm run lint && cd ../e2e && npx playwright test --reporter=list`\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"cd frontend && npm run lint && cd ../e2e && npx playwright test --reporter=list\", \"acceptanceCriteria\": [\"Lint passes with no errors\", \"E2E tests pass\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-03T23:30:00Z"
+}

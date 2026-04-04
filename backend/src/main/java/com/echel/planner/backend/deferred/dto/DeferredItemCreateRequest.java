@@ -1,4 +1,4 @@
-package com.planner.backend.deferred.dto;
+package com.echel.planner.backend.deferred.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

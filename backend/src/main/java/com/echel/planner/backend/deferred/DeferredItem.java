@@ -1,8 +1,8 @@
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.project.Project;
-import com.planner.backend.task.Task;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.project.Project;
+import com.echel.planner.backend.task.Task;
 import jakarta.persistence.*;
 
 import java.time.Instant;

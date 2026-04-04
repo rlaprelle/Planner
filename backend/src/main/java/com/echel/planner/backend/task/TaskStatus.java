@@ -1,4 +1,4 @@
-package com.planner.backend.task;
+package com.echel.planner.backend.task;
 
 public enum TaskStatus {
     TODO,

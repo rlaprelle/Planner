@@ -1,6 +1,6 @@
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

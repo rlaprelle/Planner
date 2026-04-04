@@ -1,4 +1,4 @@
-package com.planner.backend.project.dto;
+package com.echel.planner.backend.project.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,8 +1,8 @@
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.schedule.dto.ExtendRequest;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.schedule.dto.ExtendRequest;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

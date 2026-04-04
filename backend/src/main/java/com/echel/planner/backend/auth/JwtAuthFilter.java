@@ -1,4 +1,4 @@
-package com.planner.backend.auth;
+package com.echel.planner.backend.auth;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

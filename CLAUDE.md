@@ -38,19 +38,25 @@ All have working defaults for local dev:
 ## Project Structure
 
 ```
-backend/src/main/java/com/planner/backend/
+backend/src/main/java/com/echel/planner/backend/
   auth/       — JWT login, register, refresh
   task/       — Task CRUD, status, energy level
   project/    — Project CRUD
   deferred/   — Deferred items (inbox)
   reflection/ — Daily reflection
   stats/      — Points/completion stats
+  admin/      — Admin CRUD for all entities, schedule, time blocks
 frontend/src/
-  pages/           — Route-level components
+  pages/                — Route-level components
   pages/project-detail/ — Task list, detail panel, row components
-  layouts/         — App shell (AppLayout)
-  components/      — Shared UI (QuickCapture, deferred/)
-  api/             — TanStack Query + authFetch wrappers
+  pages/admin/          — Admin panel (users, projects, tasks, deferred, reflections, time blocks)
+  pages/active-session/ — Timer, subtask checklist, chime
+  pages/start-day/      — Start day flow components
+  auth/                 — AuthContext, ProtectedRoute, useAuth
+  contexts/             — ActiveSessionContext
+  layouts/              — App shell (AppLayout)
+  components/           — Shared UI (QuickCapture, deferred/)
+  api/                  — TanStack Query + authFetch wrappers (admin, auth, dashboard, deferred, projects, reflection, schedule, tasks)
 ```
 
 ## Tech Stack

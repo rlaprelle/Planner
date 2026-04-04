@@ -1,4 +1,4 @@
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

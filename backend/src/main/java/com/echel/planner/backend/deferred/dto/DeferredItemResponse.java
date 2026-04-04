@@ -1,6 +1,6 @@
-package com.planner.backend.deferred.dto;
+package com.echel.planner.backend.deferred.dto;
 
-import com.planner.backend.deferred.DeferredItem;
+import com.echel.planner.backend.deferred.DeferredItem;
 
 import java.time.Instant;
 import java.time.LocalDate;

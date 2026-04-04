@@ -1,6 +1,6 @@
-package com.planner.backend.task.dto;
+package com.echel.planner.backend.task.dto;
 
-import com.planner.backend.task.TaskStatus;
+import com.echel.planner.backend.task.TaskStatus;
 import jakarta.validation.constraints.NotNull;
 
 public record TaskStatusRequest(

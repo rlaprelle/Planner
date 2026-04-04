@@ -1,7 +1,7 @@
-package com.planner.backend.task.dto;
+package com.echel.planner.backend.task.dto;
 
-import com.planner.backend.task.EnergyLevel;
-import com.planner.backend.task.TaskStatus;
+import com.echel.planner.backend.task.EnergyLevel;
+import com.echel.planner.backend.task.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

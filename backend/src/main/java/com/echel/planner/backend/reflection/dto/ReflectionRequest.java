@@ -1,4 +1,4 @@
-package com.planner.backend.reflection.dto;
+package com.echel.planner.backend.reflection.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

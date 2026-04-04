@@ -14,24 +14,24 @@
 
 **New backend files:**
 - `backend/src/main/resources/db/migration/V6__create_time_block.sql`
-- `backend/src/main/java/com/planner/backend/schedule/TimeBlock.java`
-- `backend/src/main/java/com/planner/backend/schedule/TimeBlockRepository.java`
-- `backend/src/main/java/com/planner/backend/schedule/dto/SavePlanRequest.java`
-- `backend/src/main/java/com/planner/backend/schedule/dto/TimeBlockResponse.java`
-- `backend/src/main/java/com/planner/backend/schedule/ScheduleService.java`
-- `backend/src/main/java/com/planner/backend/schedule/ScheduleController.java`
-- `backend/src/main/java/com/planner/backend/schedule/ScheduleExceptionHandler.java`
-- `backend/src/main/java/com/planner/backend/stats/dto/DashboardResponse.java`
-- `backend/src/test/java/com/planner/backend/schedule/ScheduleControllerIntegrationTest.java`
+- `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlock.java`
+- `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockRepository.java`
+- `backend/src/main/java/com/echel/planner/backend/schedule/dto/SavePlanRequest.java`
+- `backend/src/main/java/com/echel/planner/backend/schedule/dto/TimeBlockResponse.java`
+- `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java`
+- `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleController.java`
+- `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleExceptionHandler.java`
+- `backend/src/main/java/com/echel/planner/backend/stats/dto/DashboardResponse.java`
+- `backend/src/test/java/com/echel/planner/backend/schedule/ScheduleControllerIntegrationTest.java`
 
 **Modified backend files:**
-- `backend/src/main/java/com/planner/backend/task/TaskRepository.java` — add `findSuggestedForUser`, `findUpcomingDeadlines`
-- `backend/src/main/java/com/planner/backend/task/TaskService.java` — add `listSuggested`
-- `backend/src/main/java/com/planner/backend/task/TaskController.java` — add `GET /api/v1/tasks/suggested`
-- `backend/src/main/java/com/planner/backend/deferred/DeferredItemRepository.java` — add `countPendingForUser`
-- `backend/src/main/java/com/planner/backend/stats/StatsService.java` — add `getDashboard`, inject new repos
-- `backend/src/main/java/com/planner/backend/stats/StatsController.java` — add `GET /api/v1/stats/dashboard`
-- `backend/src/test/java/com/planner/backend/stats/StatsControllerIntegrationTest.java` — add dashboard test
+- `backend/src/main/java/com/echel/planner/backend/task/TaskRepository.java` — add `findSuggestedForUser`, `findUpcomingDeadlines`
+- `backend/src/main/java/com/echel/planner/backend/task/TaskService.java` — add `listSuggested`
+- `backend/src/main/java/com/echel/planner/backend/task/TaskController.java` — add `GET /api/v1/tasks/suggested`
+- `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemRepository.java` — add `countPendingForUser`
+- `backend/src/main/java/com/echel/planner/backend/stats/StatsService.java` — add `getDashboard`, inject new repos
+- `backend/src/main/java/com/echel/planner/backend/stats/StatsController.java` — add `GET /api/v1/stats/dashboard`
+- `backend/src/test/java/com/echel/planner/backend/stats/StatsControllerIntegrationTest.java` — add dashboard test
 
 **New frontend files:**
 - `frontend/src/api/schedule.js`
@@ -95,16 +95,16 @@ git commit -m "feat: add time_block migration (V6)"
 ## Task 2: TimeBlock Entity and Repository
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/schedule/TimeBlock.java`
-- Create: `backend/src/main/java/com/planner/backend/schedule/TimeBlockRepository.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlock.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockRepository.java`
 
 - [ ] **Step 1: Create the entity**
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.task.Task;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.task.Task;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -163,7 +163,7 @@ public class TimeBlock {
 - [ ] **Step 2: Create the repository**
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -202,7 +202,7 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
             SELECT COUNT(tb) FROM TimeBlock tb
             WHERE tb.user.id = :userId
               AND tb.blockDate = :blockDate
-              AND tb.task.status = com.planner.backend.task.TaskStatus.DONE
+              AND tb.task.status = com.echel.planner.backend.task.TaskStatus.DONE
             """)
     long countCompletedByUserIdAndBlockDate(@Param("userId") UUID userId, @Param("blockDate") LocalDate blockDate);
 }
@@ -219,7 +219,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 4: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/
+git add backend/src/main/java/com/echel/planner/backend/schedule/
 git commit -m "feat: add TimeBlock entity and repository"
 ```
 
@@ -228,13 +228,13 @@ git commit -m "feat: add TimeBlock entity and repository"
 ## Task 3: Schedule DTOs
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/schedule/dto/SavePlanRequest.java`
-- Create: `backend/src/main/java/com/planner/backend/schedule/dto/TimeBlockResponse.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/dto/SavePlanRequest.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/dto/TimeBlockResponse.java`
 
 - [ ] **Step 1: Create `SavePlanRequest`**
 
 ```java
-package com.planner.backend.schedule.dto;
+package com.echel.planner.backend.schedule.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -259,10 +259,10 @@ public record SavePlanRequest(
 - [ ] **Step 2: Create `TimeBlockResponse`**
 
 ```java
-package com.planner.backend.schedule.dto;
+package com.echel.planner.backend.schedule.dto;
 
-import com.planner.backend.schedule.TimeBlock;
-import com.planner.backend.task.TaskStatus;
+import com.echel.planner.backend.schedule.TimeBlock;
+import com.echel.planner.backend.task.TaskStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -323,7 +323,7 @@ Expected: BUILD SUCCESS
 - [ ] **Step 4: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/dto/
+git add backend/src/main/java/com/echel/planner/backend/schedule/dto/
 git commit -m "feat: add schedule DTOs (SavePlanRequest, TimeBlockResponse)"
 ```
 
@@ -332,19 +332,19 @@ git commit -m "feat: add schedule DTOs (SavePlanRequest, TimeBlockResponse)"
 ## Task 4: ScheduleService
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/schedule/ScheduleService.java`
-- Create: `backend/src/main/java/com/planner/backend/schedule/ScheduleExceptionHandler.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleExceptionHandler.java`
 
 - [ ] **Step 1: Create `ScheduleService`**
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.schedule.dto.SavePlanRequest;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.schedule.dto.SavePlanRequest;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -442,7 +442,7 @@ public class ScheduleService {
 - [ ] **Step 2: Create `ScheduleExceptionHandler`**
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -470,8 +470,8 @@ Expected: BUILD SUCCESS
 - [ ] **Step 4: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/ScheduleService.java \
-        backend/src/main/java/com/planner/backend/schedule/ScheduleExceptionHandler.java
+git add backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java \
+        backend/src/main/java/com/echel/planner/backend/schedule/ScheduleExceptionHandler.java
 git commit -m "feat: add ScheduleService (savePlan, getToday) with validation"
 ```
 
@@ -480,22 +480,22 @@ git commit -m "feat: add ScheduleService (savePlan, getToday) with validation"
 ## Task 5: ScheduleController and Integration Tests
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/schedule/ScheduleController.java`
-- Create: `backend/src/test/java/com/planner/backend/schedule/ScheduleControllerIntegrationTest.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleController.java`
+- Create: `backend/src/test/java/com/echel/planner/backend/schedule/ScheduleControllerIntegrationTest.java`
 
 - [ ] **Step 1: Write the failing tests**
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.schedule.dto.SavePlanRequest;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.schedule.dto.SavePlanRequest;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -544,7 +544,7 @@ class ScheduleControllerIntegrationTest {
         UUID taskId = UUID.randomUUID();
         TimeBlockResponse.TaskSummary summary = new TimeBlockResponse.TaskSummary(
                 taskId, "Fix login", UUID.randomUUID(), "Auth", "#6366f1",
-                com.planner.backend.task.TaskStatus.TODO, (short) 3);
+                com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
                 LocalTime.of(9, 0), LocalTime.of(10, 0), 0, summary);
@@ -573,7 +573,7 @@ class ScheduleControllerIntegrationTest {
 
         TimeBlockResponse.TaskSummary summary = new TimeBlockResponse.TaskSummary(
                 taskId, "Fix login", UUID.randomUUID(), "Auth", "#6366f1",
-                com.planner.backend.task.TaskStatus.TODO, (short) 3);
+                com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
                 LocalTime.of(9, 0), LocalTime.of(10, 0), 0, summary);
@@ -619,11 +619,11 @@ Expected: compilation error — `ScheduleController` not found.
 - [ ] **Step 3: Create `ScheduleController`**
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.schedule.dto.SavePlanRequest;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.schedule.dto.SavePlanRequest;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -666,8 +666,8 @@ Expected: Tests run: 4, Failures: 0, Errors: 0.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/ScheduleController.java \
-        backend/src/test/java/com/planner/backend/schedule/ScheduleControllerIntegrationTest.java
+git add backend/src/main/java/com/echel/planner/backend/schedule/ScheduleController.java \
+        backend/src/test/java/com/echel/planner/backend/schedule/ScheduleControllerIntegrationTest.java
 git commit -m "feat: add ScheduleController with GET today and POST plan endpoints"
 ```
 
@@ -676,9 +676,9 @@ git commit -m "feat: add ScheduleController with GET today and POST plan endpoin
 ## Task 6: Suggested Tasks Endpoint
 
 **Files:**
-- Modify: `backend/src/main/java/com/planner/backend/task/TaskRepository.java`
-- Modify: `backend/src/main/java/com/planner/backend/task/TaskService.java`
-- Modify: `backend/src/main/java/com/planner/backend/task/TaskController.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/task/TaskRepository.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/task/TaskService.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/task/TaskController.java`
 
 - [ ] **Step 1: Add `findSuggestedForUser` to `TaskRepository`**
 
@@ -690,12 +690,12 @@ Add this method to the existing `TaskRepository` interface (after the existing `
         JOIN FETCH t.project p
         WHERE t.user.id = :userId
           AND t.status IN (
-              com.planner.backend.task.TaskStatus.TODO,
-              com.planner.backend.task.TaskStatus.IN_PROGRESS)
+              com.echel.planner.backend.task.TaskStatus.TODO,
+              com.echel.planner.backend.task.TaskStatus.IN_PROGRESS)
           AND t.archivedAt IS NULL
           AND t.parentTask IS NULL
           AND t.id NOT IN (
-              SELECT tb.task.id FROM com.planner.backend.schedule.TimeBlock tb
+              SELECT tb.task.id FROM com.echel.planner.backend.schedule.TimeBlock tb
               WHERE tb.user.id = :userId
                 AND tb.blockDate = :date
                 AND tb.task IS NOT NULL)
@@ -754,9 +754,9 @@ Expected: BUILD SUCCESS, all existing tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/task/TaskRepository.java \
-        backend/src/main/java/com/planner/backend/task/TaskService.java \
-        backend/src/main/java/com/planner/backend/task/TaskController.java
+git add backend/src/main/java/com/echel/planner/backend/task/TaskRepository.java \
+        backend/src/main/java/com/echel/planner/backend/task/TaskService.java \
+        backend/src/main/java/com/echel/planner/backend/task/TaskController.java
 git commit -m "feat: add GET /api/v1/tasks/suggested endpoint"
 ```
 
@@ -765,9 +765,9 @@ git commit -m "feat: add GET /api/v1/tasks/suggested endpoint"
 ## Task 7: Dashboard Stats — Repositories and DTO
 
 **Files:**
-- Modify: `backend/src/main/java/com/planner/backend/deferred/DeferredItemRepository.java`
-- Modify: `backend/src/main/java/com/planner/backend/task/TaskRepository.java`
-- Create: `backend/src/main/java/com/planner/backend/stats/dto/DashboardResponse.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemRepository.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/task/TaskRepository.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/stats/dto/DashboardResponse.java`
 
 - [ ] **Step 1: Add `countPendingForUser` to `DeferredItemRepository`**
 
@@ -794,7 +794,7 @@ Add this method to the existing `TaskRepository` interface:
         WHERE t.user.id = :userId
           AND t.dueDate IS NOT NULL
           AND t.dueDate >= :today
-          AND t.status != com.planner.backend.task.TaskStatus.DONE
+          AND t.status != com.echel.planner.backend.task.TaskStatus.DONE
           AND t.archivedAt IS NULL
           AND t.parentTask IS NULL
         ORDER BY t.dueDate ASC
@@ -807,7 +807,7 @@ List<Task> findUpcomingDeadlines(@Param("userId") UUID userId,
 - [ ] **Step 3: Create `DashboardResponse`**
 
 ```java
-package com.planner.backend.stats.dto;
+package com.echel.planner.backend.stats.dto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -842,9 +842,9 @@ Expected: BUILD SUCCESS
 - [ ] **Step 5: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/deferred/DeferredItemRepository.java \
-        backend/src/main/java/com/planner/backend/task/TaskRepository.java \
-        backend/src/main/java/com/planner/backend/stats/dto/DashboardResponse.java
+git add backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemRepository.java \
+        backend/src/main/java/com/echel/planner/backend/task/TaskRepository.java \
+        backend/src/main/java/com/echel/planner/backend/stats/dto/DashboardResponse.java
 git commit -m "feat: add dashboard query methods and DashboardResponse DTO"
 ```
 
@@ -853,24 +853,24 @@ git commit -m "feat: add dashboard query methods and DashboardResponse DTO"
 ## Task 8: StatsService Dashboard + Controller + Tests
 
 **Files:**
-- Modify: `backend/src/main/java/com/planner/backend/stats/StatsService.java`
-- Modify: `backend/src/main/java/com/planner/backend/stats/StatsController.java`
-- Modify: `backend/src/test/java/com/planner/backend/stats/StatsControllerIntegrationTest.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/stats/StatsService.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/stats/StatsController.java`
+- Modify: `backend/src/test/java/com/echel/planner/backend/stats/StatsControllerIntegrationTest.java`
 
 - [ ] **Step 1: Update `StatsService` to add `getDashboard`**
 
 Replace the entire `StatsService.java` with:
 
 ```java
-package com.planner.backend.stats;
+package com.echel.planner.backend.stats;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.deferred.DeferredItemRepository;
-import com.planner.backend.reflection.DailyReflectionRepository;
-import com.planner.backend.schedule.TimeBlockRepository;
-import com.planner.backend.stats.dto.DashboardResponse;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.DeferredItemRepository;
+import com.echel.planner.backend.reflection.DailyReflectionRepository;
+import com.echel.planner.backend.schedule.TimeBlockRepository;
+import com.echel.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -979,7 +979,7 @@ public ResponseEntity<DashboardResponse> dashboard(@AuthenticationPrincipal AppU
 
 Also add this import at the top of `StatsController.java`:
 ```java
-import com.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.stats.dto.DashboardResponse;
 ```
 
 - [ ] **Step 3: Add dashboard test to `StatsControllerIntegrationTest`**
@@ -1010,7 +1010,7 @@ void dashboard_returnsAggregatedData() throws Exception {
 
 Also add these imports to the test file:
 ```java
-import com.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.stats.dto.DashboardResponse;
 import java.util.List;
 ```
 
@@ -1025,9 +1025,9 @@ Expected: BUILD SUCCESS, all tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/stats/StatsService.java \
-        backend/src/main/java/com/planner/backend/stats/StatsController.java \
-        backend/src/test/java/com/planner/backend/stats/StatsControllerIntegrationTest.java
+git add backend/src/main/java/com/echel/planner/backend/stats/StatsService.java \
+        backend/src/main/java/com/echel/planner/backend/stats/StatsController.java \
+        backend/src/test/java/com/echel/planner/backend/stats/StatsControllerIntegrationTest.java
 git commit -m "feat: add GET /api/v1/stats/dashboard endpoint"
 ```
 

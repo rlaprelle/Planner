@@ -1,7 +1,7 @@
-package com.planner.backend.schedule.dto;
+package com.echel.planner.backend.schedule.dto;
 
-import com.planner.backend.schedule.TimeBlock;
-import com.planner.backend.task.TaskStatus;
+import com.echel.planner.backend.schedule.TimeBlock;
+import com.echel.planner.backend.task.TaskStatus;
 
 import java.time.Instant;
 import java.time.LocalDate;

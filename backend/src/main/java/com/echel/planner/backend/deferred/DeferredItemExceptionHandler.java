@@ -1,4 +1,4 @@
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

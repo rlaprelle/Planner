@@ -30,7 +30,7 @@ Three new endpoints added to `DeferredItemController`:
 
 ### Daily Reflection
 
-New package: `com.planner.backend.reflection`
+New package: `com.echel.planner.backend.reflection`
 
 **Migration `V5__create_daily_reflection.sql`**
 ```sql

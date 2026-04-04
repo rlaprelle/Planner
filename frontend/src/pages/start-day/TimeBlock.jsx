@@ -57,8 +57,8 @@ export function TimeBlock({
       style={style}
       className={`rounded flex items-center select-none border group ${
         isCompleted
-          ? 'bg-gray-100 border-gray-200 text-gray-400'
-          : 'bg-indigo-500 border-indigo-600 text-white'
+          ? 'bg-surface-soft border-edge text-ink-muted'
+          : 'bg-primary-500 border-primary-600 text-white'
       }`}
       {...(isCompleted ? {} : { ...listeners, ...attributes })}
     >
@@ -67,7 +67,7 @@ export function TimeBlock({
         <span className="text-xs font-medium truncate">
           {block.task?.title ?? 'Untitled'}
         </span>
-        <span className={`text-xs shrink-0 ${isCompleted ? 'text-gray-400' : 'text-indigo-200'}`}>
+        <span className={`text-xs shrink-0 ${isCompleted ? 'text-ink-muted' : 'text-primary-200'}`}>
           {startLabel}–{endLabel}
         </span>
       </div>
@@ -80,7 +80,7 @@ export function TimeBlock({
             navigate(`/session/${block.id}`)
           }}
           onPointerDown={(e) => e.stopPropagation()}
-          className="opacity-0 group-hover:opacity-100 transition-opacity text-white/80 hover:text-white text-xs font-medium bg-indigo-600/50 hover:bg-indigo-600/80 rounded px-2 py-0.5 shrink-0"
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-white/80 hover:text-white text-xs font-medium bg-primary-600/50 hover:bg-primary-600/80 rounded px-2 py-0.5 shrink-0"
         >
           Start
         </button>

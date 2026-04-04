@@ -199,22 +199,22 @@ export function StartDayPage() {
   const selectedCount = [...selectedTaskIds].filter((id) => !scheduledTaskIds.has(id)).length
 
   if (loadingTasks) {
-    return <div className="p-8 text-gray-400 text-sm">Loading your tasks…</div>
+    return <div className="p-8 text-ink-muted text-sm">Loading your tasks…</div>
   }
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragMove={handleDragMove} onDragEnd={handleDragEnd}>
       <div className="p-6 max-w-7xl mx-auto space-y-4">
 
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold text-ink-heading">
           Start Day — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
         </h1>
 
         {/* Row 1: All tasks by project */}
-        <section className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="text-xs font-semibold text-indigo-700 uppercase tracking-wider mb-3">
+        <section className="bg-surface-raised border border-edge rounded-lg p-4 shadow-card">
+          <div className="text-xs font-semibold text-primary-700 uppercase tracking-wider mb-3">
             All Tasks
-            <span className="ml-2 font-normal text-gray-400 normal-case tracking-normal">
+            <span className="ml-2 font-normal text-ink-muted normal-case tracking-normal">
               — drag or check to schedule
             </span>
           </div>
@@ -227,26 +227,26 @@ export function StartDayPage() {
             section="all"
           />
           <div className="mt-3 flex items-center gap-3">
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-ink-muted">
               {selectedCount > 0 ? `${selectedCount} selected` : 'None selected'}
             </span>
             <button
               onClick={handleAddToCalendar}
               disabled={selectedCount === 0}
-              className="px-3 py-1.5 text-xs rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors font-medium"
+              className="px-3 py-1.5 text-xs rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-40 transition-colors font-medium"
             >
               + Add to calendar
             </button>
             {addWarning && (
-              <span className="text-xs text-amber-600">{addWarning}</span>
+              <span className="text-xs text-deadline-week-text">{addWarning}</span>
             )}
           </div>
         </section>
 
         {/* Row 2: Due today (left) + Due this week (right) */}
         <div className="flex gap-4">
-          <section className="flex-1 min-w-0 bg-white border border-red-200 rounded-lg p-4">
-            <div className="text-xs font-semibold text-red-700 uppercase tracking-wider mb-3">
+          <section className="flex-1 min-w-0 bg-surface-raised border border-deadline-today-bg rounded-lg p-4 shadow-card">
+            <div className="text-xs font-semibold text-deadline-today-text uppercase tracking-wider mb-3">
               Due Today
             </div>
             <TaskBrowserRow
@@ -259,8 +259,8 @@ export function StartDayPage() {
             />
           </section>
 
-          <section className="flex-1 min-w-0 bg-white border border-amber-200 rounded-lg p-4">
-            <div className="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-3">
+          <section className="flex-1 min-w-0 bg-surface-raised border border-deadline-week-bg rounded-lg p-4 shadow-card">
+            <div className="text-xs font-semibold text-deadline-week-text uppercase tracking-wider mb-3">
               Due This Week
             </div>
             <TaskBrowserRow
@@ -275,10 +275,10 @@ export function StartDayPage() {
         </div>
 
         {/* Row 3: Horizontal calendar */}
-        <section className="bg-white border border-gray-200 rounded-lg p-4">
-          <div className="text-xs font-semibold text-indigo-700 uppercase tracking-wider mb-3">
+        <section className="bg-surface-raised border border-edge rounded-lg p-4 shadow-card">
+          <div className="text-xs font-semibold text-primary-700 uppercase tracking-wider mb-3">
             Today's Plan
-            <span className="ml-2 font-normal text-gray-400 normal-case tracking-normal">
+            <span className="ml-2 font-normal text-ink-muted normal-case tracking-normal">
               — drag blocks to move · drag right edge to resize
             </span>
           </div>
@@ -295,7 +295,7 @@ export function StartDayPage() {
           />
 
           {saveMutation.isError && (
-            <p className="mt-2 text-xs text-red-500">
+            <p className="mt-2 text-xs text-error">
               {saveMutation.error?.message ?? 'Something went wrong. Please try again.'}
             </p>
           )}
@@ -304,7 +304,7 @@ export function StartDayPage() {
             <button
               onClick={() => saveMutation.mutate()}
               disabled={gridBlocks.length === 0 || saveMutation.isPending}
-              className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors font-medium"
+              className="px-4 py-2 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-40 transition-colors font-medium"
             >
               {saveMutation.isPending ? 'Saving…' : 'Confirm plan'}
             </button>
@@ -315,7 +315,7 @@ export function StartDayPage() {
       {/* DragOverlay — shown while dragging a task card from the browser */}
       <DragOverlay>
         {activeTaskCard ? (
-          <div className="bg-indigo-500 text-white text-xs font-medium rounded px-2 py-1.5 shadow-lg opacity-90 max-w-[160px] truncate">
+          <div className="bg-primary-500 text-white text-xs font-medium rounded px-2 py-1.5 shadow-lg opacity-90 max-w-[160px] truncate">
             {activeTaskCard.title}
           </div>
         ) : null}

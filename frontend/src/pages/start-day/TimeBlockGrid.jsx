@@ -46,19 +46,19 @@ export function TimeBlockGrid({
 
   return (
     <div
-      className={`relative border border-gray-200 rounded-lg overflow-hidden transition-colors ${
-        isOver ? 'bg-indigo-50' : 'bg-white'
+      className={`relative border border-edge rounded-lg overflow-hidden transition-colors ${
+        isOver ? 'bg-primary-50' : 'bg-surface-raised'
       }`}
     >
       {/* Hour labels — positioned at true hour boundaries */}
-      <div className="relative h-7 border-b border-gray-100">
+      <div className="relative h-7 border-b border-edge-subtle">
         {HOUR_MARKS.map((hour, idx) => {
           const isFirst = idx === 0
           const isLast = idx === HOUR_MARKS.length - 1
           return (
             <span
               key={hour}
-              className="absolute top-1 text-xs text-gray-400 whitespace-nowrap"
+              className="absolute top-1 text-xs text-ink-muted whitespace-nowrap"
               style={{
                 left: isLast ? undefined : `${hourToPercent(hour)}%`,
                 right: isLast ? 0 : undefined,
@@ -79,7 +79,7 @@ export function TimeBlockGrid({
         {HOUR_MARKS.slice(1, -1).map((hour) => (
           <div
             key={`h-${hour}`}
-            className="absolute top-0 bottom-0 border-l border-gray-200"
+            className="absolute top-0 bottom-0 border-l border-edge"
             style={{ left: `${hourToPercent(hour)}%` }}
           />
         ))}
@@ -92,7 +92,7 @@ export function TimeBlockGrid({
             <div
               key={`s-${i}-${frac}`}
               className={`absolute top-0 bottom-0 border-l ${
-                frac === 0.5 ? 'border-gray-200' : 'border-gray-100'
+                frac === 0.5 ? 'border-edge' : 'border-edge-subtle'
               }`}
               style={{ left: `${spanStartPct + frac * spanWidthPct}%` }}
             />
@@ -123,7 +123,7 @@ export function TimeBlockGrid({
         {/* Ghost preview while dragging a task card over the grid */}
         {dropPreview && (
           <div
-            className="absolute rounded border-2 border-dashed border-indigo-400 bg-indigo-200/40 pointer-events-none"
+            className="absolute rounded border-2 border-dashed border-primary-400 bg-primary-200/40 pointer-events-none"
             style={{
               left: `${minutesToPercent(dropPreview.startMinutes)}%`,
               width: `${durationToPercent(dropPreview.endMinutes - dropPreview.startMinutes)}%`,

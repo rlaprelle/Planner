@@ -96,26 +96,10 @@ The spec is a checklist. Always check off items as they are completed. **Before 
 - Prefer archive over delete.
 - The workflow is a suggestion, not a restriction.
 
-## Git Workflow (project-specific)
-
-- Work in a worktree with a feature branch off dev (e.g., `claude/feature-name`)
-- When ready to merge: `git fetch origin && git checkout dev && git pull` to ensure dev is current, then merge the feature branch
-- Clean up the worktree after merging
-- Do NOT push to origin or create a PR unless explicitly asked
-- PRs go from dev → main (main is the stable/production branch)
-- The user controls push/PR cadence — default is to merge locally and stop
-
 ## Frontend Workflow
 
 - When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout
-- For visual/aesthetic tasks: build a standalone HTML mockup first during brainstorming, then implement on one real page for validation, then roll out to the rest
 - For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
-- Always do a visual spot-check after any batch that touches UI
-
-## Collaboration Model
-
-- **Architecture, logic, behavior:** Collaborative — check in on decisions, discuss tradeoffs, get alignment before committing
-- **Aesthetic/visual work:** Claude drives — make strong opinionated choices, implement, show the result. User acts as approver/owner, not co-designer. Don't present abstract color tables or token descriptions for approval — show rendered visuals instead.
 
 ## Frontend Design Principles
 

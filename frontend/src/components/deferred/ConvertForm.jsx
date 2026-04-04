@@ -31,13 +31,13 @@ export function ConvertForm({ item, onDone, onCancel }) {
 
   return (
     <form
-      className="mt-3 space-y-3 border-t border-gray-100 pt-3"
+      className="mt-3 space-y-3 border-t border-edge-subtle pt-3"
       onSubmit={(e) => { e.preventDefault(); mutation.mutate() }}
     >
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Project *</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">Project *</label>
         <select
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
           required
@@ -50,9 +50,9 @@ export function ConvertForm({ item, onDone, onCancel }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Title *</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">Title *</label>
         <input
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
@@ -61,19 +61,19 @@ export function ConvertForm({ item, onDone, onCancel }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Due date</label>
+          <label className="block text-xs font-medium text-ink-secondary mb-1">Due date</label>
           <input
             type="date"
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Priority (1–5)</label>
+          <label className="block text-xs font-medium text-ink-secondary mb-1">Priority (1–5)</label>
           <input
             type="number" min="1" max="5"
-            className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
           />
@@ -81,41 +81,41 @@ export function ConvertForm({ item, onDone, onCancel }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Points estimate</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">Points estimate</label>
         <input
           type="number" min="1"
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
           value={points}
           onChange={(e) => setPoints(e.target.value)}
         />
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">Description</label>
         <textarea
           rows={2}
-          className="w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus resize-none"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
 
       {mutation.isError && (
-        <p className="text-xs text-red-500">Something went wrong. Try again.</p>
+        <p className="text-xs text-error">Something went wrong. Try again.</p>
       )}
 
       <div className="flex gap-2 justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 text-sm rounded-md text-gray-600 hover:bg-gray-100 transition-colors"
+          className="px-3 py-1.5 text-sm rounded-md text-ink-secondary hover:bg-surface-soft transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="px-3 py-1.5 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+          className="px-3 py-1.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-50 transition-colors"
         >
           {mutation.isPending ? 'Creating…' : 'Create task'}
         </button>

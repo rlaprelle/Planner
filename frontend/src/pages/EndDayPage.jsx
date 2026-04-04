@@ -51,11 +51,11 @@ function Phase2() {
     return (
       <div className="text-center py-8">
         <div className="text-4xl mb-3">✨</div>
-        <p className="text-xl font-semibold text-gray-900">{streakMessage}</p>
-        <p className="mt-2 text-gray-500 text-sm">That's a wrap for today.</p>
+        <p className="text-xl font-semibold text-ink-heading">{streakMessage}</p>
+        <p className="mt-2 text-ink-secondary text-sm">That's a wrap for today.</p>
         <button
           onClick={() => navigate('/')}
-          className="mt-8 px-5 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+          className="mt-8 px-5 py-2 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors"
         >
           Done
         </button>
@@ -65,17 +65,17 @@ function Phase2() {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">How did today go?</h2>
+      <h2 className="text-xl font-semibold text-ink-heading mb-6">How did today go?</h2>
 
       {completedTasks.length > 0 && (
         <div className="mb-6">
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+          <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-2">
             Completed today
           </p>
           <ul className="space-y-1">
             {completedTasks.map((t) => (
-              <li key={t.id} className="text-sm text-gray-700 flex items-center gap-2">
-                <span className="text-indigo-400">✓</span>
+              <li key={t.id} className="text-sm text-ink-body flex items-center gap-2">
+                <span className="text-primary-400">✓</span>
                 {t.title}
               </li>
             ))}
@@ -85,17 +85,17 @@ function Phase2() {
 
       {celebrations.length > 0 && (
         <div className="mb-6">
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+          <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-2">
             Notable today
           </p>
           <div className="space-y-2">
             {celebrations.map((c) => (
               <div
                 key={c.taskId}
-                className="bg-indigo-50/70 border border-indigo-100 rounded-lg px-4 py-3"
+                className="bg-primary-50/70 border border-primary-100 rounded-lg px-4 py-3"
               >
-                <p className="text-sm font-medium text-gray-800">{c.taskTitle}</p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-sm font-medium text-ink-heading">{c.taskTitle}</p>
+                <p className="text-xs text-ink-secondary mt-0.5">
                   {c.projectName} — {c.reason}
                 </p>
               </div>
@@ -106,56 +106,56 @@ function Phase2() {
 
       <form onSubmit={(e) => { e.preventDefault(); mutation.mutate() }} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Energy — <span className="text-indigo-600">{ENERGY_LABELS[energy]}</span>
+          <label className="block text-sm font-medium text-ink-body mb-2">
+            Energy — <span className="text-primary-500">{ENERGY_LABELS[energy]}</span>
           </label>
           <input
             type="range" min="1" max="5" step="1"
             value={energy}
             onChange={(e) => setEnergy(Number(e.target.value))}
-            className="w-full accent-indigo-600"
+            className="w-full accent-primary-500"
           />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
+          <div className="flex justify-between text-xs text-ink-muted mt-1">
             <span>Drained</span><span>Energized</span>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Mood — <span className="text-indigo-600">{MOOD_LABELS[mood]}</span>
+          <label className="block text-sm font-medium text-ink-body mb-2">
+            Mood — <span className="text-primary-500">{MOOD_LABELS[mood]}</span>
           </label>
           <input
             type="range" min="1" max="5" step="1"
             value={mood}
             onChange={(e) => setMood(Number(e.target.value))}
-            className="w-full accent-indigo-600"
+            className="w-full accent-primary-500"
           />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
+          <div className="flex justify-between text-xs text-ink-muted mt-1">
             <span>Rough</span><span>Great</span>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Anything on your mind? <span className="text-gray-400 font-normal">(optional)</span>
+          <label className="block text-sm font-medium text-ink-body mb-2">
+            Anything on your mind? <span className="text-ink-muted font-normal">(optional)</span>
           </label>
           <textarea
             rows={3}
             placeholder="Anything on your mind?"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            className="w-full rounded-md border border-edge px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus resize-none"
           />
         </div>
 
         {mutation.isError && (
-          <p className="text-sm text-red-500">Something went wrong. Try again.</p>
+          <p className="text-sm text-error">Something went wrong. Try again.</p>
         )}
 
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="w-full py-2.5 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors font-medium"
+          className="w-full py-2.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-50 transition-colors font-medium"
         >
           {mutation.isPending ? 'Saving…' : 'Wrap up the day'}
         </button>
@@ -194,12 +194,12 @@ export function EndDayPage() {
   }
 
   if (isLoading) {
-    return <div className="p-8 text-gray-400">Loading…</div>
+    return <div className="p-8 text-ink-muted">Loading…</div>
   }
 
   if (phase === 2) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-16 px-4">
+      <div className="min-h-screen bg-surface flex items-start justify-center pt-16 px-4">
         <div className="w-full max-w-lg">
           <Phase2 />
         </div>
@@ -212,31 +212,31 @@ export function EndDayPage() {
 
   if (showCelebration) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="text-center">
           <div className="text-5xl mb-4">🎉</div>
-          <h2 className="text-2xl font-semibold text-gray-900">Inbox Zero!</h2>
-          <p className="mt-2 text-gray-500">All caught up.</p>
+          <h2 className="text-2xl font-semibold text-ink-heading">Inbox Zero!</h2>
+          <p className="mt-2 text-ink-secondary">All caught up.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-16 px-4">
+    <div className="min-h-screen bg-surface flex items-start justify-center pt-16 px-4">
       <div className="w-full max-w-lg">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">End of Day</h1>
+        <h1 className="text-2xl font-semibold text-ink-heading mb-2">End of Day</h1>
 
         {noItems ? (
           <div className="mb-8">
-            <p className="text-gray-500 text-sm mb-6">Inbox is clear.</p>
+            <p className="text-ink-secondary text-sm mb-6">Inbox is clear.</p>
           </div>
         ) : (
           <div className="mb-8">
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-ink-muted mb-4">
               {processedCount + 1} of {totalItemsRef.current}
             </p>
-            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="bg-surface-raised border border-edge rounded-lg p-6 shadow-card">
               {currentItem && (
                 <DeferredItemActions key={currentItem.id} item={currentItem} onDone={handleItemDone} />
               )}
@@ -247,7 +247,7 @@ export function EndDayPage() {
         {noItems && (
           <button
             onClick={() => setPhase(2)}
-            className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+            className="px-4 py-2 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors"
           >
             Continue to reflection →
           </button>

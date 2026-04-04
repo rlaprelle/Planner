@@ -21,26 +21,26 @@ export function DeferredItemActions({ item, onDone }) {
 
   return (
     <div>
-      <p className="text-sm text-gray-500 mb-1">{capturedAgo}</p>
-      <p className="text-gray-900 mb-3">{item.rawText}</p>
+      <p className="text-sm text-ink-muted mb-1">{capturedAgo}</p>
+      <p className="text-ink-heading mb-3">{item.rawText}</p>
 
       {mode === null && (
         <div className="flex gap-2">
           <button
             onClick={() => setMode('convert')}
-            className="px-3 py-1.5 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+            className="px-3 py-1.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors"
           >
             Convert
           </button>
           <button
             onClick={() => setMode('defer')}
-            className="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-3 py-1.5 text-sm rounded-md border border-edge text-ink-secondary hover:bg-surface-soft transition-colors"
           >
             Defer
           </button>
           <button
             onClick={() => setMode('dismiss-confirm')}
-            className="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-500 hover:bg-gray-50 transition-colors"
+            className="px-3 py-1.5 text-sm rounded-md border border-edge text-ink-muted hover:bg-surface-soft transition-colors"
           >
             Dismiss
           </button>
@@ -53,7 +53,7 @@ export function DeferredItemActions({ item, onDone }) {
 
       {mode === 'defer' && (
         <div className="flex gap-2 mt-1">
-          <span className="text-sm text-gray-500 self-center mr-1">Defer for:</span>
+          <span className="text-sm text-ink-muted self-center mr-1">Defer for:</span>
           {[
             { label: '1 day', value: 'ONE_DAY' },
             { label: '1 week', value: 'ONE_WEEK' },
@@ -63,14 +63,14 @@ export function DeferredItemActions({ item, onDone }) {
               key={value}
               onClick={() => deferMutation.mutate(value)}
               disabled={deferMutation.isPending}
-              className="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              className="px-3 py-1.5 text-sm rounded-md border border-edge text-ink-secondary hover:bg-surface-soft disabled:opacity-50 transition-colors"
             >
               {label}
             </button>
           ))}
           <button
             onClick={() => setMode(null)}
-            className="px-2 py-1.5 text-sm text-gray-400 hover:text-gray-600"
+            className="px-2 py-1.5 text-sm text-ink-muted hover:text-ink-secondary"
           >
             ✕
           </button>
@@ -79,7 +79,7 @@ export function DeferredItemActions({ item, onDone }) {
 
       {mode === 'dismiss-confirm' && (
         <div className="flex gap-2 mt-1 items-center">
-          <span className="text-sm text-gray-500">Sure?</span>
+          <span className="text-sm text-ink-muted">Sure?</span>
           <button
             onClick={() => dismissMutation.mutate()}
             disabled={dismissMutation.isPending}
@@ -89,7 +89,7 @@ export function DeferredItemActions({ item, onDone }) {
           </button>
           <button
             onClick={() => setMode(null)}
-            className="px-2 py-1.5 text-sm text-gray-400 hover:text-gray-600"
+            className="px-2 py-1.5 text-sm text-ink-muted hover:text-ink-secondary"
           >
             Cancel
           </button>

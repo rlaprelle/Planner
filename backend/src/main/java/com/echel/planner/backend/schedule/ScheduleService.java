@@ -1,6 +1,8 @@
 package com.echel.planner.backend.schedule;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.event.Event;
+import com.echel.planner.backend.event.EventService;
 import com.echel.planner.backend.schedule.dto.SavePlanRequest;
 import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import com.echel.planner.backend.task.Task;
@@ -26,10 +28,13 @@ public class ScheduleService {
 
     private final TimeBlockRepository timeBlockRepository;
     private final TaskRepository taskRepository;
+    private final EventService eventService;
 
-    public ScheduleService(TimeBlockRepository timeBlockRepository, TaskRepository taskRepository) {
+    public ScheduleService(TimeBlockRepository timeBlockRepository, TaskRepository taskRepository,
+                           EventService eventService) {
         this.timeBlockRepository = timeBlockRepository;
         this.taskRepository = taskRepository;
+        this.eventService = eventService;
     }
 
     @Transactional(readOnly = true)
@@ -48,18 +53,45 @@ public class ScheduleService {
         // so save and load always agree on which date "today" is.
         LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
 
+        // Fetch events for the day so we can materialize event blocks and check overlaps
+        List<Event> events = eventService.findForDate(user, today);
+
+        // Validate task blocks don't overlap with events
+        for (SavePlanRequest.BlockEntry block : request.blocks()) {
+            for (Event event : events) {
+                if (block.startTime().isBefore(event.getEndTime())
+                        && block.endTime().isAfter(event.getStartTime())) {
+                    throw new ScheduleValidationException(
+                            "Task block overlaps with event '" + event.getTitle() + "'");
+                }
+            }
+        }
+
         timeBlockRepository.deleteByUserIdAndBlockDate(user.getId(), today);
 
-        List<TimeBlock> toSave = new ArrayList<>();
-        for (int i = 0; i < request.blocks().size(); i++) {
-            SavePlanRequest.BlockEntry entry = request.blocks().get(i);
+        // Build all blocks (events + tasks), then sort by startTime for sortOrder
+        List<TimeBlock> allBlocks = new ArrayList<>();
+
+        for (Event event : events) {
+            allBlocks.add(new TimeBlock(user, today, event,
+                    event.getStartTime(), event.getEndTime(), 0));
+        }
+
+        for (SavePlanRequest.BlockEntry entry : request.blocks()) {
             Task task = taskRepository.findByIdAndUserId(entry.taskId(), user.getId())
                     .orElseThrow(() -> new ScheduleValidationException(
                             "Task not found: " + entry.taskId()));
-            toSave.add(new TimeBlock(user, today, task, entry.startTime(), entry.endTime(), i));
+            allBlocks.add(new TimeBlock(user, today, task,
+                    entry.startTime(), entry.endTime(), 0));
         }
 
-        return timeBlockRepository.saveAll(toSave)
+        // Sort by start time and assign sequential sort order
+        allBlocks.sort(Comparator.comparing(TimeBlock::getStartTime));
+        for (int i = 0; i < allBlocks.size(); i++) {
+            allBlocks.get(i).setSortOrder(i);
+        }
+
+        return timeBlockRepository.saveAll(allBlocks)
                 .stream()
                 .map(TimeBlockResponse::from)
                 .toList();
@@ -101,6 +133,9 @@ public class ScheduleService {
     public TimeBlockResponse startBlock(AppUser user, UUID blockId) {
         TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
             .orElseThrow(() -> new BlockNotFoundException("Time block not found"));
+        if (block.getEvent() != null) {
+            throw new ScheduleValidationException("Event blocks do not support session tracking");
+        }
         if (block.getActualStart() != null) {
             throw new BlockAlreadyStartedException("Time block already started");
         }
@@ -112,6 +147,9 @@ public class ScheduleService {
     public TimeBlockResponse completeBlock(AppUser user, UUID blockId) {
         TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
             .orElseThrow(() -> new BlockNotFoundException("Time block not found"));
+        if (block.getEvent() != null) {
+            throw new ScheduleValidationException("Event blocks do not support session tracking");
+        }
         if (block.getActualStart() == null) {
             throw new ScheduleValidationException("Time block has not been started");
         }
@@ -137,6 +175,9 @@ public class ScheduleService {
     public TimeBlockResponse doneForNow(AppUser user, UUID blockId) {
         TimeBlock block = timeBlockRepository.findByIdAndUserId(blockId, user.getId())
             .orElseThrow(() -> new BlockNotFoundException("Time block not found"));
+        if (block.getEvent() != null) {
+            throw new ScheduleValidationException("Event blocks do not support session tracking");
+        }
         if (block.getActualStart() == null) {
             throw new ScheduleValidationException("Time block has not been started");
         }

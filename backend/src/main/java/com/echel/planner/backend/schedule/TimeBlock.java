@@ -1,6 +1,7 @@
 package com.echel.planner.backend.schedule;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.event.Event;
 import com.echel.planner.backend.task.Task;
 import jakarta.persistence.*;
 
@@ -27,6 +28,10 @@ public class TimeBlock {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id")
     private Task task;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
 
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
@@ -57,10 +62,21 @@ public class TimeBlock {
         this.sortOrder = sortOrder;
     }
 
+    /** Constructs a time block for an event (no task). */
+    public TimeBlock(AppUser user, LocalDate blockDate, Event event, LocalTime startTime, LocalTime endTime, int sortOrder) {
+        this.user = user;
+        this.blockDate = blockDate;
+        this.event = event;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.sortOrder = sortOrder;
+    }
+
     public UUID getId() { return id; }
     public AppUser getUser() { return user; }
     public LocalDate getBlockDate() { return blockDate; }
     public Task getTask() { return task; }
+    public Event getEvent() { return event; }
     public LocalTime getStartTime() { return startTime; }
     public LocalTime getEndTime() { return endTime; }
     public int getSortOrder() { return sortOrder; }
@@ -76,6 +92,7 @@ public class TimeBlock {
 
     public void setBlockDate(LocalDate blockDate) { this.blockDate = blockDate; }
     public void setTask(Task task) { this.task = task; }
+    public void setEvent(Event event) { this.event = event; }
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
     public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
     public void setSortOrder(int sortOrder) { this.sortOrder = sortOrder; }

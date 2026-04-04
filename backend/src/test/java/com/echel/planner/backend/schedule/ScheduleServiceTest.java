@@ -1,6 +1,7 @@
 package com.echel.planner.backend.schedule;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.event.EventService;
 import com.echel.planner.backend.project.Project;
 import com.echel.planner.backend.schedule.ScheduleService.BlockAlreadyStartedException;
 import com.echel.planner.backend.schedule.ScheduleService.BlockNotFoundException;
@@ -21,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +40,9 @@ class ScheduleServiceTest {
 
     @Mock
     private TaskRepository taskRepository;
+
+    @Mock
+    private EventService eventService;
 
     @InjectMocks
     private ScheduleService scheduleService;
@@ -187,6 +192,7 @@ class ScheduleServiceTest {
 
         when(taskRepository.findByIdAndUserId(taskId,  userId)).thenReturn(Optional.of(task));
         when(taskRepository.findByIdAndUserId(taskId2, userId)).thenReturn(Optional.of(task2));
+        when(eventService.findForDate(eq(user), any(LocalDate.class))).thenReturn(Collections.emptyList());
 
         TimeBlock savedBlock1 = new TimeBlock(user, LocalDate.now(), task,  LocalTime.of(9, 0),  LocalTime.of(9, 30),  0);
         TimeBlock savedBlock2 = new TimeBlock(user, LocalDate.now(), task2, LocalTime.of(9, 30), LocalTime.of(10, 0), 1);

@@ -1,7 +1,7 @@
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.task.Task;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.task.Task;
 import jakarta.persistence.*;
 
 import java.time.Instant;

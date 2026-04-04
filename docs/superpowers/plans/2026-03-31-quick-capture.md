@@ -15,14 +15,14 @@
 | File | Status | Purpose |
 |---|---|---|
 | `backend/src/main/resources/db/migration/V4__create_deferred_item.sql` | **Create** | Schema for `deferred_item` table |
-| `backend/src/main/java/com/planner/backend/deferred/DeferredItem.java` | **Create** | JPA entity |
-| `backend/src/main/java/com/planner/backend/deferred/DeferredItemRepository.java` | **Create** | JPA repository with pending-items query |
-| `backend/src/main/java/com/planner/backend/deferred/dto/DeferredItemCreateRequest.java` | **Create** | Validated request record |
-| `backend/src/main/java/com/planner/backend/deferred/dto/DeferredItemResponse.java` | **Create** | Response record with static `from()` factory |
-| `backend/src/main/java/com/planner/backend/deferred/DeferredItemService.java` | **Create** | `create()` and `listPending()` business logic |
-| `backend/src/main/java/com/planner/backend/deferred/DeferredItemController.java` | **Create** | `POST /api/v1/deferred`, `GET /api/v1/deferred` |
-| `backend/src/main/java/com/planner/backend/deferred/DeferredItemExceptionHandler.java` | **Create** | Placeholder `@RestControllerAdvice` (populated in Evening Ritual slice) |
-| `backend/src/test/java/com/planner/backend/deferred/DeferredItemControllerIntegrationTest.java` | **Create** | `@WebMvcTest` covering create + list + auth |
+| `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItem.java` | **Create** | JPA entity |
+| `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemRepository.java` | **Create** | JPA repository with pending-items query |
+| `backend/src/main/java/com/echel/planner/backend/deferred/dto/DeferredItemCreateRequest.java` | **Create** | Validated request record |
+| `backend/src/main/java/com/echel/planner/backend/deferred/dto/DeferredItemResponse.java` | **Create** | Response record with static `from()` factory |
+| `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemService.java` | **Create** | `create()` and `listPending()` business logic |
+| `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemController.java` | **Create** | `POST /api/v1/deferred`, `GET /api/v1/deferred` |
+| `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemExceptionHandler.java` | **Create** | Placeholder `@RestControllerAdvice` (populated in Evening Ritual slice) |
+| `backend/src/test/java/com/echel/planner/backend/deferred/DeferredItemControllerIntegrationTest.java` | **Create** | `@WebMvcTest` covering create + list + auth |
 | `frontend/src/api/deferred.js` | **Create** | `createDeferredItem` and `getDeferredItems` API functions |
 | `frontend/src/components/QuickCapture.jsx` | **Create** | Self-contained capture button + modal + chime |
 | `frontend/src/layouts/AppLayout.jsx` | **Modify** | Add `<QuickCapture />` + inbox badge query |
@@ -77,19 +77,19 @@ git commit -m "feat: add V4 migration for deferred_item table"
 ## Task 2: DeferredItem Entity, DTOs, and Repository
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/deferred/DeferredItem.java`
-- Create: `backend/src/main/java/com/planner/backend/deferred/dto/DeferredItemCreateRequest.java`
-- Create: `backend/src/main/java/com/planner/backend/deferred/dto/DeferredItemResponse.java`
-- Create: `backend/src/main/java/com/planner/backend/deferred/DeferredItemRepository.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItem.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/deferred/dto/DeferredItemCreateRequest.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/deferred/dto/DeferredItemResponse.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemRepository.java`
 
 - [ ] **Step 1: Create `DeferredItem.java`**
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.project.Project;
-import com.planner.backend.task.Task;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.project.Project;
+import com.echel.planner.backend.task.Task;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -177,7 +177,7 @@ public class DeferredItem {
 - [ ] **Step 2: Create `DeferredItemCreateRequest.java`**
 
 ```java
-package com.planner.backend.deferred.dto;
+package com.echel.planner.backend.deferred.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -190,9 +190,9 @@ public record DeferredItemCreateRequest(
 - [ ] **Step 3: Create `DeferredItemResponse.java`**
 
 ```java
-package com.planner.backend.deferred.dto;
+package com.echel.planner.backend.deferred.dto;
 
-import com.planner.backend.deferred.DeferredItem;
+import com.echel.planner.backend.deferred.DeferredItem;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -234,9 +234,9 @@ public record DeferredItemResponse(
 - [ ] **Step 4: Create `DeferredItemRepository.java`**
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -261,7 +261,7 @@ public interface DeferredItemRepository extends JpaRepository<DeferredItem, UUID
 - [ ] **Step 5: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/deferred/
+git add backend/src/main/java/com/echel/planner/backend/deferred/
 git commit -m "feat: add DeferredItem entity, DTOs, and repository"
 ```
 
@@ -270,16 +270,16 @@ git commit -m "feat: add DeferredItem entity, DTOs, and repository"
 ## Task 3: DeferredItemService
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/deferred/DeferredItemService.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemService.java`
 
 - [ ] **Step 1: Create `DeferredItemService.java`**
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.deferred.dto.DeferredItemCreateRequest;
-import com.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -315,7 +315,7 @@ public class DeferredItemService {
 - [ ] **Step 2: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/deferred/DeferredItemService.java
+git add backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemService.java
 git commit -m "feat: add DeferredItemService with create and listPending"
 ```
 
@@ -324,23 +324,23 @@ git commit -m "feat: add DeferredItemService with create and listPending"
 ## Task 4: DeferredItemController, ExceptionHandler, and Integration Test
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/deferred/DeferredItemController.java`
-- Create: `backend/src/main/java/com/planner/backend/deferred/DeferredItemExceptionHandler.java`
-- Create: `backend/src/test/java/com/planner/backend/deferred/DeferredItemControllerIntegrationTest.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemController.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemExceptionHandler.java`
+- Create: `backend/src/test/java/com/echel/planner/backend/deferred/DeferredItemControllerIntegrationTest.java`
 
 - [ ] **Step 1: Write the failing integration test**
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.deferred.dto.DeferredItemCreateRequest;
-import com.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -471,11 +471,11 @@ Expected: COMPILATION ERROR — `DeferredItemController` and `DeferredItemExcept
 - [ ] **Step 3: Create `DeferredItemController.java`**
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.deferred.dto.DeferredItemCreateRequest;
-import com.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -511,7 +511,7 @@ public class DeferredItemController {
 - [ ] **Step 4: Create `DeferredItemExceptionHandler.java`**
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -543,9 +543,9 @@ Expected: `Tests run: N, Failures: 0, Errors: 0, Skipped: 0`
 - [ ] **Step 7: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/deferred/DeferredItemController.java \
-        backend/src/main/java/com/planner/backend/deferred/DeferredItemExceptionHandler.java \
-        backend/src/test/java/com/planner/backend/deferred/DeferredItemControllerIntegrationTest.java
+git add backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemController.java \
+        backend/src/main/java/com/echel/planner/backend/deferred/DeferredItemExceptionHandler.java \
+        backend/src/test/java/com/echel/planner/backend/deferred/DeferredItemControllerIntegrationTest.java
 git commit -m "feat: add DeferredItemController with POST and GET endpoints"
 ```
 

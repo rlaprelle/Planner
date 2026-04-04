@@ -1,4 +1,4 @@
-package com.planner.backend;
+package com.echel.planner.backend;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,11 +1,11 @@
-package com.planner.backend.admin;
+package com.echel.planner.backend.admin;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackages = "com.planner.backend.admin")
+@RestControllerAdvice(basePackages = "com.echel.planner.backend.admin")
 public class AdminExceptionHandler {
 
     @ExceptionHandler(AdminNotFoundException.class)

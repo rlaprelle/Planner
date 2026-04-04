@@ -1,4 +1,4 @@
-package com.planner.backend.auth;
+package com.echel.planner.backend.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

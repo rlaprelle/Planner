@@ -19,19 +19,19 @@
 | File | Responsibility |
 |------|---------------|
 | `backend/src/main/resources/db/migration/V7__add_time_block_session_fields.sql` | Add actual_start, actual_end, was_completed columns |
-| `backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java` | REST endpoints for time block session lifecycle |
-| `backend/src/main/java/com/planner/backend/schedule/dto/ExtendRequest.java` | Request DTO for extend endpoint |
-| `backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java` | Integration tests for all 4 new endpoints |
+| `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java` | REST endpoints for time block session lifecycle |
+| `backend/src/main/java/com/echel/planner/backend/schedule/dto/ExtendRequest.java` | Request DTO for extend endpoint |
+| `backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java` | Integration tests for all 4 new endpoints |
 
 ### Backend — Modify
 
 | File | Change |
 |------|--------|
-| `backend/src/main/java/com/planner/backend/schedule/TimeBlock.java` | Add actualStart, actualEnd, wasCompleted fields + setters |
-| `backend/src/main/java/com/planner/backend/schedule/dto/TimeBlockResponse.java` | Add actualStart, actualEnd, wasCompleted to response record |
-| `backend/src/main/java/com/planner/backend/schedule/TimeBlockRepository.java` | Add findByIdAndUserId query |
-| `backend/src/main/java/com/planner/backend/schedule/ScheduleService.java` | Add startBlock, completeBlock, doneForNow, extendBlock methods |
-| `backend/src/main/java/com/planner/backend/schedule/ScheduleExceptionHandler.java` | Handle new exception types (block not found, already started) |
+| `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlock.java` | Add actualStart, actualEnd, wasCompleted fields + setters |
+| `backend/src/main/java/com/echel/planner/backend/schedule/dto/TimeBlockResponse.java` | Add actualStart, actualEnd, wasCompleted to response record |
+| `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockRepository.java` | Add findByIdAndUserId query |
+| `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java` | Add startBlock, completeBlock, doneForNow, extendBlock methods |
+| `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleExceptionHandler.java` | Handle new exception types (block not found, already started) |
 
 ### Frontend — Create
 
@@ -98,9 +98,9 @@ git commit -m "feat: add session fields to time_block table (V7 migration)"
 ## Task 2: Entity & DTO Updates
 
 **Files:**
-- Modify: `backend/src/main/java/com/planner/backend/schedule/TimeBlock.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/dto/TimeBlockResponse.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/TimeBlockRepository.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlock.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/dto/TimeBlockResponse.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockRepository.java`
 
 - [ ] **Step 1: Add fields to TimeBlock entity**
 
@@ -192,9 +192,9 @@ Expected: BUILD SUCCESS
 - [ ] **Step 5: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/TimeBlock.java \
-       backend/src/main/java/com/planner/backend/schedule/dto/TimeBlockResponse.java \
-       backend/src/main/java/com/planner/backend/schedule/TimeBlockRepository.java
+git add backend/src/main/java/com/echel/planner/backend/schedule/TimeBlock.java \
+       backend/src/main/java/com/echel/planner/backend/schedule/dto/TimeBlockResponse.java \
+       backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockRepository.java
 git commit -m "feat: add session fields to TimeBlock entity, response, and repository"
 ```
 
@@ -203,23 +203,23 @@ git commit -m "feat: add session fields to TimeBlock entity, response, and repos
 ## Task 3: Start Endpoint
 
 **Files:**
-- Create: `backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
-- Create: `backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/ScheduleService.java`
+- Create: `backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java`
 
 - [ ] **Step 1: Write the failing test**
 
 Create `TimeBlockControllerIntegrationTest.java`:
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -298,10 +298,10 @@ Expected: FAIL — `TimeBlockController` class not found
 Create `TimeBlockController.java`:
 
 ```java
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -358,9 +358,9 @@ Expected: 2 tests PASS
 - [ ] **Step 7: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java \
-       backend/src/main/java/com/planner/backend/schedule/ScheduleService.java \
-       backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
+git add backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java \
+       backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java \
+       backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
 git commit -m "feat: add PATCH /time-blocks/{id}/start endpoint"
 ```
 
@@ -369,9 +369,9 @@ git commit -m "feat: add PATCH /time-blocks/{id}/start endpoint"
 ## Task 4: Complete Endpoint
 
 **Files:**
-- Modify: `backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/ScheduleService.java`
+- Modify: `backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -437,7 +437,7 @@ public TimeBlockResponse completeBlock(AppUser user, UUID blockId) {
         var task = block.getTask();
         int current = task.getActualMinutes() != null ? task.getActualMinutes() : 0;
         task.setActualMinutes(current + (int) elapsedMinutes);
-        task.setStatus(com.planner.backend.task.TaskStatus.DONE);
+        task.setStatus(com.echel.planner.backend.task.TaskStatus.DONE);
         task.setCompletedAt(now);
         taskRepository.save(task);
     }
@@ -458,7 +458,7 @@ public ScheduleService(TimeBlockRepository timeBlockRepository, TaskRepository t
 }
 ```
 
-Add `import com.planner.backend.task.TaskRepository;` and `import com.planner.backend.task.TaskStatus;` at the top.
+Add `import com.echel.planner.backend.task.TaskRepository;` and `import com.echel.planner.backend.task.TaskStatus;` at the top.
 
 Note: If `TaskRepository` is already injected (check the existing constructor), skip the constructor change.
 
@@ -470,9 +470,9 @@ Expected: 3 tests PASS
 - [ ] **Step 6: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java \
-       backend/src/main/java/com/planner/backend/schedule/ScheduleService.java \
-       backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
+git add backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java \
+       backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java \
+       backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
 git commit -m "feat: add PATCH /time-blocks/{id}/complete endpoint"
 ```
 
@@ -481,9 +481,9 @@ git commit -m "feat: add PATCH /time-blocks/{id}/complete endpoint"
 ## Task 5: Done-for-now Endpoint
 
 **Files:**
-- Modify: `backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/ScheduleService.java`
+- Modify: `backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -564,9 +564,9 @@ Expected: 4 tests PASS
 - [ ] **Step 6: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java \
-       backend/src/main/java/com/planner/backend/schedule/ScheduleService.java \
-       backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
+git add backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java \
+       backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java \
+       backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
 git commit -m "feat: add PATCH /time-blocks/{id}/done-for-now endpoint"
 ```
 
@@ -575,15 +575,15 @@ git commit -m "feat: add PATCH /time-blocks/{id}/done-for-now endpoint"
 ## Task 6: Extend Endpoint
 
 **Files:**
-- Create: `backend/src/main/java/com/planner/backend/schedule/dto/ExtendRequest.java`
-- Modify: `backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java`
-- Modify: `backend/src/main/java/com/planner/backend/schedule/ScheduleService.java`
+- Create: `backend/src/main/java/com/echel/planner/backend/schedule/dto/ExtendRequest.java`
+- Modify: `backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java`
+- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java`
 
 - [ ] **Step 1: Create ExtendRequest DTO**
 
 ```java
-package com.planner.backend.schedule.dto;
+package com.echel.planner.backend.schedule.dto;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -597,7 +597,7 @@ Add imports to `TimeBlockControllerIntegrationTest.java`:
 ```java
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import org.springframework.http.MediaType;
-import com.planner.backend.schedule.dto.ExtendRequest;
+import com.echel.planner.backend.schedule.dto.ExtendRequest;
 ```
 
 Add test:
@@ -635,7 +635,7 @@ Expected: FAIL
 Add to `TimeBlockController.java`:
 
 ```java
-import com.planner.backend.schedule.dto.ExtendRequest;
+import com.echel.planner.backend.schedule.dto.ExtendRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -685,10 +685,10 @@ Expected: All tests PASS (existing + new)
 - [ ] **Step 8: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/schedule/TimeBlockController.java \
-       backend/src/main/java/com/planner/backend/schedule/ScheduleService.java \
-       backend/src/main/java/com/planner/backend/schedule/dto/ExtendRequest.java \
-       backend/src/test/java/com/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
+git add backend/src/main/java/com/echel/planner/backend/schedule/TimeBlockController.java \
+       backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java \
+       backend/src/main/java/com/echel/planner/backend/schedule/dto/ExtendRequest.java \
+       backend/src/test/java/com/echel/planner/backend/schedule/TimeBlockControllerIntegrationTest.java
 git commit -m "feat: add POST /time-blocks/{id}/extend endpoint"
 ```
 

@@ -1,12 +1,12 @@
-package com.planner.backend.task;
+package com.echel.planner.backend.task;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.project.Project;
-import com.planner.backend.project.ProjectRepository;
-import com.planner.backend.task.dto.TaskCreateRequest;
-import com.planner.backend.task.dto.TaskResponse;
-import com.planner.backend.task.dto.TaskStatusRequest;
-import com.planner.backend.task.dto.TaskUpdateRequest;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.project.Project;
+import com.echel.planner.backend.project.ProjectRepository;
+import com.echel.planner.backend.task.dto.TaskCreateRequest;
+import com.echel.planner.backend.task.dto.TaskResponse;
+import com.echel.planner.backend.task.dto.TaskStatusRequest;
+import com.echel.planner.backend.task.dto.TaskUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

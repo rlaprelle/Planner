@@ -1,4 +1,4 @@
-package com.planner.backend;
+package com.echel.planner.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

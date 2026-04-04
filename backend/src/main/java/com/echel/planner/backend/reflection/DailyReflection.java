@@ -1,6 +1,6 @@
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
-import com.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUser;
 import jakarta.persistence.*;
 
 import java.time.Instant;

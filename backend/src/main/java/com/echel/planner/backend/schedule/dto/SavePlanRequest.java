@@ -1,4 +1,4 @@
-package com.planner.backend.schedule.dto;
+package com.echel.planner.backend.schedule.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

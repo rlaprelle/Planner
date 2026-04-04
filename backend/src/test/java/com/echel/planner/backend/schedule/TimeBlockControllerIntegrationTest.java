@@ -1,12 +1,12 @@
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
-import com.planner.backend.task.TaskStatus;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.task.TaskStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import java.time.LocalTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.planner.backend.schedule.dto.ExtendRequest;
+import com.echel.planner.backend.schedule.dto.ExtendRequest;
 import org.springframework.http.MediaType;
 
 import static org.mockito.ArgumentMatchers.any;

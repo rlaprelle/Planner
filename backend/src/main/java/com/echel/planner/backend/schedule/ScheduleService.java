@@ -1,10 +1,10 @@
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.schedule.dto.SavePlanRequest;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.schedule.dto.SavePlanRequest;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,7 +126,7 @@ public class ScheduleService {
             var task = block.getTask();
             int current = task.getActualMinutes() != null ? task.getActualMinutes() : 0;
             task.setActualMinutes(current + (int) elapsedMinutes);
-            task.setStatus(com.planner.backend.task.TaskStatus.DONE);
+            task.setStatus(com.echel.planner.backend.task.TaskStatus.DONE);
             task.setCompletedAt(now);
             taskRepository.save(task);
         }

@@ -38,19 +38,25 @@ All have working defaults for local dev:
 ## Project Structure
 
 ```
-backend/src/main/java/com/planner/backend/
+backend/src/main/java/com/echel/planner/backend/
   auth/       — JWT login, register, refresh
   task/       — Task CRUD, status, energy level
   project/    — Project CRUD
   deferred/   — Deferred items (inbox)
   reflection/ — Daily reflection
   stats/      — Points/completion stats
+  admin/      — Admin CRUD for all entities, schedule, time blocks
 frontend/src/
-  pages/           — Route-level components
+  pages/                — Route-level components
   pages/project-detail/ — Task list, detail panel, row components
-  layouts/         — App shell (AppLayout)
-  components/      — Shared UI (QuickCapture, deferred/)
-  api/             — TanStack Query + authFetch wrappers
+  pages/admin/          — Admin panel (users, projects, tasks, deferred, reflections, time blocks)
+  pages/active-session/ — Timer, subtask checklist, chime
+  pages/start-day/      — Start day flow components
+  auth/                 — AuthContext, ProtectedRoute, useAuth
+  contexts/             — ActiveSessionContext
+  layouts/              — App shell (AppLayout)
+  components/           — Shared UI (QuickCapture, deferred/)
+  api/                  — TanStack Query + authFetch wrappers (admin, auth, dashboard, deferred, projects, reflection, schedule, tasks)
 ```
 
 ## Tech Stack
@@ -95,6 +101,11 @@ The spec is a checklist. Always check off items as they are completed. **Before 
 - Deciding NOT to do something is a victory. Keep task lists small and focused.
 - Prefer archive over delete.
 - The workflow is a suggestion, not a restriction.
+
+## Frontend Workflow
+
+- When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout
+- For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
 
 ## Frontend Design Principles
 

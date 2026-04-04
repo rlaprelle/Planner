@@ -1,4 +1,4 @@
-package com.planner.backend.project;
+package com.echel.planner.backend.project;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

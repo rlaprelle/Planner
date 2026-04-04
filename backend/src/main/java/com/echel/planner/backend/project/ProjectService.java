@@ -1,9 +1,9 @@
-package com.planner.backend.project;
+package com.echel.planner.backend.project;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.project.dto.ProjectCreateRequest;
-import com.planner.backend.project.dto.ProjectResponse;
-import com.planner.backend.project.dto.ProjectUpdateRequest;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.project.dto.ProjectCreateRequest;
+import com.echel.planner.backend.project.dto.ProjectResponse;
+import com.echel.planner.backend.project.dto.ProjectUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

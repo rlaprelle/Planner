@@ -1,6 +1,6 @@
-package com.planner.backend.admin.dto;
+package com.echel.planner.backend.admin.dto;
 
-import com.planner.backend.project.Project;
+import com.echel.planner.backend.project.Project;
 import java.time.Instant;
 import java.util.UUID;
 

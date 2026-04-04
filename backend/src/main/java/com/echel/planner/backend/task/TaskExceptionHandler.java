@@ -1,4 +1,4 @@
-package com.planner.backend.task;
+package com.echel.planner.backend.task;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;

@@ -1,15 +1,15 @@
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.deferred.dto.ConvertToTaskRequest;
-import com.planner.backend.deferred.dto.DeferRequest;
-import com.planner.backend.deferred.dto.DeferredItemCreateRequest;
-import com.planner.backend.deferred.dto.DeferredItemResponse;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskRepository;
-import com.planner.backend.task.TaskService;
-import com.planner.backend.task.dto.TaskCreateRequest;
-import com.planner.backend.task.dto.TaskResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.dto.ConvertToTaskRequest;
+import com.echel.planner.backend.deferred.dto.DeferRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.task.TaskService;
+import com.echel.planner.backend.task.dto.TaskCreateRequest;
+import com.echel.planner.backend.task.dto.TaskResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

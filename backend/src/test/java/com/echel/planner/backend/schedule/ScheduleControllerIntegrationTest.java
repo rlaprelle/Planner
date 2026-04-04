@@ -1,13 +1,13 @@
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.schedule.dto.SavePlanRequest;
-import com.planner.backend.schedule.dto.TimeBlockResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.schedule.dto.SavePlanRequest;
+import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ class ScheduleControllerIntegrationTest {
         UUID taskId = UUID.randomUUID();
         TimeBlockResponse.TaskSummary summary = new TimeBlockResponse.TaskSummary(
                 taskId, "Fix login", UUID.randomUUID(), "Auth", "#6366f1",
-                com.planner.backend.task.TaskStatus.TODO, (short) 3);
+                com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
                 LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary);
@@ -85,7 +85,7 @@ class ScheduleControllerIntegrationTest {
 
         TimeBlockResponse.TaskSummary summary = new TimeBlockResponse.TaskSummary(
                 taskId, "Fix login", UUID.randomUUID(), "Auth", "#6366f1",
-                com.planner.backend.task.TaskStatus.TODO, (short) 3);
+                com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
                 LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary);

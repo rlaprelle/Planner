@@ -1,11 +1,11 @@
-package com.planner.backend.admin;
+package com.echel.planner.backend.admin;
 
-import com.planner.backend.admin.dto.AdminReflectionRequest;
-import com.planner.backend.admin.dto.AdminReflectionResponse;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.reflection.DailyReflection;
-import com.planner.backend.reflection.DailyReflectionRepository;
+import com.echel.planner.backend.admin.dto.AdminReflectionRequest;
+import com.echel.planner.backend.admin.dto.AdminReflectionResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.reflection.DailyReflection;
+import com.echel.planner.backend.reflection.DailyReflectionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

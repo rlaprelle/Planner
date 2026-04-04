@@ -1,13 +1,13 @@
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.deferred.dto.DeferredItemCreateRequest;
-import com.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.planner.backend.deferred.dto.ConvertToTaskRequest;
-import com.planner.backend.deferred.dto.DeferRequest;
+import com.echel.planner.backend.deferred.dto.ConvertToTaskRequest;
+import com.echel.planner.backend.deferred.dto.DeferRequest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -146,13 +146,13 @@ class DeferredItemControllerIntegrationTest {
         ConvertToTaskRequest req = new ConvertToTaskRequest(
                 UUID.randomUUID(), "Buy oat milk", null, null, null, null);
 
-        com.planner.backend.task.dto.TaskResponse taskResp =
-                new com.planner.backend.task.dto.TaskResponse(
+        com.echel.planner.backend.task.dto.TaskResponse taskResp =
+                new com.echel.planner.backend.task.dto.TaskResponse(
                         UUID.randomUUID(), UUID.randomUUID(), "Test Project", "#6366f1",
                         UUID.randomUUID(), "Buy oat milk", null, null,
-                        com.planner.backend.task.TaskStatus.TODO,
+                        com.echel.planner.backend.task.TaskStatus.TODO,
                         (short) 3, null, null, null, null, 0, null,
-                        com.planner.backend.task.DeadlineGroup.NO_DEADLINE,
+                        com.echel.planner.backend.task.DeadlineGroup.NO_DEADLINE,
                         null, null, null, null, java.util.List.of());
 
         when(deferredItemService.convert(any(AppUser.class), any(UUID.class),

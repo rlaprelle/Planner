@@ -1,8 +1,8 @@
-package com.planner.backend.auth;
+package com.echel.planner.backend.auth;
 
-import com.planner.backend.auth.dto.AuthResponse;
-import com.planner.backend.auth.dto.LoginRequest;
-import com.planner.backend.auth.dto.RegisterRequest;
+import com.echel.planner.backend.auth.dto.AuthResponse;
+import com.echel.planner.backend.auth.dto.LoginRequest;
+import com.echel.planner.backend.auth.dto.RegisterRequest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;

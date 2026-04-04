@@ -1,6 +1,6 @@
-package com.planner.backend.reflection.dto;
+package com.echel.planner.backend.reflection.dto;
 
-import com.planner.backend.reflection.DailyReflection;
+import com.echel.planner.backend.reflection.DailyReflection;
 
 import java.time.Instant;
 import java.time.LocalDate;

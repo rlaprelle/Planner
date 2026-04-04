@@ -1,4 +1,4 @@
-package com.planner.backend.schedule;
+package com.echel.planner.backend.schedule;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -39,7 +39,7 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
             WHERE tb.user.id = :userId
               AND tb.blockDate = :blockDate
               AND tb.task IS NOT NULL
-              AND tb.task.status = com.planner.backend.task.TaskStatus.DONE
+              AND tb.task.status = com.echel.planner.backend.task.TaskStatus.DONE
             """)
     long countCompletedByUserIdAndBlockDate(@Param("userId") UUID userId, @Param("blockDate") LocalDate blockDate);
 

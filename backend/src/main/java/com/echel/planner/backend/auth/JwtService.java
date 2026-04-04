@@ -1,4 +1,4 @@
-package com.planner.backend.auth;
+package com.echel.planner.backend.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

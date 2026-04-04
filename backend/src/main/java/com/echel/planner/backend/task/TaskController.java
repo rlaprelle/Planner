@@ -1,10 +1,10 @@
-package com.planner.backend.task;
+package com.echel.planner.backend.task;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.task.dto.TaskCreateRequest;
-import com.planner.backend.task.dto.TaskResponse;
-import com.planner.backend.task.dto.TaskStatusRequest;
-import com.planner.backend.task.dto.TaskUpdateRequest;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.task.dto.TaskCreateRequest;
+import com.echel.planner.backend.task.dto.TaskResponse;
+import com.echel.planner.backend.task.dto.TaskStatusRequest;
+import com.echel.planner.backend.task.dto.TaskUpdateRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

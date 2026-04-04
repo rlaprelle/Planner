@@ -1,13 +1,13 @@
-package com.planner.backend.admin;
+package com.echel.planner.backend.admin;
 
-import com.planner.backend.admin.dto.AdminTimeBlockRequest;
-import com.planner.backend.admin.dto.AdminTimeBlockResponse;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.schedule.TimeBlock;
-import com.planner.backend.schedule.TimeBlockRepository;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.admin.dto.AdminTimeBlockRequest;
+import com.echel.planner.backend.admin.dto.AdminTimeBlockResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.schedule.TimeBlock;
+import com.echel.planner.backend.schedule.TimeBlockRepository;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

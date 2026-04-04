@@ -14,29 +14,29 @@
 
 **Backend — New:**
 - `backend/src/main/resources/db/migration/V5__create_daily_reflection.sql`
-- `com/planner/backend/deferred/dto/ConvertToTaskRequest.java`
-- `com/planner/backend/deferred/dto/DeferRequest.java`
-- `com/planner/backend/reflection/DailyReflection.java`
-- `com/planner/backend/reflection/DailyReflectionRepository.java`
-- `com/planner/backend/reflection/DailyReflectionService.java`
-- `com/planner/backend/reflection/DailyReflectionController.java`
-- `com/planner/backend/reflection/DailyReflectionExceptionHandler.java`
-- `com/planner/backend/reflection/dto/ReflectionRequest.java`
-- `com/planner/backend/reflection/dto/ReflectionResponse.java`
-- `com/planner/backend/stats/StatsController.java`
-- `com/planner/backend/stats/StatsService.java`
+- `com/echel/planner/backend/deferred/dto/ConvertToTaskRequest.java`
+- `com/echel/planner/backend/deferred/dto/DeferRequest.java`
+- `com/echel/planner/backend/reflection/DailyReflection.java`
+- `com/echel/planner/backend/reflection/DailyReflectionRepository.java`
+- `com/echel/planner/backend/reflection/DailyReflectionService.java`
+- `com/echel/planner/backend/reflection/DailyReflectionController.java`
+- `com/echel/planner/backend/reflection/DailyReflectionExceptionHandler.java`
+- `com/echel/planner/backend/reflection/dto/ReflectionRequest.java`
+- `com/echel/planner/backend/reflection/dto/ReflectionResponse.java`
+- `com/echel/planner/backend/stats/StatsController.java`
+- `com/echel/planner/backend/stats/StatsService.java`
 
 **Backend — Modified:**
-- `com/planner/backend/deferred/DeferredItemController.java` — add convert, defer, dismiss endpoints
-- `com/planner/backend/deferred/DeferredItemService.java` — add convert, defer, dismiss; inject TaskService + TaskRepository
-- `com/planner/backend/task/TaskRepository.java` — add `findCompletedTodayForUser`
-- `com/planner/backend/task/TaskService.java` — add `listCompletedToday`
-- `com/planner/backend/task/TaskController.java` — add `GET /api/v1/tasks/completed-today`
+- `com/echel/planner/backend/deferred/DeferredItemController.java` — add convert, defer, dismiss endpoints
+- `com/echel/planner/backend/deferred/DeferredItemService.java` — add convert, defer, dismiss; inject TaskService + TaskRepository
+- `com/echel/planner/backend/task/TaskRepository.java` — add `findCompletedTodayForUser`
+- `com/echel/planner/backend/task/TaskService.java` — add `listCompletedToday`
+- `com/echel/planner/backend/task/TaskController.java` — add `GET /api/v1/tasks/completed-today`
 
 **Backend — Tests:**
 - `DeferredItemControllerIntegrationTest.java` — add convert/defer/dismiss test cases
-- `backend/src/test/java/com/planner/backend/reflection/DailyReflectionControllerIntegrationTest.java` (new)
-- `backend/src/test/java/com/planner/backend/stats/StatsControllerIntegrationTest.java` (new)
+- `backend/src/test/java/com/echel/planner/backend/reflection/DailyReflectionControllerIntegrationTest.java` (new)
+- `backend/src/test/java/com/echel/planner/backend/stats/StatsControllerIntegrationTest.java` (new)
 
 **Frontend — New:**
 - `frontend/src/api/reflection.js`
@@ -102,17 +102,17 @@ git commit -m "feat: add daily_reflection table migration (Slice 3)"
 ## Task 2: Deferred Item Action Endpoints — Backend
 
 **Files:**
-- Create: `com/planner/backend/deferred/dto/ConvertToTaskRequest.java`
-- Create: `com/planner/backend/deferred/dto/DeferRequest.java`
-- Modify: `com/planner/backend/deferred/DeferredItemService.java`
-- Modify: `com/planner/backend/deferred/DeferredItemController.java`
-- Modify: `backend/src/test/java/com/planner/backend/deferred/DeferredItemControllerIntegrationTest.java`
+- Create: `com/echel/planner/backend/deferred/dto/ConvertToTaskRequest.java`
+- Create: `com/echel/planner/backend/deferred/dto/DeferRequest.java`
+- Modify: `com/echel/planner/backend/deferred/DeferredItemService.java`
+- Modify: `com/echel/planner/backend/deferred/DeferredItemController.java`
+- Modify: `backend/src/test/java/com/echel/planner/backend/deferred/DeferredItemControllerIntegrationTest.java`
 
 - [ ] **Step 1: Write the DTOs**
 
 `ConvertToTaskRequest.java`:
 ```java
-package com.planner.backend.deferred.dto;
+package com.echel.planner.backend.deferred.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -133,7 +133,7 @@ public record ConvertToTaskRequest(
 
 `DeferRequest.java`:
 ```java
-package com.planner.backend.deferred.dto;
+package com.echel.planner.backend.deferred.dto;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -155,13 +155,13 @@ void convert_validRequest_returns200WithTask() throws Exception {
     ConvertToTaskRequest req = new ConvertToTaskRequest(
             UUID.randomUUID(), "Buy oat milk", null, null, null, null);
 
-    com.planner.backend.task.dto.TaskResponse taskResp =
-            new com.planner.backend.task.dto.TaskResponse(
+    com.echel.planner.backend.task.dto.TaskResponse taskResp =
+            new com.echel.planner.backend.task.dto.TaskResponse(
                     UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
                     "Buy oat milk", null, null,
-                    com.planner.backend.task.TaskStatus.TODO,
+                    com.echel.planner.backend.task.TaskStatus.TODO,
                     (short) 3, null, null, null, null, 0,
-                    com.planner.backend.task.DeadlineGroup.NO_DEADLINE,
+                    com.echel.planner.backend.task.DeadlineGroup.NO_DEADLINE,
                     java.util.List.of(), null, null, null, null);
 
     when(deferredItemService.convert(any(AppUser.class), any(UUID.class),
@@ -241,8 +241,8 @@ void dismiss_noAuth_returns401() throws Exception {
 
 You also need to add these imports at the top of the test file:
 ```java
-import com.planner.backend.deferred.dto.ConvertToTaskRequest;
-import com.planner.backend.deferred.dto.DeferRequest;
+import com.echel.planner.backend.deferred.dto.ConvertToTaskRequest;
+import com.echel.planner.backend.deferred.dto.DeferRequest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 ```
 
@@ -258,18 +258,18 @@ Expected: compilation error or test failures referencing missing `convert`, `def
 Replace `DeferredItemService.java` with:
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.deferred.dto.ConvertToTaskRequest;
-import com.planner.backend.deferred.dto.DeferRequest;
-import com.planner.backend.deferred.dto.DeferredItemCreateRequest;
-import com.planner.backend.deferred.dto.DeferredItemResponse;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskRepository;
-import com.planner.backend.task.TaskService;
-import com.planner.backend.task.dto.TaskCreateRequest;
-import com.planner.backend.task.dto.TaskResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.dto.ConvertToTaskRequest;
+import com.echel.planner.backend.deferred.dto.DeferRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
+import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskRepository;
+import com.echel.planner.backend.task.TaskService;
+import com.echel.planner.backend.task.dto.TaskCreateRequest;
+import com.echel.planner.backend.task.dto.TaskResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -390,9 +390,9 @@ public ResponseEntity<DeferredItemResponse> dismiss(
 
 Add these imports to `DeferredItemController.java`:
 ```java
-import com.planner.backend.deferred.dto.ConvertToTaskRequest;
-import com.planner.backend.deferred.dto.DeferRequest;
-import com.planner.backend.task.dto.TaskResponse;
+import com.echel.planner.backend.deferred.dto.ConvertToTaskRequest;
+import com.echel.planner.backend.deferred.dto.DeferRequest;
+import com.echel.planner.backend.task.dto.TaskResponse;
 ```
 
 - [ ] **Step 7: Add `DeferredItemNotFoundException` to the existing exception handler**
@@ -400,7 +400,7 @@ import com.planner.backend.task.dto.TaskResponse;
 Open `DeferredItemExceptionHandler.java` and check if it handles `DeferredItemNotFoundException`. If the class doesn't exist yet, create it in the `deferred` package:
 
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -419,7 +419,7 @@ public class DeferredItemExceptionHandler {
 
 Then create `DeferredItemNotFoundException.java` in the `deferred` package:
 ```java
-package com.planner.backend.deferred;
+package com.echel.planner.backend.deferred;
 
 public class DeferredItemNotFoundException extends RuntimeException {
     public DeferredItemNotFoundException(String message) {
@@ -432,7 +432,7 @@ Also add the `@Import(DeferredItemExceptionHandler.class)` to the test if it's n
 
 - [ ] **Step 8: Add `TaskResponse` fields**
 
-Check what fields `TaskResponse` has by reading `com/planner/backend/task/dto/TaskResponse.java`. The test above constructs it directly, so ensure the constructor args match the record definition. Adjust the test's `TaskResponse` constructor call to match the actual record fields.
+Check what fields `TaskResponse` has by reading `com/echel/planner/backend/task/dto/TaskResponse.java`. The test above constructs it directly, so ensure the constructor args match the record definition. Adjust the test's `TaskResponse` constructor call to match the actual record fields.
 
 - [ ] **Step 9: Run tests to verify they pass**
 
@@ -444,8 +444,8 @@ Expected: `Tests run: N, Failures: 0, Errors: 0`
 - [ ] **Step 10: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/deferred/ \
-        backend/src/test/java/com/planner/backend/deferred/
+git add backend/src/main/java/com/echel/planner/backend/deferred/ \
+        backend/src/test/java/com/echel/planner/backend/deferred/
 git commit -m "feat: add deferred item convert/defer/dismiss endpoints (Slice 3)"
 ```
 
@@ -454,30 +454,30 @@ git commit -m "feat: add deferred item convert/defer/dismiss endpoints (Slice 3)
 ## Task 3: Daily Reflection — Backend
 
 **Files:**
-- Create: `com/planner/backend/reflection/DailyReflection.java`
-- Create: `com/planner/backend/reflection/DailyReflectionRepository.java`
-- Create: `com/planner/backend/reflection/DailyReflectionService.java`
-- Create: `com/planner/backend/reflection/DailyReflectionController.java`
-- Create: `com/planner/backend/reflection/DailyReflectionExceptionHandler.java`
-- Create: `com/planner/backend/reflection/dto/ReflectionRequest.java`
-- Create: `com/planner/backend/reflection/dto/ReflectionResponse.java`
-- Create: `backend/src/test/java/com/planner/backend/reflection/DailyReflectionControllerIntegrationTest.java`
+- Create: `com/echel/planner/backend/reflection/DailyReflection.java`
+- Create: `com/echel/planner/backend/reflection/DailyReflectionRepository.java`
+- Create: `com/echel/planner/backend/reflection/DailyReflectionService.java`
+- Create: `com/echel/planner/backend/reflection/DailyReflectionController.java`
+- Create: `com/echel/planner/backend/reflection/DailyReflectionExceptionHandler.java`
+- Create: `com/echel/planner/backend/reflection/dto/ReflectionRequest.java`
+- Create: `com/echel/planner/backend/reflection/dto/ReflectionResponse.java`
+- Create: `backend/src/test/java/com/echel/planner/backend/reflection/DailyReflectionControllerIntegrationTest.java`
 
 - [ ] **Step 1: Write failing tests**
 
 Create `DailyReflectionControllerIntegrationTest.java`:
 
 ```java
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
-import com.planner.backend.reflection.dto.ReflectionRequest;
-import com.planner.backend.reflection.dto.ReflectionResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.reflection.dto.ReflectionRequest;
+import com.echel.planner.backend.reflection.dto.ReflectionResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -566,9 +566,9 @@ Expected: compilation errors (classes don't exist yet).
 - [ ] **Step 3: Create `DailyReflection` entity**
 
 ```java
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
-import com.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUser;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -635,9 +635,9 @@ public class DailyReflection {
 - [ ] **Step 4: Create `DailyReflectionRepository`**
 
 ```java
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
-import com.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -664,7 +664,7 @@ public interface DailyReflectionRepository extends JpaRepository<DailyReflection
 
 `ReflectionRequest.java`:
 ```java
-package com.planner.backend.reflection.dto;
+package com.echel.planner.backend.reflection.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -680,9 +680,9 @@ public record ReflectionRequest(
 
 `ReflectionResponse.java`:
 ```java
-package com.planner.backend.reflection.dto;
+package com.echel.planner.backend.reflection.dto;
 
-import com.planner.backend.reflection.DailyReflection;
+import com.echel.planner.backend.reflection.DailyReflection;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -711,11 +711,11 @@ public record ReflectionResponse(
 - [ ] **Step 6: Create `DailyReflectionService`**
 
 ```java
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.reflection.dto.ReflectionRequest;
-import com.planner.backend.reflection.dto.ReflectionResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.reflection.dto.ReflectionRequest;
+import com.echel.planner.backend.reflection.dto.ReflectionResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -750,11 +750,11 @@ public class DailyReflectionService {
 
 `DailyReflectionController.java`:
 ```java
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.reflection.dto.ReflectionRequest;
-import com.planner.backend.reflection.dto.ReflectionResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.reflection.dto.ReflectionRequest;
+import com.echel.planner.backend.reflection.dto.ReflectionResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -782,7 +782,7 @@ public class DailyReflectionController {
 
 `DailyReflectionExceptionHandler.java`:
 ```java
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -802,8 +802,8 @@ Expected: `Tests run: 3, Failures: 0, Errors: 0`
 - [ ] **Step 9: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/reflection/ \
-        backend/src/test/java/com/planner/backend/reflection/
+git add backend/src/main/java/com/echel/planner/backend/reflection/ \
+        backend/src/test/java/com/echel/planner/backend/reflection/
 git commit -m "feat: add daily reflection upsert endpoint (Slice 3)"
 ```
 
@@ -812,22 +812,22 @@ git commit -m "feat: add daily reflection upsert endpoint (Slice 3)"
 ## Task 4: Streak Endpoint — Backend
 
 **Files:**
-- Create: `com/planner/backend/stats/StatsService.java`
-- Create: `com/planner/backend/stats/StatsController.java`
-- Create: `backend/src/test/java/com/planner/backend/stats/StatsControllerIntegrationTest.java`
+- Create: `com/echel/planner/backend/stats/StatsService.java`
+- Create: `com/echel/planner/backend/stats/StatsController.java`
+- Create: `backend/src/test/java/com/echel/planner/backend/stats/StatsControllerIntegrationTest.java`
 
 - [ ] **Step 1: Write failing tests**
 
 Create `StatsControllerIntegrationTest.java`:
 
 ```java
-package com.planner.backend.stats;
+package com.echel.planner.backend.stats;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.auth.AppUserRepository;
-import com.planner.backend.auth.JwtAuthFilter;
-import com.planner.backend.auth.JwtService;
-import com.planner.backend.auth.SecurityConfig;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUserRepository;
+import com.echel.planner.backend.auth.JwtAuthFilter;
+import com.echel.planner.backend.auth.JwtService;
+import com.echel.planner.backend.auth.SecurityConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -902,10 +902,10 @@ Expected: compilation error (classes don't exist).
 - [ ] **Step 3: Create `StatsService`**
 
 ```java
-package com.planner.backend.stats;
+package com.echel.planner.backend.stats;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.reflection.DailyReflectionRepository;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.reflection.DailyReflectionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -943,9 +943,9 @@ public class StatsService {
 - [ ] **Step 4: Create `StatsController`**
 
 ```java
-package com.planner.backend.stats;
+package com.echel.planner.backend.stats;
 
-import com.planner.backend.auth.AppUser;
+import com.echel.planner.backend.auth.AppUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -979,8 +979,8 @@ Expected: `Tests run: 3, Failures: 0, Errors: 0`
 - [ ] **Step 6: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/stats/ \
-        backend/src/test/java/com/planner/backend/stats/
+git add backend/src/main/java/com/echel/planner/backend/stats/ \
+        backend/src/test/java/com/echel/planner/backend/stats/
 git commit -m "feat: add streak stats endpoint (Slice 3)"
 ```
 
@@ -989,9 +989,9 @@ git commit -m "feat: add streak stats endpoint (Slice 3)"
 ## Task 5: Completed-Today Tasks Endpoint — Backend
 
 **Files:**
-- Modify: `com/planner/backend/task/TaskRepository.java`
-- Modify: `com/planner/backend/task/TaskService.java`
-- Modify: `com/planner/backend/task/TaskController.java`
+- Modify: `com/echel/planner/backend/task/TaskRepository.java`
+- Modify: `com/echel/planner/backend/task/TaskService.java`
+- Modify: `com/echel/planner/backend/task/TaskController.java`
 
 No new test file needed — add cases to existing task controller test, or test manually. The endpoint is simple enough that a brief manual test via curl suffices; add a focused test below.
 
@@ -1004,7 +1004,7 @@ import java.time.Instant;
 @Query("""
         SELECT t FROM Task t
         WHERE t.user.id = :userId
-          AND t.status = com.planner.backend.task.TaskStatus.DONE
+          AND t.status = com.echel.planner.backend.task.TaskStatus.DONE
           AND t.completedAt >= :startOfDay
           AND t.archivedAt IS NULL
         ORDER BY t.completedAt DESC
@@ -1056,7 +1056,7 @@ Expected: `BUILD SUCCESS`, no failures.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add backend/src/main/java/com/planner/backend/task/
+git add backend/src/main/java/com/echel/planner/backend/task/
 git commit -m "feat: add completed-today tasks endpoint (Slice 3)"
 ```
 

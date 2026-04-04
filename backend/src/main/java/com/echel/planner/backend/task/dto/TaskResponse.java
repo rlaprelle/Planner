@@ -1,9 +1,9 @@
-package com.planner.backend.task.dto;
+package com.echel.planner.backend.task.dto;
 
-import com.planner.backend.task.DeadlineGroup;
-import com.planner.backend.task.EnergyLevel;
-import com.planner.backend.task.Task;
-import com.planner.backend.task.TaskStatus;
+import com.echel.planner.backend.task.DeadlineGroup;
+import com.echel.planner.backend.task.EnergyLevel;
+import com.echel.planner.backend.task.Task;
+import com.echel.planner.backend.task.TaskStatus;
 
 import java.time.Instant;
 import java.time.LocalDate;

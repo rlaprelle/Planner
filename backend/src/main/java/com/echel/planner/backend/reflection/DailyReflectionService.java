@@ -1,8 +1,8 @@
-package com.planner.backend.reflection;
+package com.echel.planner.backend.reflection;
 
-import com.planner.backend.auth.AppUser;
-import com.planner.backend.reflection.dto.ReflectionRequest;
-import com.planner.backend.reflection.dto.ReflectionResponse;
+import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.reflection.dto.ReflectionRequest;
+import com.echel.planner.backend.reflection.dto.ReflectionResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

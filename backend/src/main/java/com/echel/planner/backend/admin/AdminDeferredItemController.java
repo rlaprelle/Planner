@@ -1,7 +1,7 @@
-package com.planner.backend.admin;
+package com.echel.planner.backend.admin;
 
-import com.planner.backend.admin.dto.AdminDeferredItemRequest;
-import com.planner.backend.admin.dto.AdminDeferredItemResponse;
+import com.echel.planner.backend.admin.dto.AdminDeferredItemRequest;
+import com.echel.planner.backend.admin.dto.AdminDeferredItemResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

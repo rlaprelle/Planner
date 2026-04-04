@@ -7,10 +7,8 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 
 public record EventCreateRequest(
-        @NotNull UUID projectId,
         @NotBlank @Size(max = 255) String title,
         String description,
         EnergyLevel energyLevel,

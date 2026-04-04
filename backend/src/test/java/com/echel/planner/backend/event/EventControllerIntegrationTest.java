@@ -92,7 +92,6 @@ class EventControllerIntegrationTest {
     @Test
     void createEvent_authenticated_returns201WithEvent() throws Exception {
         EventCreateRequest req = new EventCreateRequest(
-                projectId,
                 "Team standup",
                 "Daily sync",
                 EnergyLevel.MEDIUM,
@@ -101,7 +100,7 @@ class EventControllerIntegrationTest {
                 LocalTime.of(9, 30)
         );
 
-        when(eventService.create(any(AppUser.class), any(EventCreateRequest.class)))
+        when(eventService.create(any(AppUser.class), any(UUID.class), any(EventCreateRequest.class)))
                 .thenReturn(sampleEvent);
 
         mockMvc.perform(post("/api/v1/projects/{projectId}/events", projectId)
@@ -117,7 +116,6 @@ class EventControllerIntegrationTest {
     @Test
     void createEvent_missingTitle_returns400() throws Exception {
         EventCreateRequest req = new EventCreateRequest(
-                projectId,
                 "",  // blank title
                 null,
                 null,
@@ -136,7 +134,6 @@ class EventControllerIntegrationTest {
     @Test
     void createEvent_missingBlockDate_returns400() throws Exception {
         EventCreateRequest req = new EventCreateRequest(
-                projectId,
                 "Team standup",
                 null,
                 null,

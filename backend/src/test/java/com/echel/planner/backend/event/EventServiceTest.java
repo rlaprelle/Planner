@@ -63,7 +63,7 @@ class EventServiceTest {
     @Test
     void create_withAllFields_savesAndReturnsResponse() {
         EventCreateRequest request = new EventCreateRequest(
-                projectId, "Standup", "Daily standup", EnergyLevel.LOW,
+                "Standup", "Daily standup", EnergyLevel.LOW,
                 LocalDate.of(2026, 4, 5), LocalTime.of(9, 0), LocalTime.of(9, 30));
 
         when(projectRepository.findByIdAndUserId(projectId, userId))
@@ -76,7 +76,7 @@ class EventServiceTest {
             return saved;
         });
 
-        EventResponse response = eventService.create(user, request);
+        EventResponse response = eventService.create(user, projectId, request);
 
         assertThat(response).isNotNull();
         assertThat(response.title()).isEqualTo("Standup");
@@ -98,7 +98,7 @@ class EventServiceTest {
     @Test
     void create_withRequiredFieldsOnly_savesSuccessfully() {
         EventCreateRequest request = new EventCreateRequest(
-                projectId, "Meeting", null, null,
+                "Meeting", null, null,
                 LocalDate.of(2026, 4, 5), LocalTime.of(10, 0), LocalTime.of(11, 0));
 
         when(projectRepository.findByIdAndUserId(projectId, userId))
@@ -109,7 +109,7 @@ class EventServiceTest {
             return saved;
         });
 
-        EventResponse response = eventService.create(user, request);
+        EventResponse response = eventService.create(user, projectId, request);
 
         assertThat(response.title()).isEqualTo("Meeting");
         assertThat(response.description()).isNull();
@@ -119,13 +119,13 @@ class EventServiceTest {
     @Test
     void create_throwsWhenProjectNotFound() {
         EventCreateRequest request = new EventCreateRequest(
-                projectId, "Meeting", null, null,
+                "Meeting", null, null,
                 LocalDate.of(2026, 4, 5), LocalTime.of(10, 0), LocalTime.of(11, 0));
 
         when(projectRepository.findByIdAndUserId(projectId, userId))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> eventService.create(user, request))
+        assertThatThrownBy(() -> eventService.create(user, projectId, request))
                 .isInstanceOf(EventService.EventValidationException.class)
                 .hasMessageContaining(projectId.toString());
     }
@@ -133,13 +133,13 @@ class EventServiceTest {
     @Test
     void create_throwsWhenEndTimeNotAfterStartTime() {
         EventCreateRequest request = new EventCreateRequest(
-                projectId, "Meeting", null, null,
+                "Meeting", null, null,
                 LocalDate.of(2026, 4, 5), LocalTime.of(11, 0), LocalTime.of(10, 0));
 
         when(projectRepository.findByIdAndUserId(projectId, userId))
                 .thenReturn(Optional.of(project));
 
-        assertThatThrownBy(() -> eventService.create(user, request))
+        assertThatThrownBy(() -> eventService.create(user, projectId, request))
                 .isInstanceOf(EventService.EventValidationException.class)
                 .hasMessageContaining("End time must be after start time");
     }
@@ -147,13 +147,13 @@ class EventServiceTest {
     @Test
     void create_throwsWhenStartTimeEqualsEndTime() {
         EventCreateRequest request = new EventCreateRequest(
-                projectId, "Meeting", null, null,
+                "Meeting", null, null,
                 LocalDate.of(2026, 4, 5), LocalTime.of(10, 0), LocalTime.of(10, 0));
 
         when(projectRepository.findByIdAndUserId(projectId, userId))
                 .thenReturn(Optional.of(project));
 
-        assertThatThrownBy(() -> eventService.create(user, request))
+        assertThatThrownBy(() -> eventService.create(user, projectId, request))
                 .isInstanceOf(EventService.EventValidationException.class)
                 .hasMessageContaining("End time must be after start time");
     }

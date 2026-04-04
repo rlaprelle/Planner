@@ -28,8 +28,8 @@ public class EventService {
     }
 
     /** Creates a new event, validating ownership and time ordering. */
-    public EventResponse create(AppUser user, EventCreateRequest request) {
-        Project project = findOwnedProject(user, request.projectId());
+    public EventResponse create(AppUser user, UUID projectId, EventCreateRequest request) {
+        Project project = findOwnedProject(user, projectId);
         validateTimeOrder(request.startTime(), request.endTime());
 
         Event event = new Event(user, project, request.title(),

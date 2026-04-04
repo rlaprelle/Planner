@@ -32,7 +32,7 @@ public class EventController {
             @AuthenticationPrincipal AppUser user,
             @PathVariable UUID projectId,
             @Valid @RequestBody EventCreateRequest request) {
-        EventResponse response = eventService.create(user, request);
+        EventResponse response = eventService.create(user, projectId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

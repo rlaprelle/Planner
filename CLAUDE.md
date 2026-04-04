@@ -96,6 +96,11 @@ The spec is a checklist. Always check off items as they are completed. **Before 
 - Prefer archive over delete.
 - The workflow is a suggestion, not a restriction.
 
+## Frontend Workflow
+
+- When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout
+- For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
+
 ## Frontend Design Principles
 
 1. **Calm over clever** — The interface should feel quiet and grounding. Avoid visual noise: competing colors, dense layouts, animated distractions. When in doubt, remove rather than add.

@@ -1,10 +1,16 @@
 package com.echel.planner.backend.deferred;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.dto.ConvertToEventRequest;
 import com.echel.planner.backend.deferred.dto.ConvertToTaskRequest;
 import com.echel.planner.backend.deferred.dto.DeferRequest;
 import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
 import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.event.Event;
+import com.echel.planner.backend.event.EventRepository;
+import com.echel.planner.backend.event.EventService;
+import com.echel.planner.backend.event.dto.EventCreateRequest;
+import com.echel.planner.backend.event.dto.EventResponse;
 import com.echel.planner.backend.task.Task;
 import com.echel.planner.backend.task.TaskRepository;
 import com.echel.planner.backend.task.TaskService;
@@ -26,13 +32,19 @@ public class DeferredItemService {
     private final DeferredItemRepository repository;
     private final TaskService taskService;
     private final TaskRepository taskRepository;
+    private final EventService eventService;
+    private final EventRepository eventRepository;
 
     public DeferredItemService(DeferredItemRepository repository,
                                TaskService taskService,
-                               TaskRepository taskRepository) {
+                               TaskRepository taskRepository,
+                               EventService eventService,
+                               EventRepository eventRepository) {
         this.repository = repository;
         this.taskService = taskService;
         this.taskRepository = taskRepository;
+        this.eventService = eventService;
+        this.eventRepository = eventRepository;
     }
 
     public DeferredItemResponse create(AppUser user, DeferredItemCreateRequest request) {
@@ -60,6 +72,21 @@ public class DeferredItemService {
         item.setProcessed(true);
         item.setProcessedAt(Instant.now());
         item.setResolvedTask(task);
+        return created;
+    }
+
+    /** Converts a deferred item into a calendar event and marks it as processed. */
+    public EventResponse convertToEvent(AppUser user, UUID itemId, ConvertToEventRequest request) {
+        DeferredItem item = findOwnedItem(user, itemId);
+        EventCreateRequest eventReq = new EventCreateRequest(
+                request.title(), request.description(), request.energyLevel(),
+                request.blockDate(), request.startTime(), request.endTime());
+        EventResponse created = eventService.create(user, request.projectId(), eventReq);
+        Event event = eventRepository.findById(created.id())
+                .orElseThrow(() -> new IllegalStateException("Newly created event could not be reloaded: " + created.id()));
+        item.setProcessed(true);
+        item.setProcessedAt(Instant.now());
+        item.setResolvedEvent(event);
         return created;
     }
 

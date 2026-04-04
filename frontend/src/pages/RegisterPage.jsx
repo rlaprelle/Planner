@@ -46,19 +46,19 @@ export function RegisterPage() {
   }
 
   const inputClass = (hasError) =>
-    `w-full rounded-lg border px-3 py-2 text-gray-900 text-sm shadow-sm
-     focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-     ${hasError ? 'border-red-400' : 'border-gray-300'}`
+    `w-full rounded-lg border px-3 py-2 text-ink-heading text-sm shadow-soft
+     focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-edge-focus
+     ${hasError ? 'border-error' : 'border-edge'}`
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-md p-8">
-        <h1 className="text-2xl font-bold text-gray-900 text-center mb-1">Create your account</h1>
-        <p className="text-sm text-gray-500 text-center mb-6">Start planning with less friction</p>
+    <div className="min-h-screen bg-surface flex items-center justify-center px-4">
+      <div className="w-full max-w-sm bg-surface-raised rounded-2xl shadow-modal p-8">
+        <h1 className="text-2xl font-bold text-ink-heading text-center mb-1">Create your account</h1>
+        <p className="text-sm text-ink-secondary text-center mb-6">Start planning with less friction</p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="flex flex-col gap-1.5">
-            <Label.Root htmlFor="displayName" className="text-sm font-medium text-gray-700">
+            <Label.Root htmlFor="displayName" className="text-sm font-medium text-ink-body">
               Display name
             </Label.Root>
             <input
@@ -74,7 +74,7 @@ export function RegisterPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label.Root htmlFor="email" className="text-sm font-medium text-gray-700">
+            <Label.Root htmlFor="email" className="text-sm font-medium text-ink-body">
               Email
             </Label.Root>
             <input
@@ -90,7 +90,7 @@ export function RegisterPage() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label.Root htmlFor="password" className="text-sm font-medium text-gray-700">
+            <Label.Root htmlFor="password" className="text-sm font-medium text-ink-body">
               Password
             </Label.Root>
             <input
@@ -106,7 +106,7 @@ export function RegisterPage() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 font-medium" role="alert">
+            <p className="text-sm text-error font-medium" role="alert">
               {error}
             </p>
           )}
@@ -114,18 +114,18 @@ export function RegisterPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400
-              text-white text-sm font-semibold rounded-lg shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+            className="w-full py-2.5 px-4 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-400
+              text-white text-sm font-semibold rounded-lg shadow-soft
+              focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-2
               transition-colors duration-150"
           >
             {isSubmitting ? 'Creating account…' : 'Create account'}
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-center text-gray-500">
+        <p className="mt-6 text-sm text-center text-ink-secondary">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
+          <Link to="/login" className="text-primary-500 hover:text-primary-700 font-medium">
             Log in
           </Link>
         </p>

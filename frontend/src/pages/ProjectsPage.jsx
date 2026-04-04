@@ -60,7 +60,7 @@ function PlusIcon() {
 function Spinner() {
   return (
     <div className="flex items-center justify-center py-16">
-      <div className="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-primary-100 border-t-primary-500 rounded-full animate-spin" />
     </div>
   )
 }
@@ -78,7 +78,7 @@ function ColorPicker({ value, onChange }) {
           title={label}
           onClick={() => onChange(hex)}
           className={[
-            'w-7 h-7 rounded-full transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500',
+            'w-7 h-7 rounded-full transition-transform focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-edge-focus',
             selected === hex ? 'ring-2 ring-offset-1 ring-gray-600 scale-110' : 'hover:scale-110',
           ].join(' ')}
           style={{ backgroundColor: hex }}
@@ -154,16 +154,16 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-white rounded-xl shadow-xl p-6 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
-          <Dialog.Title className="text-lg font-semibold text-gray-900 mb-4">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+          <Dialog.Title className="text-lg font-semibold text-ink-heading mb-4">
             {isEdit ? 'Edit project' : 'New project'}
           </Dialog.Title>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Name */}
             <div>
-              <label htmlFor="project-name" className="block text-sm font-medium text-gray-700 mb-1">
-                Name <span className="text-red-500">*</span>
+              <label htmlFor="project-name" className="block text-sm font-medium text-ink-body mb-1">
+                Name <span className="text-error">*</span>
               </label>
               <input
                 id="project-name"
@@ -172,20 +172,20 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
                 onChange={(e) => { setName(e.target.value); setNameError('') }}
                 placeholder="e.g. Website redesign"
                 className={[
-                  'w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors',
-                  nameError ? 'border-red-400' : 'border-gray-300',
+                  'w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors',
+                  nameError ? 'border-error' : 'border-edge',
                 ].join(' ')}
                 autoFocus
               />
               {nameError && (
-                <p className="mt-1 text-xs text-red-500">{nameError}</p>
+                <p className="mt-1 text-xs text-error">{nameError}</p>
               )}
             </div>
 
             {/* Description */}
             <div>
-              <label htmlFor="project-description" className="block text-sm font-medium text-gray-700 mb-1">
-                Description <span className="text-gray-400 font-normal">(optional)</span>
+              <label htmlFor="project-description" className="block text-sm font-medium text-ink-body mb-1">
+                Description <span className="text-ink-muted font-normal">(optional)</span>
               </label>
               <textarea
                 id="project-description"
@@ -193,22 +193,22 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="What's this project about?"
                 rows={2}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors resize-none"
+                className="w-full px-3 py-2 text-sm border border-edge rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors resize-none"
               />
             </div>
 
             {/* Color */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Color <span className="text-gray-400 font-normal">(optional)</span>
+              <label className="block text-sm font-medium text-ink-body mb-2">
+                Color <span className="text-ink-muted font-normal">(optional)</span>
               </label>
               <ColorPicker value={color} onChange={setColor} />
             </div>
 
             {/* Icon */}
             <div>
-              <label htmlFor="project-icon" className="block text-sm font-medium text-gray-700 mb-1">
-                Icon <span className="text-gray-400 font-normal">(optional)</span>
+              <label htmlFor="project-icon" className="block text-sm font-medium text-ink-body mb-1">
+                Icon <span className="text-ink-muted font-normal">(optional)</span>
               </label>
               <input
                 id="project-icon"
@@ -216,13 +216,13 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
                 value={icon}
                 onChange={(e) => setIcon(e.target.value)}
                 placeholder="e.g. 🚀 or any text"
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
+                className="w-full px-3 py-2 text-sm border border-edge rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors"
               />
             </div>
 
             {/* Server error */}
             {mutation.isError && (
-              <p className="text-sm text-red-500">
+              <p className="text-sm text-error">
                 {mutation.error?.message || 'Something went wrong. Please try again.'}
               </p>
             )}
@@ -232,7 +232,7 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
               <Dialog.Close asChild>
                 <button
                   type="button"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-ink-body bg-surface-raised border border-edge rounded-md hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
                 >
                   Cancel
                 </button>
@@ -240,7 +240,7 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
                 {mutation.isPending ? 'Saving…' : 'Save'}
               </button>
@@ -259,18 +259,18 @@ function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-white rounded-xl shadow-xl p-6 focus:outline-none">
-          <Dialog.Title className="text-base font-semibold text-gray-900 mb-2">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
+          <Dialog.Title className="text-base font-semibold text-ink-heading mb-2">
             Archive this project?
           </Dialog.Title>
-          <Dialog.Description className="text-sm text-gray-600 mb-5">
+          <Dialog.Description className="text-sm text-ink-secondary mb-5">
             <strong>{project?.name}</strong> will be archived and hidden from your active projects. You can restore it later.
           </Dialog.Description>
           <div className="flex justify-end gap-3">
             <Dialog.Close asChild>
               <button
                 type="button"
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-ink-body bg-surface-raised border border-edge rounded-md hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
               >
                 Cancel
               </button>
@@ -295,7 +295,7 @@ function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending
 function ProjectRow({ project, onEdit, onArchive }) {
   const color = project.color || DEFAULT_COLOR
   return (
-    <div className="flex items-center gap-4 px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all group">
+    <div className="flex items-center gap-4 px-4 py-3 bg-surface-raised rounded-lg border border-edge hover:border-edge hover:shadow-card transition-all group">
       {/* Color swatch */}
       <div
         className="w-4 h-4 rounded flex-shrink-0"
@@ -307,19 +307,19 @@ function ProjectRow({ project, onEdit, onArchive }) {
       <div className="flex-1 min-w-0">
         <Link
           to={`/projects/${project.id}`}
-          className="flex items-center gap-2 hover:text-indigo-700 transition-colors focus:outline-none focus:underline"
+          className="flex items-center gap-2 hover:text-primary-700 transition-colors focus:outline-none focus:underline"
         >
           {project.icon && (
             <span className="text-base leading-none flex-shrink-0" aria-hidden="true">
               {project.icon}
             </span>
           )}
-          <span className="font-medium text-gray-900 text-sm truncate">
+          <span className="font-medium text-ink-heading text-sm truncate">
             {project.name}
           </span>
         </Link>
         {project.description && (
-          <p className="mt-0.5 text-xs text-gray-500 truncate">{project.description}</p>
+          <p className="mt-0.5 text-xs text-ink-muted truncate">{project.description}</p>
         )}
       </div>
 
@@ -329,7 +329,7 @@ function ProjectRow({ project, onEdit, onArchive }) {
           type="button"
           onClick={() => onEdit(project)}
           title="Edit project"
-          className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors"
+          className="p-1.5 text-ink-muted hover:text-ink-body hover:bg-surface-soft rounded focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
           aria-label={`Edit ${project.name}`}
         >
           <PencilIcon />
@@ -338,7 +338,7 @@ function ProjectRow({ project, onEdit, onArchive }) {
           type="button"
           onClick={() => onArchive(project)}
           title="Archive project"
-          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-colors"
+          className="p-1.5 text-ink-muted hover:text-red-600 hover:bg-red-50 rounded focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-colors"
           aria-label={`Archive ${project.name}`}
         >
           <ArchiveIcon />
@@ -400,11 +400,11 @@ export function ProjectsPage() {
     <div className="p-8 max-w-2xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Projects</h1>
+        <h1 className="text-2xl font-semibold text-ink-heading">Projects</h1>
         <button
           type="button"
           onClick={handleNewProject}
-          className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
         >
           <PlusIcon />
           New project
@@ -415,18 +415,18 @@ export function ProjectsPage() {
       {isLoading && <Spinner />}
 
       {isError && (
-        <div className="py-10 text-center text-sm text-red-500">
+        <div className="py-10 text-center text-sm text-error">
           Failed to load projects. Please try again.
         </div>
       )}
 
       {!isLoading && !isError && projects?.length === 0 && (
         <div className="py-16 text-center">
-          <p className="text-gray-500 text-sm">No projects yet. Create your first project.</p>
+          <p className="text-ink-muted text-sm">No projects yet. Create your first project.</p>
           <button
             type="button"
             onClick={handleNewProject}
-            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-indigo-600 border border-indigo-300 rounded-md hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors"
+            className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-primary-500 border border-primary-300 rounded-md hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
           >
             <PlusIcon />
             Create a project

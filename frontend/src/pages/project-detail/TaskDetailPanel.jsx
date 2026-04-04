@@ -14,7 +14,7 @@ import { AddTaskModal } from './AddTaskModal'
 // ─── Field components ─────────────────────────────────────────────────────────
 
 function FieldLabel({ children }) {
-  return <span className="block text-xs font-medium text-gray-500 mb-1">{children}</span>
+  return <span className="block text-xs font-medium text-ink-muted mb-1">{children}</span>
 }
 
 function SelectField({ label, value, onChange, options, emptyLabel }) {
@@ -27,7 +27,7 @@ function SelectField({ label, value, onChange, options, emptyLabel }) {
           const v = e.target.value
           onChange(v === '' ? null : v)
         }}
-        className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent bg-white transition-colors"
+        className="w-full px-2 py-1.5 text-sm border border-edge-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent bg-surface-raised transition-colors"
       >
         {emptyLabel && <option value="">{emptyLabel}</option>}
         {options.map((opt) => (
@@ -47,18 +47,18 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-white rounded-xl shadow-xl p-6 focus:outline-none">
-          <Dialog.Title className="text-base font-semibold text-gray-900 mb-2">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
+          <Dialog.Title className="text-base font-semibold text-ink-heading mb-2">
             Archive this task?
           </Dialog.Title>
-          <Dialog.Description className="text-sm text-gray-600 mb-5">
+          <Dialog.Description className="text-sm text-ink-secondary mb-5">
             <strong>{taskTitle}</strong> will be archived and hidden from your task list.
           </Dialog.Description>
           <div className="flex justify-end gap-3">
             <Dialog.Close asChild>
               <button
                 type="button"
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-ink-body bg-surface-raised border border-edge rounded-md hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
               >
                 Cancel
               </button>
@@ -104,7 +104,7 @@ function ChildTaskItem({ child, projectId }) {
         disabled={statusMutation.isPending}
         className={[
           'flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors focus:outline-none',
-          isDone ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-green-400',
+          isDone ? 'bg-success border-success text-white' : 'border-primary-300 hover:border-primary-400',
           statusMutation.isPending ? 'opacity-50' : 'cursor-pointer',
         ].join(' ')}
         aria-label={isDone ? 'Mark as To Do' : 'Mark as Done'}
@@ -115,7 +115,7 @@ function ChildTaskItem({ child, projectId }) {
           </svg>
         )}
       </button>
-      <span className={`text-sm flex-1 min-w-0 truncate ${isDone ? 'line-through text-gray-400' : 'text-gray-700'}`}>
+      <span className={`text-sm flex-1 min-w-0 truncate ${isDone ? 'line-through text-ink-muted' : 'text-ink-body'}`}>
         {child.title}
       </span>
     </div>
@@ -227,24 +227,24 @@ export function TaskDetailPanel({ task, projectName, projectId, onClose }) {
   const children = task.children ?? []
 
   return (
-    <div className="h-full flex flex-col bg-white border-l border-gray-200 overflow-hidden">
+    <div className="h-full flex flex-col bg-surface-raised border-l border-edge overflow-hidden">
       {/* Header */}
-      <div className="flex items-start gap-2 px-5 py-4 border-b border-gray-100 flex-shrink-0">
+      <div className="flex items-start gap-2 px-5 py-4 border-b border-edge-subtle flex-shrink-0">
         <div className="flex-1 min-w-0">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onBlur={handleTitleBlur}
-            className="w-full text-base font-semibold text-gray-900 bg-transparent border-0 border-b border-transparent hover:border-gray-300 focus:border-indigo-400 focus:outline-none px-0 py-0.5 transition-colors"
+            className="w-full text-base font-semibold text-ink-heading bg-transparent border-0 border-b border-transparent hover:border-edge focus:border-edge-focus focus:outline-none px-0 py-0.5 transition-colors"
             aria-label="Task title"
           />
-          <p className="text-xs text-gray-400 mt-0.5">{projectName}</p>
+          <p className="text-xs text-ink-muted mt-0.5">{projectName}</p>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-colors mt-0.5"
+          className="flex-shrink-0 p-1 text-ink-muted hover:text-ink-secondary rounded focus:outline-none focus:ring-2 focus:ring-edge-focus transition-colors mt-0.5"
           aria-label="Close panel"
         >
           <XIcon size={16} />
@@ -295,7 +295,7 @@ export function TaskDetailPanel({ task, projectName, projectId, onClose }) {
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
             onBlur={handleDueDateBlur}
-            className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-colors"
+            className="w-full px-2 py-1.5 text-sm border border-edge-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors"
           />
         </div>
 
@@ -308,7 +308,7 @@ export function TaskDetailPanel({ task, projectName, projectId, onClose }) {
             onBlur={handleDescriptionBlur}
             placeholder="Add some details…"
             rows={4}
-            className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-colors resize-none"
+            className="w-full px-2 py-1.5 text-sm border border-edge-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors resize-none"
           />
         </div>
 
@@ -319,14 +319,14 @@ export function TaskDetailPanel({ task, projectName, projectId, onClose }) {
             <button
               type="button"
               onClick={() => setAddChildOpen(true)}
-              className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 focus:outline-none focus:underline transition-colors"
+              className="inline-flex items-center gap-1 text-xs text-primary-500 hover:text-primary-700 focus:outline-none focus:underline transition-colors"
             >
               <PlusIcon size={12} />
               Add subtask
             </button>
           </div>
           {children.length === 0 ? (
-            <p className="text-xs text-gray-400 italic">No subtasks yet.</p>
+            <p className="text-xs text-ink-muted italic">No subtasks yet.</p>
           ) : (
             <div className="space-y-0.5">
               {children.map((child) => (
@@ -341,18 +341,18 @@ export function TaskDetailPanel({ task, projectName, projectId, onClose }) {
         </div>
 
         {updateMutation.isError && (
-          <p className="text-xs text-red-500">
+          <p className="text-xs text-error">
             Save failed: {updateMutation.error?.message || 'Please try again.'}
           </p>
         )}
       </div>
 
       {/* Archive button */}
-      <div className="px-5 py-4 border-t border-gray-100 flex-shrink-0">
+      <div className="px-5 py-4 border-t border-edge-subtle flex-shrink-0">
         <button
           type="button"
           onClick={() => setArchiveOpen(true)}
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 rounded transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-error focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-1 rounded transition-colors"
         >
           <ArchiveIcon size={14} />
           Archive task

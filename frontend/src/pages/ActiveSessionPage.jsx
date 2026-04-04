@@ -130,8 +130,8 @@ export default function ActiveSessionPage() {
 
   if (!block) {
     return (
-      <div className="flex items-center justify-center h-full bg-gray-50">
-        <p className="text-gray-400">Loading session...</p>
+      <div className="flex items-center justify-center h-full bg-surface">
+        <p className="text-ink-muted">Loading session...</p>
       </div>
     )
   }
@@ -143,21 +143,21 @@ export default function ActiveSessionPage() {
     extendMutation.isPending
 
   return (
-    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-gray-50 to-indigo-50/30 px-4">
+    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-surface to-primary-50/30 px-4">
       {/* Flash message */}
       {flash && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl px-6 py-3 text-indigo-600 font-medium z-50">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl px-6 py-3 text-primary-600 font-medium z-50">
           {flash}
         </div>
       )}
 
       {/* Error message */}
       {error && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-red-50 border border-red-200 shadow-lg rounded-xl px-6 py-3 text-red-700 text-sm z-50 max-w-md text-center">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 bg-error-bg border border-error shadow-lg rounded-xl px-6 py-3 text-error text-sm z-50 max-w-md text-center">
           <p>{error}</p>
           <button
             onClick={() => setError(null)}
-            className="mt-2 text-xs text-red-500 hover:text-red-700 underline"
+            className="mt-2 text-xs text-error hover:text-ink-heading underline"
           >
             Dismiss
           </button>
@@ -166,13 +166,13 @@ export default function ActiveSessionPage() {
 
       {/* Project name */}
       {block.task && (
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
+        <p className="text-xs font-semibold text-ink-muted uppercase tracking-widest mb-2">
           {block.task.projectName}
         </p>
       )}
 
       {/* Task title */}
-      <h1 className="text-xl font-semibold text-gray-800 mb-8 text-center">
+      <h1 className="text-xl font-semibold text-ink-heading mb-8 text-center">
         {block.task?.title ?? 'Focus time'}
       </h1>
 
@@ -200,7 +200,7 @@ export default function ActiveSessionPage() {
         <button
           onClick={() => completeMutation.mutate()}
           disabled={isPending}
-          className="px-5 py-2.5 bg-indigo-500 text-white rounded-xl text-sm font-medium hover:bg-indigo-600 transition-colors disabled:opacity-50"
+          className="px-5 py-2.5 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors disabled:opacity-50"
         >
           Complete
         </button>
@@ -209,17 +209,17 @@ export default function ActiveSessionPage() {
           <button
             onClick={() => setShowExtendMenu(!showExtendMenu)}
             disabled={isPending}
-            className="px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-medium hover:bg-indigo-100 transition-colors disabled:opacity-50"
+            className="px-5 py-2.5 bg-primary-50 text-primary-700 rounded-xl text-sm font-medium hover:bg-primary-100 transition-colors disabled:opacity-50"
           >
             Extend
           </button>
           {showExtendMenu && (
-            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl border border-gray-200 py-1 min-w-[120px]">
+            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl border border-edge py-1 min-w-[120px]">
               {[15, 30, 60].map((mins) => (
                 <button
                   key={mins}
                   onClick={() => extendMutation.mutate(mins)}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 transition-colors"
+                  className="block w-full text-left px-4 py-2 text-sm text-ink-body hover:bg-primary-50 transition-colors"
                 >
                   {mins} min
                 </button>
@@ -231,7 +231,7 @@ export default function ActiveSessionPage() {
         <button
           onClick={() => doneForNowMutation.mutate()}
           disabled={isPending}
-          className="px-5 py-2.5 bg-indigo-50 text-indigo-600 rounded-xl text-sm font-medium hover:bg-indigo-100 transition-colors disabled:opacity-50"
+          className="px-5 py-2.5 bg-primary-50 text-primary-700 rounded-xl text-sm font-medium hover:bg-primary-100 transition-colors disabled:opacity-50"
         >
           Done for now
         </button>

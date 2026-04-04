@@ -42,7 +42,7 @@ const NAV_ITEMS = [
         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
         aria-hidden="true">
         <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
-        <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+        <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0-1.79 1.11z" />
       </svg>
     ),
   },
@@ -112,7 +112,7 @@ function HeaderTimer({ session, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium hover:bg-indigo-100 transition-colors mx-3 my-3"
+      className="flex items-center gap-2 px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition-colors mx-3 my-3"
     >
       <span className="truncate max-w-[150px]">{session.taskName}</span>
       <span className="font-mono tabular-nums">{remaining}</span>
@@ -127,17 +127,17 @@ function NavItem({ item, badge = 0 }) {
       end={item.end}
       className={({ isActive }) =>
         [
-          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1',
+          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
           isActive
-            ? 'bg-indigo-50 text-indigo-700'
-            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+            ? 'bg-surface-accent text-primary-700'
+            : 'text-ink-secondary hover:bg-surface-soft hover:text-ink-heading',
         ].join(' ')
       }
     >
       {item.icon}
       {item.label}
       {badge > 0 && (
-        <span className="ml-auto bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
+        <span className="ml-auto bg-primary-100 text-primary-700 text-xs font-semibold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
           {badge > 99 ? '99+' : badge}
         </span>
       )}
@@ -151,10 +151,10 @@ function RitualItem({ item }) {
       to={item.to}
       className={({ isActive }) =>
         [
-          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1',
+          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
           isActive
-            ? 'bg-indigo-100 text-indigo-800'
-            : 'text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800',
+            ? 'bg-primary-100 text-primary-800'
+            : 'text-primary-400 hover:bg-primary-50 hover:text-primary-700',
         ].join(' ')
       }
     >
@@ -178,15 +178,15 @@ export function AppLayout() {
   const inboxCount = deferredItems.length
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-surface">
       {/* Sidebar */}
       <nav
-        className="w-60 flex-shrink-0 flex flex-col bg-white border-r border-gray-200"
+        className="w-60 flex-shrink-0 flex flex-col bg-surface-raised border-r border-edge"
         aria-label="Main navigation"
       >
         {/* Logo / Brand */}
-        <div className="px-5 py-5 border-b border-gray-100">
-          <span className="text-lg font-semibold text-gray-900 tracking-tight">Planner</span>
+        <div className="px-5 py-5 border-b border-edge-subtle">
+          <span className="text-lg font-semibold text-ink-heading tracking-tight">Planner</span>
         </div>
 
         {/* Active session timer */}
@@ -208,7 +208,7 @@ export function AppLayout() {
           ))}
 
           <div className="pt-3 pb-1">
-            <p className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Daily rituals</p>
+            <p className="px-3 text-xs font-semibold text-ink-muted uppercase tracking-wider">Daily rituals</p>
           </div>
 
           {RITUAL_ITEMS.map((item) => (
@@ -217,14 +217,14 @@ export function AppLayout() {
         </div>
 
         {/* Quick capture + user + logout */}
-        <div className="px-4 py-4 border-t border-gray-100 space-y-2">
+        <div className="px-4 py-4 border-t border-edge-subtle space-y-2">
           <QuickCapture />
-          <p className="text-xs text-gray-500 truncate" title={displayName}>
+          <p className="text-xs text-ink-muted truncate" title={displayName}>
             {displayName}
           </p>
           <button
             onClick={logout}
-            className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+            className="w-full text-left px-3 py-2 rounded-md text-sm text-ink-secondary hover:bg-surface-soft hover:text-ink-heading transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1"
           >
             Log out
           </button>

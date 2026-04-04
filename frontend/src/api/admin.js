@@ -100,6 +100,20 @@ export async function deleteReflection(id) {
   return handleResponse(await adminFetch(`/reflections/${id}`, { method: 'DELETE' }))
 }
 
+// Events
+export async function getEvents() {
+  return handleResponse(await adminFetch('/events'))
+}
+export async function createAdminEvent(data) {
+  return handleResponse(await adminFetch('/events', { method: 'POST', body: JSON.stringify(data) }))
+}
+export async function updateAdminEvent(id, data) {
+  return handleResponse(await adminFetch(`/events/${id}`, { method: 'PUT', body: JSON.stringify(data) }))
+}
+export async function deleteAdminEvent(id) {
+  return handleResponse(await adminFetch(`/events/${id}`, { method: 'DELETE' }))
+}
+
 // Time Blocks
 export async function getTimeBlocks() {
   return handleResponse(await adminFetch('/time-blocks'))

@@ -1,1 +1,7 @@
 *.log
+
+# Local tooling
+.claude/
+.claire/
+.superpowers/
+package-lock.json

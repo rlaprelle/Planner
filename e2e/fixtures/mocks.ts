@@ -1,5 +1,27 @@
 import type { Page } from '@playwright/test'
-import { TASKS, BLOCKS, DASHBOARD, SESSION_BLOCK, SESSION_TASK_DETAIL } from './data'
+import { TASKS, BLOCKS, EVENTS, DASHBOARD, SESSION_BLOCK, SESSION_TASK_DETAIL } from './data'
+
+export const EVENT_BLOCKS = [
+  {
+    id: 'tb-evt-1',
+    blockDate: '2026-04-04',
+    startTime: '09:00:00',
+    endTime: '10:00:00',
+    sortOrder: 0,
+    actualStart: null,
+    actualEnd: null,
+    wasCompleted: false,
+    task: null,
+    event: {
+      id: 'evt-1',
+      title: 'Daily Standup',
+      projectId: 'proj-1',
+      projectName: 'Work',
+      projectColor: '#6366f1',
+      energyLevel: 'LOW',
+    },
+  },
+]
 
 export async function mockDashboard(
   page: Page,
@@ -19,6 +41,22 @@ export async function mockSuggestedTasks(page: Page, tasks = TASKS) {
 export async function mockScheduleToday(page: Page, blocks = BLOCKS) {
   await page.route(/\/api\/v1\/schedule\/today(?!\/)/, route =>
     route.fulfill({ json: blocks })
+  )
+}
+
+export async function mockScheduleTodayWithEvents(page: Page, blocks = EVENT_BLOCKS) {
+  await page.route(/\/api\/v1\/schedule\/today(?!\/)/, route =>
+    route.fulfill({ json: blocks })
+  )
+}
+
+export async function mockProjects(page: Page) {
+  await page.route('**/api/v1/projects', route =>
+    route.fulfill({
+      json: [
+        { id: 'proj-1', name: 'Work', color: '#6366f1', isActive: true },
+      ],
+    })
   )
 }
 

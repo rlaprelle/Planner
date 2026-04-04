@@ -22,8 +22,8 @@ export default function SubtaskChecklist({ subtasks, projectId }) {
   })
 
   return (
-    <div className="bg-white rounded-2xl p-4 w-full max-w-sm">
-      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+    <div className="bg-surface-raised rounded-2xl p-4 w-full max-w-sm">
+      <div className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">
         Subtasks
       </div>
       <div className="space-y-1">
@@ -32,7 +32,7 @@ export default function SubtaskChecklist({ subtasks, projectId }) {
           return (
             <label
               key={child.id}
-              className="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+              className="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-surface-soft cursor-pointer transition-colors"
             >
               <input
                 type="checkbox"
@@ -40,9 +40,9 @@ export default function SubtaskChecklist({ subtasks, projectId }) {
                 onChange={() =>
                   toggleMutation.mutate({ taskId: child.id, isDone: !isDone })
                 }
-                className="w-4 h-4 rounded border-gray-300 text-indigo-500 focus:ring-indigo-400"
+                className="w-4 h-4 rounded border-primary-300 text-primary-500 focus:ring-edge-focus"
               />
-              <span className={`text-sm ${isDone ? 'text-gray-400 line-through' : 'text-gray-700'}`}>
+              <span className={`text-sm ${isDone ? 'text-ink-muted line-through' : 'text-ink-body'}`}>
                 {child.title}
               </span>
             </label>

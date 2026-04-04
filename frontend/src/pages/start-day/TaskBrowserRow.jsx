@@ -23,7 +23,7 @@ export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onTog
 
   if (projectMap.size === 0) {
     return (
-      <p className="text-xs text-gray-400 italic px-1">{emptyMessage}</p>
+      <p className="text-xs text-ink-muted italic px-1">{emptyMessage}</p>
     )
   }
 
@@ -32,7 +32,7 @@ export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onTog
       {[...projectMap.entries()].map(([projectId, { name, color, tasks: ptasks }]) => (
         <div
           key={projectId}
-          className="min-w-[130px] max-w-[160px] flex-shrink-0 bg-indigo-50 rounded-lg p-2"
+          className="min-w-[130px] max-w-[160px] flex-shrink-0 bg-primary-50 rounded-lg p-2"
         >
           {/* Project header */}
           <div className="flex items-center gap-1.5 mb-2">
@@ -42,7 +42,7 @@ export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onTog
                 style={{ background: color }}
               />
             )}
-            <span className="text-xs font-bold text-indigo-800 truncate">{name}</span>
+            <span className="text-xs font-bold text-primary-800 truncate">{name}</span>
           </div>
 
           {/* Task cards */}

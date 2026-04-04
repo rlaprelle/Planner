@@ -1,8 +1,8 @@
 import { useDraggable } from '@dnd-kit/core'
 
 const DEADLINE_BADGE = {
-  TODAY: { label: 'TODAY', className: 'bg-red-100 text-red-700' },
-  THIS_WEEK: { label: 'THIS WK', className: 'bg-amber-100 text-amber-700' },
+  TODAY: { label: 'TODAY', className: 'bg-deadline-today-bg text-deadline-today-text' },
+  THIS_WEEK: { label: 'THIS WK', className: 'bg-deadline-week-bg text-deadline-week-text' },
 }
 
 /**
@@ -27,8 +27,8 @@ export function TaskCard({ task, isSelected, isScheduled, onToggle, section = 'd
     <div
       ref={setNodeRef}
       className={`flex items-center gap-2 bg-white rounded px-2 py-1.5 border text-xs
-        ${isDragging ? 'opacity-40 border-indigo-300' : 'border-gray-200'}
-        ${isScheduled ? 'opacity-50' : 'cursor-grab hover:border-indigo-300 hover:shadow-sm'}
+        ${isDragging ? 'opacity-40 border-primary-300' : 'border-edge'}
+        ${isScheduled ? 'opacity-50' : 'cursor-grab hover:border-primary-300 hover:shadow-card'}
         transition-all`}
       {...(isScheduled ? {} : { ...listeners, ...attributes })}
     >
@@ -38,16 +38,16 @@ export function TaskCard({ task, isSelected, isScheduled, onToggle, section = 'd
         disabled={isScheduled}
         onChange={() => onToggle(task.id)}
         onClick={(e) => e.stopPropagation()}
-        className="shrink-0 accent-indigo-600"
+        className="shrink-0 accent-primary-500"
       />
-      <span className="truncate flex-1 text-gray-800">{task.title}</span>
+      <span className="truncate flex-1 text-ink-body">{task.title}</span>
       {badge && (
         <span className={`shrink-0 rounded px-1 py-0.5 text-[10px] font-semibold ${badge.className}`}>
           {badge.label}
         </span>
       )}
       {task.pointsEstimate != null && (
-        <span className="shrink-0 text-gray-400">{task.pointsEstimate}pt</span>
+        <span className="shrink-0 text-ink-muted">{task.pointsEstimate}pt</span>
       )}
     </div>
   )

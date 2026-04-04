@@ -32,10 +32,10 @@ function StatusCheckbox({ status, onChange, isPending }) {
       disabled={isPending}
       title={isDone ? 'Mark as To Do' : 'Mark as Done'}
       className={[
-        'flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1',
+        'flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
         isDone
-          ? 'bg-green-500 border-green-500 text-white'
-          : 'border-gray-300 hover:border-green-400',
+          ? 'bg-success border-success text-white'
+          : 'border-primary-300 hover:border-primary-400',
         isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
       ].join(' ')}
       aria-label={isDone ? 'Mark as To Do' : 'Mark as Done'}
@@ -76,7 +76,7 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
       <div
         className={[
           'flex items-center gap-2 py-2 rounded-lg group transition-colors',
-          isSelected ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-gray-50 border border-transparent',
+          isSelected ? 'bg-surface-accent border border-primary-200' : 'hover:bg-surface-soft border border-transparent',
         ].join(' ')}
         style={{ paddingLeft: `${12 + depth * 20}px`, paddingRight: '8px' }}
       >
@@ -85,7 +85,7 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
           type="button"
           onClick={(e) => { e.stopPropagation(); setChildrenExpanded((v) => !v) }}
           className={[
-            'flex-shrink-0 w-4 h-4 flex items-center justify-center text-gray-400 hover:text-gray-600 focus:outline-none rounded transition-colors',
+            'flex-shrink-0 w-4 h-4 flex items-center justify-center text-ink-muted hover:text-ink-secondary focus:outline-none rounded transition-colors',
             hasChildren ? 'visible' : 'invisible',
           ].join(' ')}
           aria-label={childrenExpanded ? 'Collapse subtasks' : 'Expand subtasks'}
@@ -109,7 +109,7 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
           type="button"
           className={[
             'flex-1 min-w-0 text-sm truncate text-left cursor-pointer select-none bg-transparent border-0 p-0 focus:outline-none',
-            isDone ? 'line-through text-gray-400' : 'text-gray-800',
+            isDone ? 'line-through text-ink-muted' : 'text-ink-body',
           ].join(' ')}
           onClick={() => onSelect(task)}
         >
@@ -123,7 +123,7 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
           </span>
         )}
         {task.dueDate && task.deadlineGroup === 'NO_DEADLINE' && (
-          <span className="flex-shrink-0 text-xs text-gray-400">
+          <span className="flex-shrink-0 text-xs text-ink-muted">
             {formatDate(task.dueDate)}
           </span>
         )}
@@ -132,7 +132,7 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
         <button
           type="button"
           onClick={() => onSelect(task)}
-          className="flex-shrink-0 p-0.5 text-gray-300 hover:text-gray-600 focus:outline-none rounded opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+          className="flex-shrink-0 p-0.5 text-ink-faint hover:text-ink-secondary focus:outline-none rounded opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
           aria-label={`Open details for ${task.title}`}
         >
           <ChevronRightIcon size={14} />

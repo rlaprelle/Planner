@@ -110,7 +110,7 @@ export function QuickCapture() {
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Trigger asChild>
         <button
-          className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
+          className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-primary-500 hover:bg-primary-50 hover:text-primary-700 transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1"
         >
           + Quick capture
         </button>
@@ -119,13 +119,13 @@ export function QuickCapture() {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/30 z-40" />
         <Dialog.Content
-          className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-white rounded-xl shadow-xl p-6 focus:outline-none"
+          className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none"
           aria-label="Quick capture"
         >
           {confirmed ? (
             <div className="flex flex-col items-center gap-3 py-4">
               <svg
-                className="text-green-500 w-10 h-10"
+                className="text-success w-10 h-10"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -134,11 +134,11 @@ export function QuickCapture() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              <p className="text-gray-700 font-medium">Captured.</p>
+              <p className="text-ink-body font-medium">Captured.</p>
             </div>
           ) : (
             <>
-              <Dialog.Title className="text-base font-semibold text-gray-900 mb-3">
+              <Dialog.Title className="text-base font-semibold text-ink-heading mb-3">
                 Quick capture
               </Dialog.Title>
               <Dialog.Description className="sr-only">
@@ -148,7 +148,7 @@ export function QuickCapture() {
               <textarea
                 autoFocus
                 rows={3}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full rounded-md border border-edge px-3 py-2 text-sm text-ink-heading placeholder-ink-muted resize-none focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-edge-focus"
                 placeholder="What's on your mind?"
                 value={text}
                 onChange={e => { setText(e.target.value); setError(null) }}
@@ -156,19 +156,19 @@ export function QuickCapture() {
               />
 
               {error && (
-                <p className="mt-1 text-xs text-red-600" role="alert">{error}</p>
+                <p className="mt-1 text-xs text-error" role="alert">{error}</p>
               )}
 
               <div className="mt-4 flex justify-end gap-2">
                 <Dialog.Close asChild>
-                  <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md transition-colors duration-100">
+                  <button className="px-4 py-2 text-sm text-ink-secondary hover:text-ink-heading focus:outline-none focus:ring-2 focus:ring-edge-focus rounded-md transition-colors duration-100">
                     Cancel
                   </button>
                 </Dialog.Close>
                 <button
                   disabled={isBlank || mutation.isPending}
                   onClick={() => mutation.mutate()}
-                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 transition-colors duration-100"
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors duration-100"
                 >
                   {mutation.isPending ? 'Saving…' : 'Capture'}
                 </button>

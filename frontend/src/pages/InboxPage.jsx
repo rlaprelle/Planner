@@ -14,19 +14,19 @@ export function InboxPage() {
   }
 
   if (isLoading) {
-    return <div className="p-8 text-gray-400">Loading…</div>
+    return <div className="p-8 text-ink-muted">Loading…</div>
   }
 
   return (
     <div className="p-8 max-w-2xl">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">Inbox</h1>
+      <h1 className="text-2xl font-semibold text-ink-heading mb-6">Inbox</h1>
 
       {items.length === 0 ? (
-        <p className="text-gray-400">Nothing to process.</p>
+        <p className="text-ink-muted">All clear. Nothing waiting for you.</p>
       ) : (
         <ul className="space-y-4">
           {items.map((item) => (
-            <li key={item.id} className="bg-white border border-gray-200 rounded-lg p-4">
+            <li key={item.id} className="bg-surface-raised border border-edge rounded-lg p-4 shadow-card">
               <DeferredItemActions item={item} onDone={handleDone} />
             </li>
           ))}

@@ -60,7 +60,8 @@ class TimeBlockControllerIntegrationTest {
             blockId, LocalDate.now(), LocalTime.of(9, 0), LocalTime.of(10, 0), 0,
             Instant.now(), null, false,
             new TimeBlockResponse.TaskSummary(UUID.randomUUID(), "Write tests",
-                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.IN_PROGRESS, (short) 2)
+                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.IN_PROGRESS, (short) 2),
+            null
         );
         when(scheduleService.startBlock(any(AppUser.class), any(UUID.class))).thenReturn(response);
 
@@ -83,7 +84,8 @@ class TimeBlockControllerIntegrationTest {
             blockId, LocalDate.now(), LocalTime.of(9, 0), LocalTime.of(10, 0), 0,
             Instant.now().minusSeconds(3600), Instant.now(), true,
             new TimeBlockResponse.TaskSummary(UUID.randomUUID(), "Write tests",
-                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.DONE, (short) 2)
+                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.DONE, (short) 2),
+            null
         );
         when(scheduleService.completeBlock(any(AppUser.class), any(UUID.class))).thenReturn(response);
 
@@ -101,7 +103,8 @@ class TimeBlockControllerIntegrationTest {
             blockId, LocalDate.now(), LocalTime.of(9, 0), LocalTime.of(10, 0), 0,
             Instant.now().minusSeconds(1800), Instant.now(), false,
             new TimeBlockResponse.TaskSummary(UUID.randomUUID(), "Write tests",
-                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.IN_PROGRESS, (short) 2)
+                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.IN_PROGRESS, (short) 2),
+            null
         );
         when(scheduleService.doneForNow(any(AppUser.class), any(UUID.class))).thenReturn(response);
 
@@ -120,7 +123,8 @@ class TimeBlockControllerIntegrationTest {
             newBlockId, LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(10, 30), 1,
             null, null, false,
             new TimeBlockResponse.TaskSummary(UUID.randomUUID(), "Write tests",
-                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.IN_PROGRESS, (short) 2)
+                UUID.randomUUID(), "Work", "#6366f1", TaskStatus.IN_PROGRESS, (short) 2),
+            null
         );
         when(scheduleService.extendBlock(any(AppUser.class), any(UUID.class), any(Integer.class)))
             .thenReturn(response);

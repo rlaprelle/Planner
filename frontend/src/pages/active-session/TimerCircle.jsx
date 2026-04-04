@@ -37,12 +37,12 @@ export default function TimerCircle({ endTime, totalMinutes, onTimeUp }) {
           {/* Background circle */}
           <circle
             cx="90" cy="90" r={RADIUS}
-            fill="none" stroke="#e8e4f0" strokeWidth="8"
+            fill="none" stroke="#D4C8E2" strokeWidth="8"
           />
           {/* Progress arc */}
           <circle
             cx="90" cy="90" r={RADIUS}
-            fill="none" stroke="#8b7ec8" strokeWidth="8"
+            fill="none" stroke="#7C6B9E" strokeWidth="8"
             strokeDasharray={CIRCUMFERENCE}
             strokeDashoffset={offset}
             strokeLinecap="round"
@@ -53,17 +53,17 @@ export default function TimerCircle({ endTime, totalMinutes, onTimeUp }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           {isOvertime ? (
             <>
-              <span className="text-3xl font-light text-gray-400">+{timeStr}</span>
-              <span className="text-sm text-indigo-400 mt-1 font-medium">
+              <span className="text-3xl font-light text-ink-muted">+{timeStr}</span>
+              <span className="text-sm text-primary-400 mt-1 font-medium">
                 Time&apos;s up. Good work!
               </span>
             </>
           ) : (
-            <span className="text-4xl font-light text-gray-800 tracking-wide">{timeStr}</span>
+            <span className="text-4xl font-light text-ink-heading tracking-wide">{timeStr}</span>
           )}
         </div>
       </div>
-      <span className="text-sm text-gray-400 mt-3">of {totalMinutes} min</span>
+      <span className="text-sm text-ink-muted mt-3">of {totalMinutes} min</span>
     </div>
   )
 }

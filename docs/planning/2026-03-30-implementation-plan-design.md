@@ -134,12 +134,12 @@ Stand up the dev environment with auth. No business logic.
 ## Slice 6: Polish & Stats
 
 **Backend:**
-- [ ] `GET /api/v1/stats/weekly-summary` — tasks completed, total points, total actual_minutes, mood/energy trends for the week
-- [ ] Celebration logic: identify tasks worth celebrating (high points, high actual_minutes, high effort)
+- [x] `GET /api/v1/stats/weekly-summary` — tasks completed, total points, total actual_minutes, mood/energy trends for the week
+- [x] Celebration logic: identify tasks worth celebrating (high points, high actual_minutes, high effort)
 
 **Frontend:**
-- [ ] Dashboard weekly summary card: tasks completed, points earned, trends
-- [ ] Intelligent celebration in Evening Clean-up reflection: highlight significant completions by effort, complexity, time spent
+- [x] Dashboard weekly summary card: tasks completed, points earned, trends
+- [x] Intelligent celebration in Evening Clean-up reflection: highlight significant completions by effort, complexity, time spent
 - [ ] UI polish pass: consistent animations/transitions between views, responsive layout adjustments
 
 **Done when:** Dashboard shows weekly stats, evening reflection highlights significant accomplishments, UX feels cohesive.

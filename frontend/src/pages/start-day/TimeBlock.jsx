@@ -22,6 +22,7 @@ export function TimeBlock({
   minutesToPercent,
   durationToPercent,
   startResize,
+  showStartButton = true,
 }) {
   const isCompleted = block.task?.status === 'COMPLETED'
   const navigate = useNavigate()
@@ -72,8 +73,8 @@ export function TimeBlock({
         </span>
       </div>
 
-      {/* Start button — appears on hover for incomplete blocks */}
-      {block.task?.status !== 'COMPLETED' && (
+      {/* Start button — appears on hover for incomplete blocks (hidden during planning) */}
+      {showStartButton && block.task?.status !== 'COMPLETED' && (
         <button
           onClick={(e) => {
             e.stopPropagation()

@@ -128,6 +128,7 @@ export function TimeBlockGrid({
               minutesToPercent={minutesToPercent}
               durationToPercent={durationToPercent}
               startResize={startResize}
+              showStartButton={false}
             />
           )
         )}

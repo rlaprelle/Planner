@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/auth'
-import { mockSuggestedTasks, mockScheduleToday, mockSavePlan, mockDashboard } from '../fixtures/mocks'
+import { mockSuggestedTasks, mockScheduleToday, mockSavePlan, mockDashboard, mockEventsForDate } from '../fixtures/mocks'
 import { TASKS, BLOCKS } from '../fixtures/data'
 
 test.describe('Start Day', () => {
@@ -26,9 +26,12 @@ test.describe('Start Day', () => {
 
     await page.getByRole('button', { name: '+ Add to calendar' }).click()
 
-    // Task title should now appear as a TimeBlock in the "Today's Plan" section
+    // Task title should now appear as a TimeBlock in the "Today's Plan" section.
+    // Use the TimeBlock's draggable container (role=button from dnd-kit) rather than the
+    // inner text span, which is clipped by overflow:hidden and appears hidden to Playwright.
+    // .first() selects the draggable container over the hover-only Remove button.
     const planSection = page.locator('section').filter({ hasText: "Today's Plan" })
-    await expect(planSection.getByText('Write tests')).toBeVisible()
+    await expect(planSection.getByRole('button', { name: /Write tests/ }).first()).toBeVisible()
   })
 
   test('confirm plan navigates to dashboard with toast', async ({ page }) => {
@@ -40,9 +43,10 @@ test.describe('Start Day', () => {
     await mockDashboard(page)
     await page.goto('/start-day')
 
-    // Wait for the block to appear in the plan (confirms existingBlocks loaded)
+    // Wait for the block to appear in the plan (confirms existingBlocks loaded).
+    // Use the TimeBlock's draggable container rather than the inner clipped text span.
     const planSection = page.locator('section').filter({ hasText: "Today's Plan" })
-    await expect(planSection.getByText('Write tests')).toBeVisible()
+    await expect(planSection.getByRole('button', { name: /Write tests/ }).first()).toBeVisible()
 
     await page.getByRole('button', { name: 'Confirm plan' }).click()
 
@@ -55,10 +59,62 @@ test.describe('Start Day', () => {
     await mockScheduleToday(page, BLOCKS)
     await page.goto('/start-day')
 
-    // Both existing blocks should appear in the "Today's Plan" grid
+    // Both existing blocks should appear in the "Today's Plan" grid.
+    // Use the TimeBlock's draggable container rather than the inner clipped text span.
     const planSection = page.locator('section').filter({ hasText: "Today's Plan" })
-    await expect(planSection.getByText('Write tests')).toBeVisible()
-    await expect(planSection.getByText('Review PR')).toBeVisible()
+    await expect(planSection.getByRole('button', { name: /Write tests/ }).first()).toBeVisible()
+    await expect(planSection.getByRole('button', { name: /Review PR/ }).first()).toBeVisible()
+  })
+
+  test('hour range dropdowns default to 8 AM and 5 PM', async ({ page }) => {
+    await mockSuggestedTasks(page, [])
+    await mockScheduleToday(page, [])
+    await mockEventsForDate(page, [])
+    await page.goto('/start-day')
+
+    const planSection = page.locator('section').filter({ hasText: "Today's Plan" })
+    const selects = planSection.locator('select')
+
+    await expect(selects.first()).toHaveValue('8')
+    await expect(selects.last()).toHaveValue('17')
+  })
+
+  test('changing start hour updates grid labels', async ({ page }) => {
+    await mockSuggestedTasks(page, [])
+    await mockScheduleToday(page, [])
+    await mockEventsForDate(page, [])
+    await page.goto('/start-day')
+
+    const planSection = page.locator('section').filter({ hasText: "Today's Plan" })
+    const startSelect = planSection.locator('select').first()
+
+    // Change start to 6 AM
+    await startSelect.selectOption('6')
+
+    // Grid should now show 6 AM label — target the span in the hour labels row,
+    // not the option element inside the select, to avoid a strict mode violation.
+    await expect(planSection.locator('span').filter({ hasText: '6 AM' })).toBeVisible()
+  })
+
+  test('narrowing range past existing block shows warning', async ({ page }) => {
+    await mockSuggestedTasks(page, TASKS.slice(0, 1))
+    // Block at 8:00-9:00 (BLOCKS[0].startTime = '08:00')
+    await mockScheduleToday(page, [BLOCKS[0]])
+    await mockEventsForDate(page, [])
+    await page.goto('/start-day')
+
+    const planSection = page.locator('section').filter({ hasText: "Today's Plan" })
+
+    // Wait for block to appear (use the TimeBlock container, not the clipped inner span)
+    await expect(planSection.getByRole('button', { name: /Write tests/ }).first()).toBeVisible()
+
+    // Try to set start hour to 10 AM (would hide the 8:00 block)
+    const startSelect = planSection.locator('select').first()
+    await startSelect.selectOption('10')
+
+    // Warning should appear and start hour should remain at 8
+    await expect(page.getByText(/You have blocks before/)).toBeVisible()
+    await expect(startSelect).toHaveValue('8')
   })
 
   test('drag task card onto calendar adds block', async ({ page }) => {
@@ -99,6 +155,7 @@ test.describe('Start Day', () => {
     // Release
     await page.mouse.up()
 
-    await expect(planSection.getByText('Write tests')).toBeVisible()
+    // Use the TimeBlock container rather than the inner clipped text span
+    await expect(planSection.getByRole('button', { name: /Write tests/ }).first()).toBeVisible()
   })
 })

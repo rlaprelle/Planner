@@ -78,6 +78,12 @@ export async function mockTaskDetail(page: Page, task = SESSION_TASK_DETAIL) {
   )
 }
 
+export async function mockEventsForDate(page: Page, events: unknown[] = []) {
+  await page.route(/\/api\/v1\/events\/for-date/, route =>
+    route.fulfill({ json: events })
+  )
+}
+
 export async function mockSessionEndpoints(page: Page) {
   await page.route(/\/api\/v1\/time-blocks\/[^/]+\/start/, (route) =>
     route.fulfill({

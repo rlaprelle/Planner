@@ -75,18 +75,13 @@ frontend/src/
 - Project status is `is_active` boolean (no priority on projects)
 - JWT auth: refresh token in HttpOnly cookie, access token in response body
 
-## Implementation Approach
-
-Vertical slices, built sequentially. See `docs/planning/2026-03-30-implementation-plan-design.md` for the full spec.
-
-The spec is a checklist. Always check off items as they are completed. **Before pushing or creating a PR, verify all completed work is checked off in the spec** — this is easy to miss at the end of a session.
-
 ## Key Documents
 
 - `docs/ARCHITECTURE.md` — Data model, API endpoints, tech stack
-- `docs/IMPLEMENTATION_PLAN.md` — Design decisions, slice overview
-- `docs/planning/2026-03-30-implementation-plan-design.md` — Detailed vertical slice spec
+- `docs/IMPLEMENTATION_PLAN.md` — Design decisions and rationale behind key choices
+- `docs/planning/user_design/DEFERRED_WORK.md` — Roadmap of deferred features and future work
 - `docs/planning/user_design/` — User design docs (use cases, workflows, wireframes)
+- `docs/planning/2026-03-30-implementation-plan-design.md` — Original vertical slice spec (nearly complete, 1 polish item remaining)
 
 ## Conventions
 

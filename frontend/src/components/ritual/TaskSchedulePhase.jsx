@@ -1,44 +1,53 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getActiveTasks, rescheduleTask } from '@/api/tasks'
+import { getPreferences } from '@/api/preferences'
 
-function getWeeksInMonth(year, month) {
+// Maps API day names (MONDAY, SUNDAY, etc.) to JS Date.getDay() values (0=Sun, 1=Mon, ...)
+const DAY_TO_JS = { SUNDAY: 0, MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3, THURSDAY: 4, FRIDAY: 5, SATURDAY: 6 }
+
+function getWeeksInMonth(year, month, weekStartDay = 'MONDAY') {
+  const startDayJs = DAY_TO_JS[weekStartDay] ?? 1
   const weeks = []
   const first = new Date(year, month, 1)
-  // Find Monday of the week containing the 1st
-  let monday = new Date(first)
-  const day = monday.getDay()
-  monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1))
+  // Find the configured week-start day of the week containing the 1st
+  let weekStart = new Date(first)
+  const day = weekStart.getDay()
+  const diff = (day - startDayJs + 7) % 7
+  weekStart.setDate(weekStart.getDate() - diff)
 
   const lastDay = new Date(year, month + 1, 0)
 
-  while (monday <= lastDay) {
-    const sunday = new Date(monday)
-    sunday.setDate(sunday.getDate() + 6)
+  while (weekStart <= lastDay) {
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekEnd.getDate() + 6)
     weeks.push({
-      start: new Date(monday),
-      label: `${monday.getMonth() + 1}/${monday.getDate()} – ${sunday.getMonth() + 1}/${sunday.getDate()}`,
-      isoMonday: monday.toISOString().split('T')[0],
+      start: new Date(weekStart),
+      label: `${weekStart.getMonth() + 1}/${weekStart.getDate()} – ${weekEnd.getMonth() + 1}/${weekEnd.getDate()}`,
+      isoStart: weekStart.toISOString().split('T')[0],
     })
-    monday = new Date(monday)
-    monday.setDate(monday.getDate() + 7)
+    weekStart = new Date(weekStart)
+    weekStart.setDate(weekStart.getDate() + 7)
   }
   return weeks
 }
 
-function getDaysInWeek() {
+function getDaysInWeek(weekStartDay = 'MONDAY') {
+  const startDayJs = DAY_TO_JS[weekStartDay] ?? 1
+  const nameMap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
   const today = new Date()
-  const day = today.getDay()
-  const monday = new Date(today)
-  monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1))
+  const currentDayJs = today.getDay()
+  const diff = (currentDayJs - startDayJs + 7) % 7
+  const weekStart = new Date(today)
+  weekStart.setDate(weekStart.getDate() - diff)
 
   const days = []
-  const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   for (let i = 0; i < 7; i++) {
-    const d = new Date(monday)
+    const d = new Date(weekStart)
     d.setDate(d.getDate() + i)
     days.push({
-      label: names[i],
+      label: nameMap[d.getDay()],
       dateLabel: `${d.getMonth() + 1}/${d.getDate()}`,
       iso: d.toISOString().split('T')[0],
     })
@@ -49,6 +58,12 @@ function getDaysInWeek() {
 export function TaskSchedulePhase({ mode, onPhaseComplete }) {
   const queryClient = useQueryClient()
   const [currentIndex, setCurrentIndex] = useState(0)
+
+  const { data: prefs } = useQuery({
+    queryKey: ['preferences'],
+    queryFn: getPreferences,
+  })
+  const weekStartDay = prefs?.weekStartDay || 'MONDAY'
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks', 'active'],
@@ -92,8 +107,8 @@ export function TaskSchedulePhase({ mode, onPhaseComplete }) {
   }
 
   const now = new Date()
-  const weeks = mode === 'month' ? getWeeksInMonth(now.getFullYear(), now.getMonth()) : []
-  const days = mode === 'week' ? getDaysInWeek() : []
+  const weeks = mode === 'month' ? getWeeksInMonth(now.getFullYear(), now.getMonth(), weekStartDay) : []
+  const days = mode === 'week' ? getDaysInWeek(weekStartDay) : []
 
   return (
     <div>
@@ -137,10 +152,10 @@ export function TaskSchedulePhase({ mode, onPhaseComplete }) {
           <div className="grid grid-cols-2 gap-2">
             {weeks.map((week) => (
               <button
-                key={week.isoMonday}
+                key={week.isoStart}
                 onClick={() => rescheduleMutation.mutate({
                   taskId: task.id,
-                  visibleFrom: week.isoMonday,
+                  visibleFrom: week.isoStart,
                   schedulingScope: 'WEEK',
                 })}
                 disabled={rescheduleMutation.isPending}

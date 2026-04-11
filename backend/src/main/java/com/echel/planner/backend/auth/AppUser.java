@@ -38,13 +38,13 @@ public class AppUser implements UserDetails {
     private LocalTime defaultEndTime = LocalTime.of(17, 0);
 
     @Column(name = "default_session_minutes", nullable = false)
-    private int defaultSessionMinutes = 60;
+    private short defaultSessionMinutes = 60;
 
     @Column(name = "week_start_day", nullable = false)
-    private int weekStartDay = 1;
+    private short weekStartDay = 1;
 
     @Column(name = "ceremony_day", nullable = false)
-    private int ceremonyDay = 5;
+    private short ceremonyDay = 5;
 
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private Instant createdAt;
@@ -140,11 +140,11 @@ public class AppUser implements UserDetails {
     public void setDefaultEndTime(LocalTime defaultEndTime) { this.defaultEndTime = defaultEndTime; }
 
     public int getDefaultSessionMinutes() { return defaultSessionMinutes; }
-    public void setDefaultSessionMinutes(int defaultSessionMinutes) { this.defaultSessionMinutes = defaultSessionMinutes; }
+    public void setDefaultSessionMinutes(int defaultSessionMinutes) { this.defaultSessionMinutes = (short) defaultSessionMinutes; }
 
     public DayOfWeek getWeekStartDay() { return DayOfWeek.of(weekStartDay); }
-    public void setWeekStartDay(DayOfWeek weekStartDay) { this.weekStartDay = weekStartDay.getValue(); }
+    public void setWeekStartDay(DayOfWeek weekStartDay) { this.weekStartDay = (short) weekStartDay.getValue(); }
 
     public DayOfWeek getCeremonyDay() { return DayOfWeek.of(ceremonyDay); }
-    public void setCeremonyDay(DayOfWeek ceremonyDay) { this.ceremonyDay = ceremonyDay.getValue(); }
+    public void setCeremonyDay(DayOfWeek ceremonyDay) { this.ceremonyDay = (short) ceremonyDay.getValue(); }
 }

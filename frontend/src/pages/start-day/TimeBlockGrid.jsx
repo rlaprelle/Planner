@@ -1,24 +1,11 @@
 import { useDroppable } from '@dnd-kit/core'
 import { TimeBlock } from './TimeBlock'
 import { EventBlock } from './EventBlock'
-import { DAY_START_MINUTES, DAY_DURATION } from './useTimeGrid'
-
-const TOTAL_HOURS = DAY_DURATION / 60 // 9
-
-// Hour boundary marks for labels and grid lines: 8 AM through 5 PM
-const HOUR_MARKS = Array.from(
-  { length: TOTAL_HOURS + 1 },
-  (_, i) => DAY_START_MINUTES / 60 + i
-) // [8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
 
 function formatHour(h) {
   if (h === 12) return '12 PM'
   if (h < 12) return `${h} AM`
   return `${h - 12} PM`
-}
-
-function hourToPercent(h) {
-  return ((h * 60 - DAY_START_MINUTES) / DAY_DURATION) * 100
 }
 
 /**
@@ -37,8 +24,22 @@ export function TimeBlockGrid({
   minutesToPercent,
   durationToPercent,
   startResize,
+  dayStartMinutes,
+  dayEndMinutes,
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: 'time-block-grid' })
+
+  const dayDuration = dayEndMinutes - dayStartMinutes
+  const totalHours = dayDuration / 60
+
+  const hourMarks = Array.from(
+    { length: totalHours + 1 },
+    (_, i) => dayStartMinutes / 60 + i
+  )
+
+  function hourToPercent(h) {
+    return ((h * 60 - dayStartMinutes) / dayDuration) * 100
+  }
 
   const mergedRef = (el) => {
     setNodeRef(el)
@@ -53,9 +54,9 @@ export function TimeBlockGrid({
     >
       {/* Hour labels — positioned at true hour boundaries */}
       <div className="relative h-7 border-b border-edge-subtle">
-        {HOUR_MARKS.map((hour, idx) => {
+        {hourMarks.map((hour, idx) => {
           const isFirst = idx === 0
-          const isLast = idx === HOUR_MARKS.length - 1
+          const isLast = idx === hourMarks.length - 1
           return (
             <span
               key={hour}
@@ -77,7 +78,7 @@ export function TimeBlockGrid({
       {/* Grid body with hour lines and 15-min sub-lines */}
       <div className="relative h-14">
         {/* Hour boundary lines (container border handles the outer edges) */}
-        {HOUR_MARKS.slice(1, -1).map((hour) => (
+        {hourMarks.slice(1, -1).map((hour) => (
           <div
             key={`h-${hour}`}
             className="absolute top-0 bottom-0 border-l border-edge"
@@ -86,9 +87,9 @@ export function TimeBlockGrid({
         ))}
 
         {/* 15-min sub-lines within each hour span */}
-        {Array.from({ length: TOTAL_HOURS }, (_, i) => {
-          const spanStartPct = (i / TOTAL_HOURS) * 100
-          const spanWidthPct = 100 / TOTAL_HOURS
+        {Array.from({ length: totalHours }, (_, i) => {
+          const spanStartPct = (i / totalHours) * 100
+          const spanWidthPct = 100 / totalHours
           return [0.25, 0.5, 0.75].map((frac) => (
             <div
               key={`s-${i}-${frac}`}

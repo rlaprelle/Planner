@@ -3,6 +3,7 @@ package com.echel.planner.backend.reflection;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.reflection.dto.ReflectionRequest;
 import com.echel.planner.backend.reflection.dto.ReflectionResponse;
+import com.echel.planner.backend.reflection.ReflectionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,10 +37,10 @@ class DailyReflectionServiceTest {
 
     @Test
     void upsert_createsNewReflection_whenNoneExistsForToday() {
-        ReflectionRequest request = new ReflectionRequest((short) 3, (short) 4, "Feeling good", false);
+        ReflectionRequest request = new ReflectionRequest((short) 3, (short) 4, "Feeling good", false, null);
         LocalDate today = LocalDate.now(java.time.ZoneId.of("UTC"));
 
-        when(repository.findByUserAndReflectionDate(user, today)).thenReturn(Optional.empty());
+        when(repository.findByUserAndReflectionDateAndReflectionType(user, today, ReflectionType.DAILY)).thenReturn(Optional.empty());
         when(repository.save(any(DailyReflection.class))).thenAnswer(inv -> inv.getArgument(0));
 
         ReflectionResponse response = service.upsert(user, request);
@@ -62,9 +63,9 @@ class DailyReflectionServiceTest {
         existing.setReflectionNotes("old notes");
         existing.setFinalized(false);
 
-        ReflectionRequest request = new ReflectionRequest((short) 5, (short) 5, "Updated notes", true);
+        ReflectionRequest request = new ReflectionRequest((short) 5, (short) 5, "Updated notes", true, null);
 
-        when(repository.findByUserAndReflectionDate(user, today)).thenReturn(Optional.of(existing));
+        when(repository.findByUserAndReflectionDateAndReflectionType(user, today, ReflectionType.DAILY)).thenReturn(Optional.of(existing));
         when(repository.save(any(DailyReflection.class))).thenAnswer(inv -> inv.getArgument(0));
 
         service.upsert(user, request);
@@ -78,9 +79,9 @@ class DailyReflectionServiceTest {
     @Test
     void upsert_setsAllFieldsFromRequest() {
         LocalDate today = LocalDate.now(java.time.ZoneId.of("UTC"));
-        ReflectionRequest request = new ReflectionRequest((short) 2, (short) 3, "Some notes", true);
+        ReflectionRequest request = new ReflectionRequest((short) 2, (short) 3, "Some notes", true, null);
 
-        when(repository.findByUserAndReflectionDate(user, today)).thenReturn(Optional.empty());
+        when(repository.findByUserAndReflectionDateAndReflectionType(user, today, ReflectionType.DAILY)).thenReturn(Optional.empty());
         when(repository.save(any(DailyReflection.class))).thenAnswer(inv -> inv.getArgument(0));
 
         ReflectionResponse response = service.upsert(user, request);

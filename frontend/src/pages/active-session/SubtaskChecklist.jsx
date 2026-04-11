@@ -6,7 +6,7 @@ export default function SubtaskChecklist({ subtasks, projectId }) {
 
   const toggleMutation = useMutation({
     mutationFn: ({ taskId, isDone }) =>
-      updateTaskStatus(taskId, isDone ? 'DONE' : 'TODO'),
+      updateTaskStatus(taskId, isDone ? 'COMPLETED' : 'OPEN'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks', projectId] })
       queryClient.invalidateQueries({ queryKey: ['schedule'] })
@@ -16,8 +16,8 @@ export default function SubtaskChecklist({ subtasks, projectId }) {
   if (!subtasks || subtasks.length === 0) return null
 
   const sorted = [...subtasks].sort((a, b) => {
-    if (a.status === 'DONE' && b.status !== 'DONE') return 1
-    if (a.status !== 'DONE' && b.status === 'DONE') return -1
+    if (a.status === 'COMPLETED' && b.status !== 'COMPLETED') return 1
+    if (a.status !== 'COMPLETED' && b.status === 'COMPLETED') return -1
     return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
   })
 
@@ -28,7 +28,7 @@ export default function SubtaskChecklist({ subtasks, projectId }) {
       </div>
       <div className="space-y-1">
         {sorted.map((child) => {
-          const isDone = child.status === 'DONE'
+          const isDone = child.status === 'COMPLETED'
           return (
             <label
               key={child.id}

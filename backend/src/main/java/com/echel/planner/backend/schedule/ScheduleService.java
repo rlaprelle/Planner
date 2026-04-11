@@ -23,8 +23,8 @@ import java.util.UUID;
 @Transactional
 public class ScheduleService {
 
-    private static final LocalTime DAY_START = LocalTime.of(8, 0);
-    private static final LocalTime DAY_END = LocalTime.of(17, 0);
+    private static final int DEFAULT_START_HOUR = 8;
+    private static final int DEFAULT_END_HOUR = 17;
 
     private final TimeBlockRepository timeBlockRepository;
     private final TaskRepository taskRepository;
@@ -47,7 +47,23 @@ public class ScheduleService {
     }
 
     public List<TimeBlockResponse> savePlan(AppUser user, SavePlanRequest request) {
-        validateBlocks(request.blocks());
+        int startHour = request.startHour() != null ? request.startHour() : DEFAULT_START_HOUR;
+        int endHour = request.endHour() != null ? request.endHour() : DEFAULT_END_HOUR;
+
+        if (startHour < 0 || startHour > 23) {
+            throw new ScheduleValidationException("startHour must be between 0 and 23");
+        }
+        if (endHour < 1 || endHour > 24) {
+            throw new ScheduleValidationException("endHour must be between 1 and 24");
+        }
+        if (startHour >= endHour) {
+            throw new ScheduleValidationException("startHour must be less than endHour");
+        }
+
+        LocalTime dayStart = LocalTime.of(startHour, 0);
+        LocalTime dayEnd = endHour == 24 ? LocalTime.MAX : LocalTime.of(endHour, 0);
+
+        validateBlocks(request.blocks(), dayStart, dayEnd);
 
         // Use the same server-computed date as getToday() and the dashboard,
         // so save and load always agree on which date "today" is.
@@ -97,7 +113,7 @@ public class ScheduleService {
                 .toList();
     }
 
-    private void validateBlocks(List<SavePlanRequest.BlockEntry> blocks) {
+    private void validateBlocks(List<SavePlanRequest.BlockEntry> blocks, LocalTime dayStart, LocalTime dayEnd) {
         for (int i = 0; i < blocks.size(); i++) {
             SavePlanRequest.BlockEntry b = blocks.get(i);
 
@@ -113,9 +129,10 @@ public class ScheduleService {
                 throw new ScheduleValidationException(
                         "Block " + i + ": endTime must be after startTime");
             }
-            if (b.startTime().isBefore(DAY_START) || b.endTime().isAfter(DAY_END)) {
+            if (b.startTime().isBefore(dayStart) || b.endTime().isAfter(dayEnd)) {
                 throw new ScheduleValidationException(
-                        "Block " + i + ": times must be within 08:00–17:00");
+                        "Block " + i + ": times must be within "
+                        + dayStart.toString().substring(0, 5) + "\u2013" + (dayEnd.equals(LocalTime.MAX) ? "24:00" : dayEnd.toString().substring(0, 5)));
             }
         }
 
@@ -164,7 +181,7 @@ public class ScheduleService {
             var task = block.getTask();
             int current = task.getActualMinutes() != null ? task.getActualMinutes() : 0;
             task.setActualMinutes(current + (int) elapsedMinutes);
-            task.setStatus(com.echel.planner.backend.task.TaskStatus.DONE);
+            task.setStatus(com.echel.planner.backend.task.TaskStatus.COMPLETED);
             task.setCompletedAt(now);
             taskRepository.save(task);
         }

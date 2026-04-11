@@ -12,11 +12,14 @@ import java.util.UUID;
 
 public interface DailyReflectionRepository extends JpaRepository<DailyReflection, UUID> {
 
-    Optional<DailyReflection> findByUserAndReflectionDate(AppUser user, LocalDate date);
+    Optional<DailyReflection> findByUserAndReflectionDateAndReflectionType(
+            AppUser user, LocalDate date, ReflectionType reflectionType);
 
     @Query("""
             SELECT r.reflectionDate FROM DailyReflection r
-            WHERE r.user = :user AND r.isFinalized = true
+            WHERE r.user = :user
+              AND r.isFinalized = true
+              AND r.reflectionType = com.echel.planner.backend.reflection.ReflectionType.DAILY
             ORDER BY r.reflectionDate DESC
             """)
     List<LocalDate> findFinalizedDatesDesc(@Param("user") AppUser user);
@@ -25,6 +28,7 @@ public interface DailyReflectionRepository extends JpaRepository<DailyReflection
             SELECT r FROM DailyReflection r
             WHERE r.user = :user
               AND r.isFinalized = true
+              AND r.reflectionType = com.echel.planner.backend.reflection.ReflectionType.DAILY
               AND r.reflectionDate >= :start
               AND r.reflectionDate <= :end
             ORDER BY r.reflectionDate ASC

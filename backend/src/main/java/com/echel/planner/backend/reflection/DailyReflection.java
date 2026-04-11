@@ -7,6 +7,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.echel.planner.backend.reflection.ReflectionType;
+
 @Entity
 @Table(name = "daily_reflection")
 public class DailyReflection {
@@ -21,6 +23,10 @@ public class DailyReflection {
 
     @Column(name = "reflection_date", nullable = false)
     private LocalDate reflectionDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reflection_type", nullable = false, length = 10)
+    private ReflectionType reflectionType = ReflectionType.DAILY;
 
     @Column(name = "energy_rating", nullable = false)
     private short energyRating;
@@ -50,6 +56,7 @@ public class DailyReflection {
     public UUID getId() { return id; }
     public AppUser getUser() { return user; }
     public LocalDate getReflectionDate() { return reflectionDate; }
+    public ReflectionType getReflectionType() { return reflectionType; }
     public short getEnergyRating() { return energyRating; }
     public short getMoodRating() { return moodRating; }
     public String getReflectionNotes() { return reflectionNotes; }
@@ -60,5 +67,6 @@ public class DailyReflection {
     public void setEnergyRating(short energyRating) { this.energyRating = energyRating; }
     public void setMoodRating(short moodRating) { this.moodRating = moodRating; }
     public void setReflectionNotes(String reflectionNotes) { this.reflectionNotes = reflectionNotes; }
+    public void setReflectionType(ReflectionType reflectionType) { this.reflectionType = reflectionType; }
     public void setFinalized(boolean finalized) { isFinalized = finalized; }
 }

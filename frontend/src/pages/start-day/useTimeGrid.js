@@ -8,23 +8,28 @@ export const DAY_DURATION = DAY_END_MINUTES - DAY_START_MINUTES // 540
 /**
  * Provides the grid ref, coordinate helpers, and resize handler.
  * Block state is owned by the caller (StartDayPage).
+ *
+ * @param {number} dayStartMinutes - start of the schedulable day in minutes from midnight
+ * @param {number} dayEndMinutes - end of the schedulable day in minutes from midnight
  */
-export function useTimeGrid() {
+export function useTimeGrid(dayStartMinutes = DAY_START_MINUTES, dayEndMinutes = DAY_END_MINUTES) {
   const gridRef = useRef(null)
   const resizeRef = useRef(null)
+
+  const dayDuration = dayEndMinutes - dayStartMinutes
 
   /**
    * Convert minutes-from-midnight to a percentage left offset within the grid.
    */
   function minutesToPercent(minutes) {
-    return ((minutes - DAY_START_MINUTES) / DAY_DURATION) * 100
+    return ((minutes - dayStartMinutes) / dayDuration) * 100
   }
 
   /**
    * Convert a duration in minutes to a percentage width within the grid.
    */
   function durationToPercent(durationMinutes) {
-    return (durationMinutes / DAY_DURATION) * 100
+    return (durationMinutes / dayDuration) * 100
   }
 
   /**
@@ -33,7 +38,7 @@ export function useTimeGrid() {
   function pixelDeltaToMinutes(deltaX) {
     if (!gridRef.current) return 0
     const { width } = gridRef.current.getBoundingClientRect()
-    return (deltaX / width) * DAY_DURATION
+    return (deltaX / width) * dayDuration
   }
 
   /**
@@ -41,10 +46,10 @@ export function useTimeGrid() {
    * relative to the grid's left edge.
    */
   function clientXToMinutes(clientX) {
-    if (!gridRef.current) return DAY_START_MINUTES
+    if (!gridRef.current) return dayStartMinutes
     const { left, width } = gridRef.current.getBoundingClientRect()
     const ratio = Math.max(0, Math.min(1, (clientX - left) / width))
-    return DAY_START_MINUTES + ratio * DAY_DURATION
+    return dayStartMinutes + ratio * dayDuration
   }
 
   /**
@@ -82,7 +87,7 @@ export function useTimeGrid() {
         i === ref.blockIndex ? { ...b, endMinutes: snappedEnd } : { ...b }
       )
 
-      const pushed = pushBlocks(newBlocks, ref.blockIndex, DAY_END_MINUTES)
+      const pushed = pushBlocks(newBlocks, ref.blockIndex, dayEndMinutes)
       if (pushed) {
         ref.onBlocksChange(pushed)
       }

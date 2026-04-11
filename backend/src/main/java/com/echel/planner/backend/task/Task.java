@@ -36,7 +36,7 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private TaskStatus status = TaskStatus.TODO;
+    private TaskStatus status = TaskStatus.OPEN;
 
     @Column(nullable = false)
     private short priority = 3;
@@ -61,8 +61,21 @@ public class Task {
     @JoinColumn(name = "blocked_by_task_id")
     private Task blockedByTask;
 
+    @Column(name = "visible_from")
+    private LocalDate visibleFrom;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "scheduling_scope", length = 10)
+    private SchedulingScope schedulingScope;
+
+    @Column(name = "deferral_count", nullable = false)
+    private int deferralCount = 0;
+
     @Column(name = "archived_at")
     private Instant archivedAt;
+
+    @Column(name = "cancelled_at")
+    private Instant cancelledAt;
 
     @Column(name = "completed_at")
     private Instant completedAt;
@@ -139,8 +152,24 @@ public class Task {
         return blockedByTask;
     }
 
+    public LocalDate getVisibleFrom() {
+        return visibleFrom;
+    }
+
+    public SchedulingScope getSchedulingScope() {
+        return schedulingScope;
+    }
+
+    public int getDeferralCount() {
+        return deferralCount;
+    }
+
     public Instant getArchivedAt() {
         return archivedAt;
+    }
+
+    public Instant getCancelledAt() {
+        return cancelledAt;
     }
 
     public Instant getCompletedAt() {
@@ -205,8 +234,24 @@ public class Task {
         this.blockedByTask = blockedByTask;
     }
 
+    public void setVisibleFrom(LocalDate visibleFrom) {
+        this.visibleFrom = visibleFrom;
+    }
+
+    public void setSchedulingScope(SchedulingScope schedulingScope) {
+        this.schedulingScope = schedulingScope;
+    }
+
+    public void setDeferralCount(int deferralCount) {
+        this.deferralCount = deferralCount;
+    }
+
     public void setArchivedAt(Instant archivedAt) {
         this.archivedAt = archivedAt;
+    }
+
+    public void setCancelledAt(Instant cancelledAt) {
+        this.cancelledAt = cancelledAt;
     }
 
     public void setCompletedAt(Instant completedAt) {

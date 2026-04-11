@@ -294,22 +294,7 @@ function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending
 
 // ─── Project Card Tasks ──────────────────────────────────────────────────────
 
-const ACTIVE_STATUSES = new Set(['TODO', 'IN_PROGRESS', 'BLOCKED'])
 const MAX_VISIBLE_TASKS = 3
-
-function StatusDot({ status }) {
-  const colors = {
-    TODO: 'bg-ink-faint',
-    IN_PROGRESS: 'bg-primary-400',
-    BLOCKED: 'bg-deadline-today-text',
-  }
-  return (
-    <span
-      className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${colors[status] || 'bg-ink-faint'}`}
-      aria-label={status}
-    />
-  )
-}
 
 function ProjectCardTasks({ projectId, onSelectTask }) {
   const { data: tasks } = useQuery({
@@ -317,8 +302,10 @@ function ProjectCardTasks({ projectId, onSelectTask }) {
     queryFn: () => getProjectTasks(projectId),
   })
 
+  const today = new Date().toISOString().split('T')[0]
   const activeTasks = (tasks ?? [])
-    .filter((t) => !t.parentTaskId && ACTIVE_STATUSES.has(t.status))
+    .filter((t) => !t.parentTaskId && t.status === 'OPEN'
+      && (!t.visibleFrom || t.visibleFrom <= today))
 
   if (activeTasks.length === 0) {
     return (
@@ -333,7 +320,7 @@ function ProjectCardTasks({ projectId, onSelectTask }) {
     <ul className="space-y-1.5">
       {visible.map((task) => (
         <li key={task.id} className="flex items-center gap-2 min-w-0">
-          <StatusDot status={task.status} />
+          <span className="inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 bg-primary-400" aria-hidden="true" />
           <button
             type="button"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSelectTask(task) }}

@@ -8,6 +8,7 @@ import com.echel.planner.backend.auth.JwtService;
 import com.echel.planner.backend.auth.SecurityConfig;
 import com.echel.planner.backend.reflection.dto.ReflectionRequest;
 import com.echel.planner.backend.reflection.dto.ReflectionResponse;
+import com.echel.planner.backend.reflection.ReflectionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,10 @@ class DailyReflectionControllerIntegrationTest {
 
     @Test
     void reflect_validRequest_returns200() throws Exception {
-        ReflectionRequest req = new ReflectionRequest((short) 4, (short) 3, "Good day", true);
+        ReflectionRequest req = new ReflectionRequest((short) 4, (short) 3, "Good day", true, null);
         ReflectionResponse resp = new ReflectionResponse(
                 UUID.randomUUID(), user.getId(), LocalDate.now(),
+                ReflectionType.DAILY,
                 (short) 4, (short) 3, "Good day", true,
                 Instant.now(), Instant.now());
         when(reflectionService.upsert(any(AppUser.class), any(ReflectionRequest.class))).thenReturn(resp);

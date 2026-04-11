@@ -1,17 +1,14 @@
+import { useState, useCallback } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { useNavigate } from 'react-router-dom'
 
 /**
  * A single draggable, resizable time block on the calendar grid.
  *
- * Props:
- *   block          - { id, startMinutes, endMinutes, task: { title, status } }
- *   blockIndex     - index in the blocks array
- *   allBlocks      - the full blocks array (passed to startResize)
- *   onBlocksChange - called when blocks change via resize
- *   minutesToPercent(n)    - grid helper from useTimeGrid
- *   durationToPercent(n)   - grid helper from useTimeGrid
- *   startResize(e, block, index, blocks, onChange) - from useTimeGrid
+ * Adapts its layout based on available width:
+ *   - Wide (>= 140px): title and time side by side
+ *   - Medium (>= 70px): title stacked above time
+ *   - Narrow (< 70px): title only, no time range
  */
 export function TimeBlock({
   block,
@@ -22,15 +19,31 @@ export function TimeBlock({
   minutesToPercent,
   durationToPercent,
   startResize,
+  showStartButton = true,
 }) {
-  const isCompleted = block.task?.status === 'DONE'
+  const isCompleted = block.task?.status === 'COMPLETED'
   const navigate = useNavigate()
+  const [blockWidth, setBlockWidth] = useState(200)
+
+  const measuredRef = useCallback((node) => {
+    if (!node) return
+    const observer = new ResizeObserver(([entry]) => {
+      setBlockWidth(entry.contentRect.width)
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `calendar-block-${block.id}`,
     data: { type: 'calendar-block', block, blockIndex },
     disabled: isCompleted,
   })
+
+  const mergedRef = (el) => {
+    setNodeRef(el)
+    measuredRef(el)
+  }
 
   const left = minutesToPercent(block.startMinutes)
   const width = durationToPercent(block.endMinutes - block.startMinutes)
@@ -51,29 +64,46 @@ export function TimeBlock({
   const startLabel = `${Math.floor(block.startMinutes / 60)}:${String(block.startMinutes % 60).padStart(2, '0')}`
   const endLabel = `${Math.floor(block.endMinutes / 60)}:${String(block.endMinutes % 60).padStart(2, '0')}`
 
+  const isWide = blockWidth >= 140
+  const isMedium = blockWidth >= 40 && blockWidth < 140
+  const isNarrow = blockWidth < 40
+
+  const timeSpan = (
+    <span className={`text-[10px] leading-tight shrink-0 ${isCompleted ? 'text-ink-muted' : 'text-primary-200'}`}>
+      {startLabel}–{endLabel}
+    </span>
+  )
+
   return (
     <div
-      ref={setNodeRef}
+      ref={mergedRef}
       style={style}
-      className={`rounded flex items-center select-none border group ${
+      className={`rounded select-none border group overflow-hidden ${
         isCompleted
           ? 'bg-surface-soft border-edge text-ink-muted'
           : 'bg-primary-500 border-primary-600 text-white'
-      }`}
+      } ${isWide ? 'flex items-center' : 'flex flex-col justify-center'}`}
       {...(isCompleted ? {} : { ...listeners, ...attributes })}
     >
-      {/* Block body — shows title and time */}
-      <div className="flex-1 flex items-center gap-1 px-2 overflow-hidden min-w-0">
-        <span className="text-xs font-medium truncate">
-          {block.task?.title ?? 'Untitled'}
-        </span>
-        <span className={`text-xs shrink-0 ${isCompleted ? 'text-ink-muted' : 'text-primary-200'}`}>
-          {startLabel}–{endLabel}
-        </span>
-      </div>
+      {/* Block body — adapts layout based on width */}
+      {isWide ? (
+        <div className="flex-1 flex items-center gap-1 px-2 overflow-hidden min-w-0">
+          <span className="text-xs font-medium truncate">
+            {block.task?.title ?? 'Untitled'}
+          </span>
+          {timeSpan}
+        </div>
+      ) : (
+        <div className="flex flex-col px-1.5 overflow-hidden min-w-0">
+          <span className="text-[11px] font-medium truncate leading-tight">
+            {block.task?.title ?? 'Untitled'}
+          </span>
+          {isMedium && timeSpan}
+        </div>
+      )}
 
-      {/* Start button — appears on hover for incomplete blocks */}
-      {block.task?.status !== 'DONE' && (
+      {/* Start button — appears on hover for incomplete blocks (hidden during planning) */}
+      {showStartButton && block.task?.status !== 'COMPLETED' && isWide && (
         <button
           onClick={(e) => {
             e.stopPropagation()

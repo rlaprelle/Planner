@@ -81,7 +81,8 @@ class ScheduleControllerIntegrationTest {
         UUID taskId = UUID.randomUUID();
         SavePlanRequest request = new SavePlanRequest(
                 LocalDate.of(2026, 3, 31),
-                List.of(new SavePlanRequest.BlockEntry(taskId, LocalTime.of(9, 0), LocalTime.of(10, 0))));
+                List.of(new SavePlanRequest.BlockEntry(taskId, LocalTime.of(9, 0), LocalTime.of(10, 0))),
+                null, null);
 
         TimeBlockResponse.TaskSummary summary = new TimeBlockResponse.TaskSummary(
                 taskId, "Fix login", UUID.randomUUID(), "Auth", "#6366f1",
@@ -106,7 +107,8 @@ class ScheduleControllerIntegrationTest {
         UUID taskId = UUID.randomUUID();
         SavePlanRequest request = new SavePlanRequest(
                 LocalDate.of(2026, 3, 31),
-                List.of(new SavePlanRequest.BlockEntry(taskId, LocalTime.of(9, 0), LocalTime.of(10, 0))));
+                List.of(new SavePlanRequest.BlockEntry(taskId, LocalTime.of(9, 0), LocalTime.of(10, 0))),
+                null, null);
 
         when(scheduleService.savePlan(any(AppUser.class), any(SavePlanRequest.class)))
                 .thenThrow(new ScheduleService.ScheduleValidationException("Blocks must not overlap"));

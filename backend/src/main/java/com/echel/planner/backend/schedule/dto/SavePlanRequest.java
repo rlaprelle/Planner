@@ -10,7 +10,9 @@ import java.util.UUID;
 
 public record SavePlanRequest(
         @NotNull LocalDate blockDate,
-        @NotNull List<@Valid BlockEntry> blocks
+        @NotNull List<@Valid BlockEntry> blocks,
+        Integer startHour,
+        Integer endHour
 ) {
     public record BlockEntry(
             @NotNull UUID taskId,

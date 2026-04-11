@@ -30,6 +30,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,7 +93,7 @@ class ScheduleServiceTest {
                 LocalTime.of(9, 7),  // not a 15-min boundary
                 LocalTime.of(9, 30)
         );
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
                 .isInstanceOf(ScheduleValidationException.class)
@@ -106,7 +107,7 @@ class ScheduleServiceTest {
                 LocalTime.of(9, 0),
                 LocalTime.of(9, 22)  // not a 15-min boundary
         );
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
                 .isInstanceOf(ScheduleValidationException.class)
@@ -120,7 +121,7 @@ class ScheduleServiceTest {
                 LocalTime.of(10, 0),
                 LocalTime.of(9, 0)  // end before start
         );
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
                 .isInstanceOf(ScheduleValidationException.class)
@@ -134,7 +135,7 @@ class ScheduleServiceTest {
                 LocalTime.of(7, 0),  // before 08:00
                 LocalTime.of(7, 30)
         );
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
                 .isInstanceOf(ScheduleValidationException.class)
@@ -148,7 +149,7 @@ class ScheduleServiceTest {
                 LocalTime.of(16, 45),
                 LocalTime.of(17, 15)  // ends after 17:00
         );
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
                 .isInstanceOf(ScheduleValidationException.class)
@@ -167,7 +168,7 @@ class ScheduleServiceTest {
                 LocalTime.of(9, 30),  // overlaps with entry1
                 LocalTime.of(10, 30)
         );
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry1, entry2));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry1, entry2), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
                 .isInstanceOf(ScheduleValidationException.class)
@@ -188,7 +189,7 @@ class ScheduleServiceTest {
 
         var entry1 = new SavePlanRequest.BlockEntry(taskId,  LocalTime.of(9, 0),  LocalTime.of(9, 30));
         var entry2 = new SavePlanRequest.BlockEntry(taskId2, LocalTime.of(9, 30), LocalTime.of(10, 0));
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry1, entry2));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry1, entry2), null, null);
 
         when(taskRepository.findByIdAndUserId(taskId,  userId)).thenReturn(Optional.of(task));
         when(taskRepository.findByIdAndUserId(taskId2, userId)).thenReturn(Optional.of(task2));
@@ -203,6 +204,76 @@ class ScheduleServiceTest {
         assertThat(result).hasSize(2);
         verify(timeBlockRepository).deleteByUserIdAndBlockDate(eq(userId), any(LocalDate.class));
         verify(timeBlockRepository).saveAll(any());
+    }
+
+    // -------------------------------------------------------------------------
+    // savePlan: dynamic hour range
+    // -------------------------------------------------------------------------
+
+    @Test
+    void savePlan_acceptsBlocksInCustomRange() {
+        var entry = new SavePlanRequest.BlockEntry(
+                taskId,
+                LocalTime.of(6, 0),
+                LocalTime.of(7, 0)
+        );
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), 5, 22);
+
+        when(taskRepository.findByIdAndUserId(taskId, userId)).thenReturn(Optional.of(task));
+        when(eventService.findForDate(eq(user), any(LocalDate.class))).thenReturn(Collections.emptyList());
+
+        TimeBlock savedBlock = new TimeBlock(user, LocalDate.now(), task, LocalTime.of(6, 0), LocalTime.of(7, 0), 0);
+        when(timeBlockRepository.saveAll(any())).thenReturn(List.of(savedBlock));
+
+        List<TimeBlockResponse> result = scheduleService.savePlan(user, request);
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void savePlan_rejectsBlockOutsideCustomRange() {
+        var entry = new SavePlanRequest.BlockEntry(
+                taskId,
+                LocalTime.of(6, 0),
+                LocalTime.of(7, 0)
+        );
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), 7, 20);
+
+        assertThatThrownBy(() -> scheduleService.savePlan(user, request))
+                .isInstanceOf(ScheduleValidationException.class)
+                .hasMessageContaining("within 07:00");
+    }
+
+    @Test
+    void savePlan_rejectsInvalidHourRange() {
+        var entry = new SavePlanRequest.BlockEntry(
+                taskId,
+                LocalTime.of(9, 0),
+                LocalTime.of(10, 0)
+        );
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), 17, 8);
+
+        assertThatThrownBy(() -> scheduleService.savePlan(user, request))
+                .isInstanceOf(ScheduleValidationException.class)
+                .hasMessageContaining("startHour must be less than endHour");
+    }
+
+    @Test
+    void savePlan_defaultsToStandardRangeWhenNull() {
+        var entry = new SavePlanRequest.BlockEntry(
+                taskId,
+                LocalTime.of(9, 0),
+                LocalTime.of(10, 0)
+        );
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
+
+        when(taskRepository.findByIdAndUserId(taskId, userId)).thenReturn(Optional.of(task));
+        when(eventService.findForDate(eq(user), any(LocalDate.class))).thenReturn(Collections.emptyList());
+
+        TimeBlock savedBlock = new TimeBlock(user, LocalDate.now(), task, LocalTime.of(9, 0), LocalTime.of(10, 0), 0);
+        when(timeBlockRepository.saveAll(any())).thenReturn(List.of(savedBlock));
+
+        List<TimeBlockResponse> result = scheduleService.savePlan(user, request);
+        assertThat(result).hasSize(1);
     }
 
     // -------------------------------------------------------------------------

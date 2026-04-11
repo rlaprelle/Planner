@@ -84,7 +84,7 @@ class ScheduleServiceEventTest {
     void savePlan_materializesEventBlocks() {
         var entry = new SavePlanRequest.BlockEntry(
                 taskId, LocalTime.of(9, 0), LocalTime.of(9, 30));
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
@@ -123,7 +123,7 @@ class ScheduleServiceEventTest {
     @Test
     void savePlan_eventBlockResponseIncludesEventSummary() {
         // No task blocks, just events
-        var request = new SavePlanRequest(LocalDate.now(), List.of());
+        var request = new SavePlanRequest(LocalDate.now(), List.of(), null, null);
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
@@ -148,7 +148,7 @@ class ScheduleServiceEventTest {
         // Event is 10:00–10:30, task block overlaps at 10:00–10:30
         var entry = new SavePlanRequest.BlockEntry(
                 taskId, LocalTime.of(10, 0), LocalTime.of(10, 30));
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
@@ -164,7 +164,7 @@ class ScheduleServiceEventTest {
         // Event is 10:00–10:30, task block partially overlaps at 9:45–10:15
         var entry = new SavePlanRequest.BlockEntry(
                 taskId, LocalTime.of(9, 45), LocalTime.of(10, 15));
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
@@ -180,7 +180,7 @@ class ScheduleServiceEventTest {
         // Event is 10:00–10:30, task block at 10:30–11:00 (adjacent, no overlap)
         var entry = new SavePlanRequest.BlockEntry(
                 taskId, LocalTime.of(10, 30), LocalTime.of(11, 0));
-        var request = new SavePlanRequest(LocalDate.now(), List.of(entry));
+        var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));

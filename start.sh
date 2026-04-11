@@ -36,13 +36,27 @@ find_maven() {
 }
 
 start_database() {
-  info "Starting database..."
-  docker compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" up -d
+  # If the container already exists and is running (e.g. started from another worktree), reuse it
+  local state
+  state=$(docker inspect planner-db --format "{{.State.Status}}" 2>/dev/null || echo "")
+  if [[ "$state" == "running" ]]; then
+    local health
+    health=$(docker inspect planner-db --format "{{.State.Health.Status}}" 2>/dev/null || echo "")
+    if [[ "$health" == "healthy" ]]; then
+      ok "Database already running"
+      return
+    fi
+    info "Database container exists but not healthy yet, waiting..."
+  else
+    info "Starting database..."
+    docker compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" up -d
+  fi
 
   info "Waiting for PostgreSQL to be ready..."
   for i in $(seq 1 "$DATABASE_TIMEOUT"); do
-    if docker compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" exec -T db \
-         pg_isready -U planner -d planner &>/dev/null; then
+    local health
+    health=$(docker inspect planner-db --format "{{.State.Health.Status}}" 2>/dev/null || echo "")
+    if [[ "$health" == "healthy" ]]; then
       ok "Database is ready"
       return
     fi
@@ -66,6 +80,16 @@ show_backend_logs() {
   echo ""
   echo "$prefix Last $LOG_TAIL_LINES lines of backend.log:"
   tail -"$LOG_TAIL_LINES" "$BACKEND_LOG"
+  # Check for schema mismatch (shared DB across worktrees with different migrations)
+  if grep -qiE "Schema-validation|FlywayValidateException|Missing column|wrong column type" "$BACKEND_LOG" 2>/dev/null; then
+    echo ""
+    echo -e "${RED}!! This looks like a database schema mismatch.${NC}"
+    echo -e "${RED}!! The database was likely migrated by a different branch/worktree.${NC}"
+    echo -e "${RED}!! To fix: stop the DB, delete the volume, and restart:${NC}"
+    echo -e "${YELLOW}!!   docker compose -p planner down -v${NC}"
+    echo -e "${YELLOW}!!   Then re-run this script.${NC}"
+    echo ""
+  fi
 }
 
 start_backend() {

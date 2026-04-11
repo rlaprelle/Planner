@@ -131,7 +131,7 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 ## Frontend Workflow
 
-- When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout. Before doing visual checks, confirm which port has the current worktree's code — don't assume.
+- When starting a worktree for frontend work, start a dev server from the worktree on a non-default port (e.g., `npm run dev -- --port 5174`). Vite will silently pick a different port if the requested one is taken, so always read the server output to confirm the actual port before navigating to it.
 - For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
 - After merging dev into a feature branch, do a visual spot-check — merges can introduce UI regressions that aren't caught by tests (e.g., new features from dev appearing in contexts where they don't belong).
 

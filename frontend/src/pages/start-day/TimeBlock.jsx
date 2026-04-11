@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 /**
  * A single draggable, resizable time block on the calendar grid.
@@ -21,6 +22,7 @@ export function TimeBlock({
   startResize,
   showStartButton = true,
 }) {
+  const { t } = useTranslation('timeBlocking')
   const isCompleted = block.task?.status === 'COMPLETED'
   const navigate = useNavigate()
   const [blockWidth, setBlockWidth] = useState(200)
@@ -89,14 +91,14 @@ export function TimeBlock({
       {isWide ? (
         <div className="flex-1 flex items-center gap-1 px-2 overflow-hidden min-w-0">
           <span className="text-xs font-medium truncate">
-            {block.task?.title ?? 'Untitled'}
+            {block.task?.title ?? t('untitled')}
           </span>
           {timeSpan}
         </div>
       ) : (
         <div className="flex flex-col px-1.5 overflow-hidden min-w-0">
           <span className="text-[11px] font-medium truncate leading-tight">
-            {block.task?.title ?? 'Untitled'}
+            {block.task?.title ?? t('untitled')}
           </span>
           {isMedium && timeSpan}
         </div>
@@ -112,7 +114,7 @@ export function TimeBlock({
           onPointerDown={(e) => e.stopPropagation()}
           className="opacity-0 group-hover:opacity-100 transition-opacity text-white/80 hover:text-white text-xs font-medium bg-primary-600/50 hover:bg-primary-600/80 rounded px-2 py-0.5 shrink-0"
         >
-          Start
+          {t('start')}
         </button>
       )}
 
@@ -125,7 +127,7 @@ export function TimeBlock({
             e.stopPropagation()
             onRemove(block.id)
           }}
-          aria-label={`Remove ${block.task?.title ?? 'block'} from plan`}
+          aria-label={t('removeFromPlan', { title: block.task?.title ?? t('untitled') })}
         >
           ×
         </button>

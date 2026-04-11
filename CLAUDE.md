@@ -81,7 +81,6 @@ frontend/src/
 - `docs/IMPLEMENTATION_PLAN.md` — Design decisions and rationale behind key choices
 - `docs/planning/user_design/DEFERRED_WORK.md` — Roadmap of deferred features and future work
 - `docs/planning/user_design/` — User design docs (use cases, workflows, wireframes)
-- `docs/planning/2026-03-30-implementation-plan-design.md` — Original vertical slice spec (nearly complete, 1 polish item remaining)
 
 ## Conventions
 

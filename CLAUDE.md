@@ -131,8 +131,9 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 ## Frontend Workflow
 
-- When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout
+- When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout. However, if the main worktree already has a dev server running on 5173, use that for visual checks — don't lose track of which port has the current code.
 - For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
+- After merging dev into a feature branch, do a visual spot-check — merges can introduce UI regressions that aren't caught by tests (e.g., new features from dev appearing in contexts where they don't belong).
 
 ## Frontend Design Principles
 
@@ -143,6 +144,11 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 5. **Warm, not clinical** — The palette and tone should feel personal and inviting, not sterile or corporate. Slight warmth in backgrounds (tinted off-whites, not pure white), soft shadows over hard borders. The app should feel like opening a journal, not a spreadsheet.
 6. **Guide gently** — Use subtle visual hierarchy (tinted backgrounds, font weight, muted color shifts) to guide the eye toward what matters now, without demanding attention. Nothing should shout.
 7. **Evoke physical artifacts** — UI elements should feel like tangible objects: notebooks, index cards, sticky notes. Rounded corners, soft shadows, and subtle depth cues create a tactile quality that makes the digital feel personal and approachable.
+
+## E2E Testing
+
+- `e2e/playwright.config.ts` should not be modified by feature branches — the port (5173) and webServer config are shared defaults. Worktree dev servers should use `BASE_URL` env var if they need a different port, not change the config file.
+- When adding new page features, check whether existing E2E tests need a mock for new API endpoints the page now calls (e.g., adding `mockEventsForDate` when the page starts fetching events).
 
 ## Known Issues / Quirks
 

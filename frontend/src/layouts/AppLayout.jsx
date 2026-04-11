@@ -6,6 +6,7 @@ import { useAuth } from '@/auth/useAuth'
 import { getDeferredItems } from '@/api/deferred'
 import { QuickCapture } from '@/components/QuickCapture'
 import { useActiveSession } from '@/contexts/ActiveSessionContext'
+import { EchelLogo } from '@/components/EchelLogo'
 
 const NAV_ITEMS = [
   {
@@ -212,8 +213,9 @@ export function AppLayout() {
         aria-label="Main navigation"
       >
         {/* Logo / Brand */}
-        <div className="px-5 py-5 border-b border-edge-subtle">
-          <span className="text-lg font-semibold text-ink-heading tracking-tight">Planner</span>
+        <div className="px-5 py-5 border-b border-edge-subtle flex items-center gap-2.5">
+          <EchelLogo size={24} />
+          <span className="text-lg font-semibold text-ink-heading tracking-tight">Echel Planner</span>
         </div>
 
         {/* Active session timer */}

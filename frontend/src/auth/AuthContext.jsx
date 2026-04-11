@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useCallback } from 'react'
 import { login as apiLogin, logout as apiLogout, refreshToken } from '@/api/auth'
 import { setAuthToken, setTokenRefreshedCallback, setAuthFailureCallback } from '@/api/client'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {

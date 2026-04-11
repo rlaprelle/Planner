@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { getDeferredItems } from '@/api/deferred'
@@ -174,17 +174,15 @@ export function EndDayPage() {
   const [processedCount, setProcessedCount] = useState(0)
   const [phase, setPhase] = useState(1)
   const [showCelebration, setShowCelebration] = useState(false)
-  // Capture total at load time so progress counter stays stable as items are removed
-  const totalItemsRef = useRef(null)
-  if (!isLoading && totalItemsRef.current === null) {
-    totalItemsRef.current = items.length
-  }
+  // Capture total at first load so the progress counter stays stable as items are removed.
+  // Uses processedCount + remaining items to derive total without reading a ref during render.
+  const totalItems = isLoading ? 0 : processedCount + items.length
 
   function handleItemDone() {
     queryClient.invalidateQueries({ queryKey: ['deferred'] })
     const newCount = processedCount + 1
     setProcessedCount(newCount)
-    if (newCount >= totalItemsRef.current) {
+    if (newCount >= totalItems) {
       setShowCelebration(true)
       setTimeout(() => {
         setShowCelebration(false)
@@ -207,7 +205,7 @@ export function EndDayPage() {
     )
   }
 
-  const noItems = totalItemsRef.current === 0
+  const noItems = totalItems === 0
   const currentItem = items[0]
 
   if (showCelebration) {
@@ -234,7 +232,7 @@ export function EndDayPage() {
         ) : (
           <div className="mb-8">
             <p className="text-sm text-ink-muted mb-4">
-              {processedCount + 1} of {totalItemsRef.current}
+              {processedCount + 1} of {totalItems}
             </p>
             <div className="bg-surface-raised border border-edge rounded-lg p-6 shadow-card">
               {currentItem && (

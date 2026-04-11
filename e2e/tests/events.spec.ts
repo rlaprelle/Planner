@@ -4,6 +4,7 @@ import {
   mockScheduleTodayWithEvents,
   mockScheduleToday,
   mockProjects,
+  mockEventsForDate,
   EVENT_BLOCKS,
 } from '../fixtures/mocks'
 
@@ -24,6 +25,7 @@ test.describe('Events', () => {
   test('event blocks render on schedule grid', async ({ page }) => {
     await mockSuggestedTasks(page, [])
     await mockScheduleTodayWithEvents(page)
+    await mockEventsForDate(page)
     await page.goto('/start-day')
 
     await expect(page.getByText('Daily Standup')).toBeVisible()
@@ -75,6 +77,7 @@ test.describe('Events', () => {
 
     await mockSuggestedTasks(page, [])
     await mockScheduleToday(page, mixedBlocks)
+    await mockEventsForDate(page)
     await page.goto('/start-day')
 
     // Both blocks should render

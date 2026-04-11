@@ -27,7 +27,7 @@ test.describe('Login page', () => {
 
     await page.goto('/login')
 
-    await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Echel Planner' })).toBeVisible()
     await expect(page.locator('#email')).toBeVisible()
     await expect(page.locator('#password')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Log in' })).toBeVisible()
@@ -101,7 +101,7 @@ test.describe('Register page', () => {
 
     await page.goto('/register')
 
-    await expect(page.getByRole('heading', { name: 'Create your account' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Echel Planner' })).toBeVisible()
     await expect(page.locator('#displayName')).toBeVisible()
     await expect(page.locator('#email')).toBeVisible()
     await expect(page.locator('#password')).toBeVisible()

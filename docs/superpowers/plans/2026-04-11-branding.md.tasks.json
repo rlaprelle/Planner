@@ -1,0 +1,46 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-11-branding.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Create EchelLogo Component",
+      "status": "pending",
+      "description": "**Goal:** A reusable React component that renders the notebook+pencil logo SVG, adjusting detail level based on size.\n\n**Files:**\n- Create: `frontend/src/components/EchelLogo.jsx`\n\n**Acceptance Criteria:**\n- [ ] Renders an SVG notebook with scribble lines and angled pencil\n- [ ] Accepts a `size` prop (number, defaults to 24)\n- [ ] At size >= 32: three scribbles, pencil with ferrule and gold tip\n- [ ] At size < 32: two scribbles, simplified pencil\n- [ ] Uses the warm cocoa color palette from the spec\n\n**Verify:** Visual inspection in sidebar and login page after Tasks 2-4\n\n```json:metadata\n{\"files\": [\"frontend/src/components/EchelLogo.jsx\"], \"verifyCommand\": \"visual inspection\", \"acceptanceCriteria\": [\"Renders SVG notebook with scribble lines and angled pencil\", \"Accepts size prop with responsive detail\", \"Uses warm cocoa color palette\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Replace Favicon and Page Title",
+      "status": "pending",
+      "description": "**Goal:** Update the browser tab to show the new logo and name.\n\n**Files:**\n- Replace: `frontend/public/favicon.svg`\n- Modify: `frontend/index.html:7`\n\n**Acceptance Criteria:**\n- [ ] Favicon renders the notebook+pencil icon at 16px\n- [ ] Browser tab reads \"Echel Planner\"\n\n**Verify:** Open the app in a browser, check the tab icon and title\n\n```json:metadata\n{\"files\": [\"frontend/public/favicon.svg\", \"frontend/index.html\"], \"verifyCommand\": \"visual inspection\", \"acceptanceCriteria\": [\"Favicon renders notebook+pencil icon\", \"Browser tab reads Echel Planner\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: Brand the Sidebar Header",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Replace plain 'Planner' text in sidebar with logo icon + 'Echel Planner'.\n\n**Files:**\n- Modify: `frontend/src/layouts/AppLayout.jsx:214-217`\n\n**Acceptance Criteria:**\n- [ ] Sidebar header shows 24px logo icon next to \"Echel Planner\" text\n- [ ] Layout is horizontally aligned with a gap between icon and text\n\n**Verify:** Open the app, check the sidebar header visually\n\n```json:metadata\n{\"files\": [\"frontend/src/layouts/AppLayout.jsx\"], \"verifyCommand\": \"visual inspection\", \"acceptanceCriteria\": [\"Sidebar shows 24px logo + Echel Planner text\", \"Horizontally aligned with gap\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 4: Brand the Login and Register Pages",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Replace generic headings on auth pages with logo + product name + tagline.\n\n**Files:**\n- Modify: `frontend/src/pages/LoginPage.jsx:36-37`\n- Modify: `frontend/src/pages/RegisterPage.jsx:56-57`\n\n**Acceptance Criteria:**\n- [ ] Login page shows: 36px logo + \"Echel Planner\" heading + tagline in italics\n- [ ] Register page shows the same branded header\n- [ ] Both pages maintain centered layout\n\n**Verify:** Navigate to `/login` and `/register`, check visually\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/LoginPage.jsx\", \"frontend/src/pages/RegisterPage.jsx\"], \"verifyCommand\": \"visual inspection\", \"acceptanceCriteria\": [\"Login shows logo + name + tagline\", \"Register shows logo + name + tagline\", \"Centered layout maintained\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 5: Update E2E Tests",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Fix E2E assertions that reference the old heading text.\n\n**Files:**\n- Modify: `e2e/tests/auth.spec.ts:30,104`\n\n**Acceptance Criteria:**\n- [ ] Login test checks for \"Echel Planner\" heading\n- [ ] Register test checks for \"Echel Planner\" heading\n- [ ] E2E tests pass\n\n**Verify:** `cd e2e && npx playwright test tests/auth.spec.ts`\n\n```json:metadata\n{\"files\": [\"e2e/tests/auth.spec.ts\"], \"verifyCommand\": \"cd e2e && npx playwright test tests/auth.spec.ts\", \"acceptanceCriteria\": [\"Auth E2E tests pass with new headings\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 6: Visual Spot-Check",
+      "status": "pending",
+      "blockedBy": [1, 2, 3],
+      "description": "**Goal:** Verify all branded surfaces look correct in the running app.\n\n**Acceptance Criteria:**\n- [ ] Favicon shows notebook+pencil in browser tab\n- [ ] Browser tab title reads \"Echel Planner\"\n- [ ] Sidebar shows logo icon + \"Echel Planner\"\n- [ ] Login page shows logo + name + tagline\n- [ ] Register page shows logo + name + tagline\n- [ ] No regressions in other pages\n\n**Verify:** Start dev stack, navigate through all surfaces\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"cd frontend && node dev.js start\", \"acceptanceCriteria\": [\"All branded surfaces render correctly\", \"No visual regressions\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-11T15:30:00Z"
+}

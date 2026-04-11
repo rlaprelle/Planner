@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import * as Label from '@radix-ui/react-label'
 import { register } from '@/api/auth'
 import { useAuth } from '@/auth/useAuth'
+import { EchelLogo } from '@/components/EchelLogo'
 
 export function RegisterPage() {
   const { login } = useAuth()
@@ -53,8 +54,13 @@ export function RegisterPage() {
   return (
     <div className="min-h-screen bg-surface flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-surface-raised rounded-2xl shadow-modal p-8">
-        <h1 className="text-2xl font-bold text-ink-heading text-center mb-1">Create your account</h1>
-        <p className="text-sm text-ink-secondary text-center mb-6">Start planning with less friction</p>
+        <div className="flex items-center justify-center gap-2.5 mb-1">
+          <EchelLogo size={36} />
+          <h1 className="text-2xl font-bold text-ink-heading">Echel Planner</h1>
+        </div>
+        <p className="text-sm text-ink-muted text-center italic mb-6">
+          Planning that works with your brain, not against it.
+        </p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="flex flex-col gap-1.5">

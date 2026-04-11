@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { deferDeferredItem, dismissDeferredItem } from '@/api/deferred'
 import { ConvertForm } from './ConvertForm'
+import { ConvertToEventForm } from './ConvertToEventForm'
 import { formatDistanceToNow } from 'date-fns'
 
 export function DeferredItemActions({ item, onDone }) {
-  const [mode, setMode] = useState(null) // null | 'convert' | 'defer' | 'dismiss-confirm'
+  const [mode, setMode] = useState(null) // null | 'convert' | 'convert-event' | 'defer' | 'dismiss-confirm'
 
   const deferMutation = useMutation({
     mutationFn: (deferFor) => deferDeferredItem(item.id, deferFor),
@@ -28,9 +29,15 @@ export function DeferredItemActions({ item, onDone }) {
         <div className="flex gap-2">
           <button
             onClick={() => setMode('convert')}
-            className="px-3 py-1.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors"
+            className="px-3 py-1.5 text-sm rounded-md bg-primary-100 text-primary-700 hover:bg-primary-200 transition-colors font-medium"
           >
-            Convert
+            Task
+          </button>
+          <button
+            onClick={() => setMode('convert-event')}
+            className="px-3 py-1.5 text-sm rounded-md bg-primary-100 text-primary-700 hover:bg-primary-200 transition-colors font-medium"
+          >
+            Event
           </button>
           <button
             onClick={() => setMode('defer')}
@@ -49,6 +56,10 @@ export function DeferredItemActions({ item, onDone }) {
 
       {mode === 'convert' && (
         <ConvertForm item={item} onDone={() => onDone()} onCancel={() => setMode(null)} />
+      )}
+
+      {mode === 'convert-event' && (
+        <ConvertToEventForm item={item} onDone={() => onDone()} onCancel={() => setMode(null)} />
       )}
 
       {mode === 'defer' && (

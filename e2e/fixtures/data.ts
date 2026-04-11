@@ -100,6 +100,20 @@ export const DASHBOARD = {
   deferredItemCount: 0,
 } as const
 
+export const EVENTS = [
+  {
+    id: 'evt-1',
+    title: 'Daily Standup',
+    projectId: 'proj-1',
+    projectName: 'Work',
+    projectColor: '#6366f1',
+    energyLevel: 'LOW',
+    blockDate: '2026-04-04',
+    startTime: '09:00:00',
+    endTime: '10:00:00',
+  },
+] as const
+
 export const SESSION_BLOCK = {
   id: 'block-session-1',
   blockDate: '2026-04-01',

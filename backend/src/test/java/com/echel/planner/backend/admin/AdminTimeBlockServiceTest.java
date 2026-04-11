@@ -61,8 +61,8 @@ class AdminTimeBlockServiceTest {
 
     @Test
     void listAll_returnsMappedResponses() {
-        TimeBlock block1 = new TimeBlock(user, BLOCK_DATE, null, START_TIME, END_TIME, 0);
-        TimeBlock block2 = new TimeBlock(user, BLOCK_DATE.plusDays(1), null,
+        TimeBlock block1 = new TimeBlock(user, BLOCK_DATE, (Task) null, START_TIME, END_TIME, 0);
+        TimeBlock block2 = new TimeBlock(user, BLOCK_DATE.plusDays(1), (Task) null,
                 LocalTime.of(14, 0), LocalTime.of(15, 0), 1);
         when(timeBlockRepository.findAll()).thenReturn(List.of(block1, block2));
 
@@ -125,7 +125,7 @@ class AdminTimeBlockServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        TimeBlock saved = new TimeBlock(user, BLOCK_DATE, null, START_TIME, END_TIME, 0);
+        TimeBlock saved = new TimeBlock(user, BLOCK_DATE, (Task) null, START_TIME, END_TIME, 0);
         when(timeBlockRepository.save(any(TimeBlock.class))).thenReturn(saved);
 
         service.create(request);
@@ -166,7 +166,7 @@ class AdminTimeBlockServiceTest {
     void update_setsFieldsAndLooksUpNewTaskWhenTaskIdProvided() {
         UUID taskId = UUID.randomUUID();
         Task newTask = mock(Task.class);
-        TimeBlock existing = new TimeBlock(user, BLOCK_DATE, null, START_TIME, END_TIME, 0);
+        TimeBlock existing = new TimeBlock(user, BLOCK_DATE, (Task) null, START_TIME, END_TIME, 0);
         when(timeBlockRepository.findById(blockId)).thenReturn(Optional.of(existing));
         when(taskRepository.findById(taskId)).thenReturn(Optional.of(newTask));
 
@@ -216,7 +216,7 @@ class AdminTimeBlockServiceTest {
 
     @Test
     void delete_removesBlockById() {
-        TimeBlock existing = new TimeBlock(user, BLOCK_DATE, null, START_TIME, END_TIME, 0);
+        TimeBlock existing = new TimeBlock(user, BLOCK_DATE, (Task) null, START_TIME, END_TIME, 0);
         when(timeBlockRepository.findById(blockId)).thenReturn(Optional.of(existing));
 
         service.delete(blockId);

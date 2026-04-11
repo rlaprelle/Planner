@@ -3,7 +3,9 @@ set -euo pipefail
 
 # ── constants ────────────────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
+REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null || echo "$SCRIPT_DIR")"
+COMPOSE_FILE="$REPO_ROOT/docker-compose.yml"
+COMPOSE_PROJECT_NAME="planner"
 BACKEND_LOG="$SCRIPT_DIR/backend.log"
 DATABASE_TIMEOUT=30
 BACKEND_TIMEOUT=60
@@ -35,11 +37,11 @@ find_maven() {
 
 start_database() {
   info "Starting database..."
-  docker compose -f "$COMPOSE_FILE" up -d
+  docker compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" up -d
 
   info "Waiting for PostgreSQL to be ready..."
   for i in $(seq 1 "$DATABASE_TIMEOUT"); do
-    if docker compose -f "$COMPOSE_FILE" exec -T db \
+    if docker compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" exec -T db \
          pg_isready -U planner -d planner &>/dev/null; then
       ok "Database is ready"
       return
@@ -106,7 +108,7 @@ cleanup() {
   echo ""
   info "Shutting down..."
   [[ -n "$BACKEND_PID" ]] && kill "$BACKEND_PID" 2>/dev/null && ok "Backend stopped"
-  docker compose -f "$COMPOSE_FILE" stop 2>/dev/null && ok "Database stopped"
+  docker compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" stop 2>/dev/null && ok "Database stopped"
   exit 0
 }
 trap cleanup SIGINT SIGTERM

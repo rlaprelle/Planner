@@ -16,6 +16,8 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
             SELECT tb FROM TimeBlock tb
             LEFT JOIN FETCH tb.task t
             LEFT JOIN FETCH t.project
+            LEFT JOIN FETCH tb.event e
+            LEFT JOIN FETCH e.project
             WHERE tb.user.id = :userId
               AND tb.blockDate = :blockDate
             ORDER BY tb.sortOrder ASC
@@ -43,7 +45,7 @@ public interface TimeBlockRepository extends JpaRepository<TimeBlock, UUID> {
             """)
     long countCompletedByUserIdAndBlockDate(@Param("userId") UUID userId, @Param("blockDate") LocalDate blockDate);
 
-    @Query("SELECT tb FROM TimeBlock tb LEFT JOIN FETCH tb.task t LEFT JOIN FETCH t.project WHERE tb.id = :id AND tb.user.id = :userId")
+    @Query("SELECT tb FROM TimeBlock tb LEFT JOIN FETCH tb.task t LEFT JOIN FETCH t.project LEFT JOIN FETCH tb.event e LEFT JOIN FETCH e.project WHERE tb.id = :id AND tb.user.id = :userId")
     Optional<TimeBlock> findByIdAndUserId(@Param("id") UUID id, @Param("userId") UUID userId);
 
     void deleteByTaskId(UUID taskId);

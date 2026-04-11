@@ -48,6 +48,8 @@ export function pushBlocks(blocks, changedIndex, dayEndMinutes) {
     const prev = result[i - 1]
     const curr = result[i]
     if (curr.startMinutes < prev.endMinutes) {
+      // Event blocks are hard boundaries — reject if we'd need to push one
+      if (curr.isEvent) return null
       const shift = prev.endMinutes - curr.startMinutes
       result[i] = {
         ...curr,
@@ -77,5 +79,6 @@ export function toGridBlock(serverBlock) {
     ...serverBlock,
     startMinutes: timeToMinutes(serverBlock.startTime),
     endMinutes: timeToMinutes(serverBlock.endTime),
+    isEvent: serverBlock.event != null,
   }
 }

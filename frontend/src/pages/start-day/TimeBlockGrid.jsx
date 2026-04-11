@@ -1,5 +1,6 @@
 import { useDroppable } from '@dnd-kit/core'
 import { TimeBlock } from './TimeBlock'
+import { EventBlock } from './EventBlock'
 import { DAY_START_MINUTES, DAY_DURATION } from './useTimeGrid'
 
 const TOTAL_HOURS = DAY_DURATION / 60 // 9
@@ -106,19 +107,28 @@ export function TimeBlockGrid({
         className="absolute left-0 right-0 bottom-0"
         style={{ top: '1.75rem' }}
       >
-        {blocks.map((block, i) => (
-          <TimeBlock
-            key={block.id}
-            block={block}
-            blockIndex={i}
-            allBlocks={blocks}
-            onBlocksChange={onBlocksChange}
-            onRemove={onRemoveBlock}
-            minutesToPercent={minutesToPercent}
-            durationToPercent={durationToPercent}
-            startResize={startResize}
-          />
-        ))}
+        {blocks.map((block, i) =>
+          block.isEvent ? (
+            <EventBlock
+              key={block.id}
+              block={block}
+              minutesToPercent={minutesToPercent}
+              durationToPercent={durationToPercent}
+            />
+          ) : (
+            <TimeBlock
+              key={block.id}
+              block={block}
+              blockIndex={i}
+              allBlocks={blocks}
+              onBlocksChange={onBlocksChange}
+              onRemove={onRemoveBlock}
+              minutesToPercent={minutesToPercent}
+              durationToPercent={durationToPercent}
+              startResize={startResize}
+            />
+          )
+        )}
 
         {/* Ghost preview while dragging a task card over the grid */}
         {dropPreview && (

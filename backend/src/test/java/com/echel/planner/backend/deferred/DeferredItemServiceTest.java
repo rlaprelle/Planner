@@ -6,6 +6,8 @@ import com.echel.planner.backend.deferred.dto.DeferRequest;
 import com.echel.planner.backend.deferred.dto.DeferRequest.DeferDuration;
 import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
 import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.event.EventRepository;
+import com.echel.planner.backend.event.EventService;
 import com.echel.planner.backend.task.TaskRepository;
 import com.echel.planner.backend.task.TaskService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,12 @@ class DeferredItemServiceTest {
 
     @Mock
     private TaskRepository taskRepository;
+
+    @Mock
+    private EventService eventService;
+
+    @Mock
+    private EventRepository eventRepository;
 
     @InjectMocks
     private DeferredItemService service;

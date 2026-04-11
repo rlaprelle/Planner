@@ -1,10 +1,12 @@
 package com.echel.planner.backend.deferred;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.deferred.dto.ConvertToEventRequest;
 import com.echel.planner.backend.deferred.dto.ConvertToTaskRequest;
 import com.echel.planner.backend.deferred.dto.DeferRequest;
 import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
 import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
+import com.echel.planner.backend.event.dto.EventResponse;
 import com.echel.planner.backend.task.dto.TaskResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,15 @@ public class DeferredItemController {
             @PathVariable UUID id,
             @Valid @RequestBody ConvertToTaskRequest request) {
         return ResponseEntity.ok(service.convert(user, id, request));
+    }
+
+    @PostMapping("/api/v1/deferred/{id}/convert-to-event")
+    public ResponseEntity<EventResponse> convertToEvent(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable UUID id,
+            @Valid @RequestBody ConvertToEventRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.convertToEvent(user, id, request));
     }
 
     @PostMapping("/api/v1/deferred/{id}/defer")

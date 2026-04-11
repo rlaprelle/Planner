@@ -3,7 +3,9 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getProject } from '@/api/projects'
 import { getProjectTasks } from '@/api/tasks'
+import { getProjectEvents } from '@/api/events'
 import { TaskList } from './project-detail/TaskList'
+import { EventList } from './project-detail/EventList'
 import { TaskDetailPanel } from './project-detail/TaskDetailPanel'
 import { AddTaskModal } from './project-detail/AddTaskModal'
 import { PlusIcon, Spinner } from './project-detail/icons'
@@ -29,6 +31,12 @@ export default function ProjectDetailPage() {
   } = useQuery({
     queryKey: ['tasks', projectId],
     queryFn: () => getProjectTasks(projectId),
+    enabled: Boolean(projectId),
+  })
+
+  const { data: events = [] } = useQuery({
+    queryKey: ['events', projectId],
+    queryFn: () => getProjectEvents(projectId),
     enabled: Boolean(projectId),
   })
 
@@ -86,12 +94,19 @@ export default function ProjectDetailPage() {
           )}
 
           {!isLoading && !tasksError && (
-            <TaskList
-              tasks={tasks ?? []}
-              projectId={projectId}
-              selectedTask={resolvedSelectedTask}
-              onSelectTask={handleSelectTask}
-            />
+            <>
+              <TaskList
+                tasks={tasks ?? []}
+                projectId={projectId}
+                selectedTask={resolvedSelectedTask}
+                onSelectTask={handleSelectTask}
+              />
+              {events.length > 0 && (
+                <div className="mt-6">
+                  <EventList events={events} projectId={projectId} />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -59,7 +59,7 @@ class ScheduleControllerIntegrationTest {
                 com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
-                LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary);
+                LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary, null);
 
         when(scheduleService.getToday(any(AppUser.class))).thenReturn(List.of(block));
 
@@ -88,7 +88,7 @@ class ScheduleControllerIntegrationTest {
                 com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
-                LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary);
+                LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary, null);
 
         when(scheduleService.savePlan(any(AppUser.class), any(SavePlanRequest.class)))
                 .thenReturn(List.of(block));

@@ -6,6 +6,7 @@ import com.echel.planner.backend.auth.JwtAuthFilter;
 import com.echel.planner.backend.auth.JwtService;
 import com.echel.planner.backend.auth.SecurityConfig;
 import com.echel.planner.backend.stats.dto.DashboardResponse;
+import com.echel.planner.backend.stats.dto.WeeklySummaryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -88,5 +90,64 @@ class StatsControllerIntegrationTest {
                 .andExpect(jsonPath("$.streakDays").value(7))
                 .andExpect(jsonPath("$.upcomingDeadlines[0].taskTitle").value("Fix login"))
                 .andExpect(jsonPath("$.deferredItemCount").value(3));
+    }
+
+    @Test
+    void dashboard_serializesCelebrationTasks() throws Exception {
+        DashboardResponse response = new DashboardResponse(
+                0, 0, 0, List.of(), 0,
+                List.of(new DashboardResponse.CelebrationTask(
+                        UUID.randomUUID(), "Big task", "Work", "High complexity task")));
+
+        when(statsService.getDashboard(any(AppUser.class))).thenReturn(response);
+
+        mockMvc.perform(get("/api/v1/stats/dashboard")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.celebrationTasks[0].taskTitle").value("Big task"))
+                .andExpect(jsonPath("$.celebrationTasks[0].reason").value("High complexity task"));
+    }
+
+    @Test
+    void dashboard_noAuth_returns401() throws Exception {
+        mockMvc.perform(get("/api/v1/stats/dashboard"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void weeklySummary_returnsAggregatedData() throws Exception {
+        WeeklySummaryResponse response = new WeeklySummaryResponse(5, 21, 300, 3, "improving", "steady", true);
+        when(statsService.getWeeklySummary(any(AppUser.class))).thenReturn(response);
+
+        mockMvc.perform(get("/api/v1/stats/weekly-summary")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tasksCompleted").value(5))
+                .andExpect(jsonPath("$.totalPoints").value(21))
+                .andExpect(jsonPath("$.totalFocusMinutes").value(300))
+                .andExpect(jsonPath("$.streakDays").value(3))
+                .andExpect(jsonPath("$.energyTrend").value("improving"))
+                .andExpect(jsonPath("$.moodTrend").value("steady"))
+                .andExpect(jsonPath("$.hasActivity").value(true));
+    }
+
+    @Test
+    void weeklySummary_emptyState() throws Exception {
+        WeeklySummaryResponse response = new WeeklySummaryResponse(0, 0, 0, 0, null, null, false);
+        when(statsService.getWeeklySummary(any(AppUser.class))).thenReturn(response);
+
+        mockMvc.perform(get("/api/v1/stats/weekly-summary")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tasksCompleted").value(0))
+                .andExpect(jsonPath("$.hasActivity").value(false))
+                .andExpect(jsonPath("$.energyTrend").doesNotExist())
+                .andExpect(jsonPath("$.moodTrend").doesNotExist());
+    }
+
+    @Test
+    void weeklySummary_noAuth_returns401() throws Exception {
+        mockMvc.perform(get("/api/v1/stats/weekly-summary"))
+                .andExpect(status().isUnauthorized());
     }
 }

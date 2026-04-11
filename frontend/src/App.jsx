@@ -13,6 +13,7 @@ import { EndRitualPage } from '@/pages/EndRitualPage'
 import { StartDayPage } from '@/pages/StartDayPage'
 import { StartWeekPage } from '@/pages/StartWeekPage'
 import { StartMonthPage } from '@/pages/StartMonthPage'
+import { SettingsPage } from '@/pages/SettingsPage'
 import { ActiveSessionProvider } from '@/contexts/ActiveSessionContext'
 import ActiveSessionPage from '@/pages/ActiveSessionPage'
 import AdminPage from '@/pages/admin/AdminPage'
@@ -71,6 +72,7 @@ function App() {
                   <Route path="/start-day" element={<StartDayPage />} />
                   <Route path="/start-week" element={<StartWeekPage />} />
                   <Route path="/start-month" element={<StartMonthPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
                 </Route>
               </Route>
 

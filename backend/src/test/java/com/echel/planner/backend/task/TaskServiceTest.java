@@ -77,7 +77,7 @@ class TaskServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.title()).isEqualTo("My Task");
         assertThat(response.projectId()).isEqualTo(projectId);
-        assertThat(response.status()).isEqualTo(TaskStatus.TODO);
+        assertThat(response.status()).isEqualTo(TaskStatus.OPEN);
         assertThat(response.parentTaskId()).isNull();
         assertThat(captor.getValue().getTitle()).isEqualTo("My Task");
     }
@@ -158,10 +158,10 @@ class TaskServiceTest {
         when(taskRepository.findByParentTaskIdAndUserIdAndArchivedAtIsNull(taskId, userId))
                 .thenReturn(List.of());
 
-        TaskStatusRequest request = new TaskStatusRequest(TaskStatus.DONE);
+        TaskStatusRequest request = new TaskStatusRequest(TaskStatus.COMPLETED);
         TaskResponse response = taskService.changeStatus(user, taskId, request);
 
-        assertThat(response.status()).isEqualTo(TaskStatus.DONE);
+        assertThat(response.status()).isEqualTo(TaskStatus.COMPLETED);
         assertThat(task.getCompletedAt()).isNotNull();
     }
 
@@ -170,7 +170,7 @@ class TaskServiceTest {
         UUID taskId = UUID.randomUUID();
         Task task = new Task(user, project, "Some Task");
         setField(task, "id", taskId);
-        task.setStatus(TaskStatus.DONE);
+        task.setStatus(TaskStatus.COMPLETED);
         task.setCompletedAt(java.time.Instant.now());
 
         when(taskRepository.findByIdAndUserId(taskId, userId))
@@ -178,10 +178,10 @@ class TaskServiceTest {
         when(taskRepository.findByParentTaskIdAndUserIdAndArchivedAtIsNull(taskId, userId))
                 .thenReturn(List.of());
 
-        TaskStatusRequest request = new TaskStatusRequest(TaskStatus.IN_PROGRESS);
+        TaskStatusRequest request = new TaskStatusRequest(TaskStatus.OPEN);
         TaskResponse response = taskService.changeStatus(user, taskId, request);
 
-        assertThat(response.status()).isEqualTo(TaskStatus.IN_PROGRESS);
+        assertThat(response.status()).isEqualTo(TaskStatus.OPEN);
         assertThat(task.getCompletedAt()).isNull();
         assertThat(response.completedAt()).isNull();
     }

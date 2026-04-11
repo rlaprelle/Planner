@@ -56,7 +56,7 @@ class ScheduleControllerIntegrationTest {
         UUID taskId = UUID.randomUUID();
         TimeBlockResponse.TaskSummary summary = new TimeBlockResponse.TaskSummary(
                 taskId, "Fix login", UUID.randomUUID(), "Auth", "#6366f1",
-                com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
+                com.echel.planner.backend.task.TaskStatus.OPEN, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
                 LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary, null);
@@ -85,7 +85,7 @@ class ScheduleControllerIntegrationTest {
 
         TimeBlockResponse.TaskSummary summary = new TimeBlockResponse.TaskSummary(
                 taskId, "Fix login", UUID.randomUUID(), "Auth", "#6366f1",
-                com.echel.planner.backend.task.TaskStatus.TODO, (short) 3);
+                com.echel.planner.backend.task.TaskStatus.OPEN, (short) 3);
         TimeBlockResponse block = new TimeBlockResponse(
                 UUID.randomUUID(), LocalDate.of(2026, 3, 31),
                 LocalTime.of(9, 0), LocalTime.of(10, 0), 0, null, null, false, summary, null);

@@ -24,7 +24,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     @Query("""
             SELECT t FROM Task t
             WHERE t.user.id = :userId
-              AND t.status = com.echel.planner.backend.task.TaskStatus.DONE
+              AND t.status = com.echel.planner.backend.task.TaskStatus.COMPLETED
               AND t.completedAt >= :startOfDay
               AND t.archivedAt IS NULL
             ORDER BY t.completedAt DESC
@@ -35,7 +35,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     @Query("""
             SELECT t FROM Task t
             WHERE t.user.id = :userId
-              AND t.status = com.echel.planner.backend.task.TaskStatus.DONE
+              AND t.status = com.echel.planner.backend.task.TaskStatus.COMPLETED
               AND t.completedAt >= :start
               AND t.completedAt < :end
               AND t.archivedAt IS NULL
@@ -48,11 +48,10 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             SELECT DISTINCT t FROM Task t
             JOIN FETCH t.project p
             WHERE t.user.id = :userId
-              AND t.status IN (
-                  com.echel.planner.backend.task.TaskStatus.TODO,
-                  com.echel.planner.backend.task.TaskStatus.IN_PROGRESS)
+              AND t.status = com.echel.planner.backend.task.TaskStatus.OPEN
               AND t.archivedAt IS NULL
               AND t.parentTask IS NULL
+              AND (t.visibleFrom IS NULL OR t.visibleFrom <= :date)
               AND t.id NOT IN (
                   SELECT tb.task.id FROM com.echel.planner.backend.schedule.TimeBlock tb
                   WHERE tb.user.id = :userId
@@ -61,12 +60,25 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
             """)
     List<Task> findSuggestedForUser(@Param("userId") UUID userId, @Param("date") LocalDate date);
 
+    /** All active top-level tasks visible as of the given date. Used by End Day triage and Start rituals. */
+    @Query("""
+            SELECT DISTINCT t FROM Task t
+            JOIN FETCH t.project p
+            WHERE t.user.id = :userId
+              AND t.status = com.echel.planner.backend.task.TaskStatus.OPEN
+              AND t.archivedAt IS NULL
+              AND t.parentTask IS NULL
+              AND (t.visibleFrom IS NULL OR t.visibleFrom <= :date)
+            ORDER BY t.priority DESC, t.dueDate ASC NULLS LAST
+            """)
+    List<Task> findActiveForUser(@Param("userId") UUID userId, @Param("date") LocalDate date);
+
     @Query("""
             SELECT t FROM Task t
             JOIN FETCH t.project p
             WHERE t.user.id = :userId
               AND t.dueDate IS NOT NULL
-              AND t.status != com.echel.planner.backend.task.TaskStatus.DONE
+              AND t.status = com.echel.planner.backend.task.TaskStatus.OPEN
               AND t.archivedAt IS NULL
               AND t.parentTask IS NULL
             ORDER BY t.dueDate ASC

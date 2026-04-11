@@ -164,7 +164,7 @@ public class ScheduleService {
             var task = block.getTask();
             int current = task.getActualMinutes() != null ? task.getActualMinutes() : 0;
             task.setActualMinutes(current + (int) elapsedMinutes);
-            task.setStatus(com.echel.planner.backend.task.TaskStatus.DONE);
+            task.setStatus(com.echel.planner.backend.task.TaskStatus.COMPLETED);
             task.setCompletedAt(now);
             taskRepository.save(task);
         }

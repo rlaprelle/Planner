@@ -100,7 +100,7 @@ export function DashboardPage() {
   })
 
   const nextBlock = todayBlocks?.find(
-    (b) => b.task && b.task.status !== 'DONE' && !b.actualEnd
+    (b) => b.task && b.task.status !== 'COMPLETED' && !b.actualEnd
   )
 
   if (isLoading) {

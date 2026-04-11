@@ -1,9 +1,7 @@
 export const STATUS_OPTIONS = [
-  { value: 'TODO', label: 'To Do' },
-  { value: 'IN_PROGRESS', label: 'In Progress' },
-  { value: 'BLOCKED', label: 'Blocked' },
-  { value: 'DONE', label: 'Done' },
-  { value: 'SKIPPED', label: 'Done for now' },
+  { value: 'OPEN', label: 'Open' },
+  { value: 'COMPLETED', label: 'Completed' },
+  { value: 'CANCELLED', label: 'Cancelled' },
 ]
 
 export const PRIORITY_OPTIONS = [

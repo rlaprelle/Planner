@@ -21,9 +21,15 @@ public class DailyReflectionService {
 
     public ReflectionResponse upsert(AppUser user, ReflectionRequest request) {
         LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
+        ReflectionType type = request.reflectionType() != null
+                ? request.reflectionType() : ReflectionType.DAILY;
         DailyReflection reflection = repository
-                .findByUserAndReflectionDate(user, today)
-                .orElseGet(() -> new DailyReflection(user, today));
+                .findByUserAndReflectionDateAndReflectionType(user, today, type)
+                .orElseGet(() -> {
+                    DailyReflection r = new DailyReflection(user, today);
+                    r.setReflectionType(type);
+                    return r;
+                });
         reflection.setEnergyRating(request.energyRating());
         reflection.setMoodRating(request.moodRating());
         reflection.setReflectionNotes(request.reflectionNotes());

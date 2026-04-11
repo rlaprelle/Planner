@@ -67,28 +67,30 @@ const NAV_ITEMS = [
   },
 ]
 
-const RITUAL_ITEMS = [
+const RITUAL_GROUPS = [
   {
-    label: 'Start Day',
-    to: '/start-day',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        aria-hidden="true">
-        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-      </svg>
-    ),
+    label: 'Daily',
+    defaultOpen: true,
+    items: [
+      { label: 'Start Day', to: '/start-day' },
+      { label: 'End Day', to: '/end-day' },
+    ],
   },
   {
-    label: 'End Day',
-    to: '/end-day',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        aria-hidden="true">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-      </svg>
-    ),
+    label: 'Weekly',
+    defaultOpen: false,
+    items: [
+      { label: 'Start Week', to: '/start-week' },
+      { label: 'End Week', to: '/end-week' },
+    ],
+  },
+  {
+    label: 'Monthly',
+    defaultOpen: false,
+    items: [
+      { label: 'Start Month', to: '/start-month' },
+      { label: 'End Month', to: '/end-month' },
+    ],
   },
 ]
 
@@ -145,22 +147,47 @@ function NavItem({ item, badge = 0 }) {
   )
 }
 
-function RitualItem({ item }) {
+function RitualGroup({ group }) {
+  const [open, setOpen] = useState(group.defaultOpen)
+
   return (
-    <NavLink
-      to={item.to}
-      className={({ isActive }) =>
-        [
-          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
-          isActive
-            ? 'bg-primary-100 text-primary-800'
-            : 'text-primary-400 hover:bg-primary-50 hover:text-primary-700',
-        ].join(' ')
-      }
-    >
-      {item.icon}
-      {item.label}
-    </NavLink>
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex items-center gap-2 px-3 py-1.5 w-full text-left text-xs font-semibold text-ink-muted uppercase tracking-wider hover:text-ink-secondary transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          className={`transition-transform ${open ? 'rotate-90' : ''}`}
+          aria-hidden="true"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        {group.label}
+      </button>
+      {open && (
+        <div className="space-y-0.5 ml-2">
+          {group.items.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                [
+                  'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
+                  isActive
+                    ? 'bg-primary-100 text-primary-800'
+                    : 'text-primary-400 hover:bg-primary-50 hover:text-primary-700',
+                ].join(' ')
+              }
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -208,12 +235,14 @@ export function AppLayout() {
           ))}
 
           <div className="pt-3 pb-1">
-            <p className="px-3 text-xs font-semibold text-ink-muted uppercase tracking-wider">Daily rituals</p>
+            <p className="px-3 text-xs font-semibold text-ink-muted uppercase tracking-wider">Rituals</p>
           </div>
 
-          {RITUAL_ITEMS.map((item) => (
-            <RitualItem key={item.to} item={item} />
-          ))}
+          <div className="space-y-1">
+            {RITUAL_GROUPS.map((group) => (
+              <RitualGroup key={group.label} group={group} />
+            ))}
+          </div>
         </div>
 
         {/* Quick capture + user + logout */}

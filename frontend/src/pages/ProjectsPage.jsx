@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useTranslation } from 'react-i18next'
 import { getProjects, createProject, updateProject, archiveProject } from '@/api/projects'
 import { getProjectTasks } from '@/api/tasks'
 import { TaskDetailModal } from './project-detail/TaskDetailModal'
@@ -95,6 +96,7 @@ function ColorPicker({ value, onChange }) {
 // ─── Project Form Modal ───────────────────────────────────────────────────────
 
 function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
+  const { t } = useTranslation('tasks')
   const isEdit = Boolean(project)
   const [name, setName] = useState(project?.name ?? '')
   const [description, setDescription] = useState(project?.description ?? '')
@@ -127,7 +129,7 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
     mutation.reset()
     if (mutation.isPending) return
     if (!name.trim()) {
-      setNameError('Name is required.')
+      setNameError(t('nameRequired'))
       return
     }
     setNameError('')
@@ -158,21 +160,21 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
           <Dialog.Title className="text-lg font-semibold text-ink-heading mb-4">
-            {isEdit ? 'Edit project' : 'New project'}
+            {isEdit ? t('editProject') : t('newProject')}
           </Dialog.Title>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Name */}
             <div>
               <label htmlFor="project-name" className="block text-sm font-medium text-ink-body mb-1">
-                Name <span className="text-error">*</span>
+                {t('name')} <span className="text-error">*</span>
               </label>
               <input
                 id="project-name"
                 type="text"
                 value={name}
                 onChange={(e) => { setName(e.target.value); setNameError('') }}
-                placeholder="e.g. Website redesign"
+                placeholder={t('namePlaceholder')}
                 className={[
                   'w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors',
                   nameError ? 'border-error' : 'border-edge',
@@ -187,13 +189,13 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
             {/* Description */}
             <div>
               <label htmlFor="project-description" className="block text-sm font-medium text-ink-body mb-1">
-                Description <span className="text-ink-muted font-normal">(optional)</span>
+                {t('common:description')} <span className="text-ink-muted font-normal">{t('common:optional')}</span>
               </label>
               <textarea
                 id="project-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="What's this project about?"
+                placeholder={t('whatIsThisAbout')}
                 rows={2}
                 className="w-full px-3 py-2 text-sm border border-edge rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors resize-none"
               />
@@ -202,7 +204,7 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
             {/* Color */}
             <div>
               <label className="block text-sm font-medium text-ink-body mb-2">
-                Color <span className="text-ink-muted font-normal">(optional)</span>
+                {t('color')} <span className="text-ink-muted font-normal">{t('common:optional')}</span>
               </label>
               <ColorPicker value={color} onChange={setColor} />
             </div>
@@ -210,14 +212,14 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
             {/* Icon */}
             <div>
               <label htmlFor="project-icon" className="block text-sm font-medium text-ink-body mb-1">
-                Icon <span className="text-ink-muted font-normal">(optional)</span>
+                {t('icon')} <span className="text-ink-muted font-normal">{t('common:optional')}</span>
               </label>
               <input
                 id="project-icon"
                 type="text"
                 value={icon}
                 onChange={(e) => setIcon(e.target.value)}
-                placeholder="e.g. 🚀 or any text"
+                placeholder={t('iconPlaceholder')}
                 className="w-full px-3 py-2 text-sm border border-edge rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors"
               />
             </div>
@@ -225,7 +227,7 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
             {/* Server error */}
             {mutation.isError && (
               <p className="text-sm text-error">
-                {mutation.error?.message || 'Something went wrong. Please try again.'}
+                {mutation.error?.message || t('common:genericError')}
               </p>
             )}
 
@@ -236,7 +238,7 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
                   type="button"
                   className="px-4 py-2 text-sm font-medium text-ink-body bg-surface-raised border border-edge rounded-md hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
                 >
-                  Cancel
+                  {t('common:cancel')}
                 </button>
               </Dialog.Close>
               <button
@@ -244,7 +246,7 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
                 disabled={mutation.isPending}
                 className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
-                {mutation.isPending ? 'Saving…' : 'Save'}
+                {mutation.isPending ? t('common:saving') : t('common:save')}
               </button>
             </div>
           </form>
@@ -257,16 +259,17 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
 // ─── Archive Confirm Modal ────────────────────────────────────────────────────
 
 function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending }) {
+  const { t } = useTranslation('tasks')
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
           <Dialog.Title className="text-base font-semibold text-ink-heading mb-2">
-            Archive this project?
+            {t('archiveThisProject')}
           </Dialog.Title>
           <Dialog.Description className="text-sm text-ink-secondary mb-5">
-            <strong>{project?.name}</strong> will be archived and hidden from your active projects. You can restore it later.
+            {t('archiveProjectConfirm', { name: project?.name })}
           </Dialog.Description>
           <div className="flex justify-end gap-3">
             <Dialog.Close asChild>
@@ -274,7 +277,7 @@ function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending
                 type="button"
                 className="px-4 py-2 text-sm font-medium text-ink-body bg-surface-raised border border-edge rounded-md hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
               >
-                Cancel
+                {t('common:cancel')}
               </button>
             </Dialog.Close>
             <button
@@ -283,7 +286,7 @@ function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending
               disabled={isPending}
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
             >
-              {isPending ? 'Archiving…' : 'Archive'}
+              {isPending ? t('common:archiving') : t('common:archive')}
             </button>
           </div>
         </Dialog.Content>
@@ -297,6 +300,7 @@ function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending
 const MAX_VISIBLE_TASKS = 3
 
 function ProjectCardTasks({ projectId, onSelectTask }) {
+  const { t } = useTranslation('tasks')
   const { data: tasks } = useQuery({
     queryKey: ['projects', projectId, 'tasks'],
     queryFn: () => getProjectTasks(projectId),
@@ -309,7 +313,7 @@ function ProjectCardTasks({ projectId, onSelectTask }) {
 
   if (activeTasks.length === 0) {
     return (
-      <p className="text-xs text-ink-muted italic">No active tasks</p>
+      <p className="text-xs text-ink-muted italic">{t('noActiveTasks')}</p>
     )
   }
 
@@ -332,7 +336,7 @@ function ProjectCardTasks({ projectId, onSelectTask }) {
       ))}
       {overflow > 0 && (
         <li className="text-xs text-ink-muted">
-          +{overflow} more
+          {t('overflowMore', { count: overflow })}
         </li>
       )}
     </ul>
@@ -342,6 +346,7 @@ function ProjectCardTasks({ projectId, onSelectTask }) {
 // ─── Project Card ─────────────────────────────────────────────────────────────
 
 function ProjectCard({ project, onEdit, onArchive, onSelectTask, onAddTask }) {
+  const { t } = useTranslation('tasks')
   const color = project.color || DEFAULT_COLOR
   return (
     <div className="relative bg-surface-raised rounded-2xl border border-edge shadow-card hover:shadow-card-hover hover:border-primary-200 transition-all group overflow-hidden">
@@ -378,27 +383,27 @@ function ProjectCard({ project, onEdit, onArchive, onSelectTask, onAddTask }) {
           <button
             type="button"
             onClick={() => onAddTask(project)}
-            title="New task"
+            title={t('newTask')}
             className="p-1.5 text-ink-muted hover:text-primary-600 hover:bg-primary-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
-            aria-label={`Add task to ${project.name}`}
+            aria-label={t('addTaskTo', { name: project.name })}
           >
             <PlusIcon />
           </button>
           <button
             type="button"
             onClick={() => onEdit(project)}
-            title="Edit project"
+            title={t('editProject')}
             className="p-1.5 text-ink-muted hover:text-ink-body hover:bg-surface-soft rounded-lg focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
-            aria-label={`Edit ${project.name}`}
+            aria-label={t('editProjectName', { name: project.name })}
           >
             <PencilIcon />
           </button>
           <button
             type="button"
             onClick={() => onArchive(project)}
-            title="Archive project"
+            title={t('common:archive')}
             className="p-1.5 text-ink-muted hover:text-red-600 hover:bg-red-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-colors"
-            aria-label={`Archive ${project.name}`}
+            aria-label={t('archiveProjectName', { name: project.name })}
           >
             <ArchiveIcon />
           </button>
@@ -411,6 +416,7 @@ function ProjectCard({ project, onEdit, onArchive, onSelectTask, onAddTask }) {
 // ─── Projects Page ────────────────────────────────────────────────────────────
 
 export function ProjectsPage() {
+  const { t } = useTranslation('tasks')
   const queryClient = useQueryClient()
 
   const { data: projects, isLoading, isError } = useQuery({
@@ -488,14 +494,14 @@ export function ProjectsPage() {
     <div className="p-8 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-ink-heading">Projects</h1>
+        <h1 className="text-2xl font-semibold text-ink-heading">{t('projects')}</h1>
         <button
           type="button"
           onClick={handleNewProject}
           className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
         >
           <PlusIcon />
-          New project
+          {t('newProject')}
         </button>
       </div>
 
@@ -504,20 +510,20 @@ export function ProjectsPage() {
 
       {isError && (
         <div className="py-10 text-center text-sm text-error">
-          Failed to load projects. Please try again.
+          {t('loadProjectsFailed')}
         </div>
       )}
 
       {!isLoading && !isError && projects?.length === 0 && (
         <div className="py-16 text-center">
-          <p className="text-ink-muted text-sm">No projects yet. Create your first project.</p>
+          <p className="text-ink-muted text-sm">{t('noProjectsYet')}</p>
           <button
             type="button"
             onClick={handleNewProject}
             className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-primary-500 border border-primary-300 rounded-md hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
           >
             <PlusIcon />
-            Create a project
+            {t('createAProject')}
           </button>
         </div>
       )}

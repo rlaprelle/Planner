@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   getScheduleToday,
   startTimeBlock,
@@ -17,6 +18,7 @@ import { playCompletionChime } from './active-session/chime'
 const TODAY = new Date().toISOString().slice(0, 10)
 
 export default function ActiveSessionPage() {
+  const { t } = useTranslation('tasks')
   const { blockId } = useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -60,7 +62,7 @@ export default function ActiveSessionPage() {
       // 409/422 "already started" is expected on revisit — ignore it
       if (err.status === 409 || err.status === 422) return
       console.error('Failed to start block:', err)
-      setError(`Failed to start session: ${err.message}`)
+      setError(t('failedToStart', { message: err.message }))
     },
   })
 
@@ -84,12 +86,12 @@ export default function ActiveSessionPage() {
       clearSession()
       queryClient.invalidateQueries({ queryKey: ['schedule'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      setFlash('Nice work!')
+      setFlash(t('niceWork'))
       setTimeout(() => navigate(-1), 1500)
     },
     onError: (err) => {
       console.error('Failed to complete block:', err)
-      setError(`Failed to complete: ${err.message}`)
+      setError(t('failedToComplete', { message: err.message }))
     },
   })
 
@@ -104,7 +106,7 @@ export default function ActiveSessionPage() {
     },
     onError: (err) => {
       console.error('Failed (done for now):', err)
-      setError(`Something went wrong: ${err.message}`)
+      setError(t('somethingWentWrong', { message: err.message }))
     },
   })
 
@@ -119,7 +121,7 @@ export default function ActiveSessionPage() {
     },
     onError: (err) => {
       console.error('Failed to extend:', err)
-      setError(`Failed to extend: ${err.message}`)
+      setError(t('failedToExtend', { message: err.message }))
       setShowExtendMenu(false)
     },
   })
@@ -131,7 +133,7 @@ export default function ActiveSessionPage() {
   if (!block) {
     return (
       <div className="flex items-center justify-center h-full bg-surface">
-        <p className="text-ink-muted">Loading session...</p>
+        <p className="text-ink-muted">{t('loadingSession')}</p>
       </div>
     )
   }
@@ -159,7 +161,7 @@ export default function ActiveSessionPage() {
             onClick={() => setError(null)}
             className="mt-2 text-xs text-error hover:text-ink-heading underline"
           >
-            Dismiss
+            {t('dismiss')}
           </button>
         </div>
       )}
@@ -173,7 +175,7 @@ export default function ActiveSessionPage() {
 
       {/* Task title */}
       <h1 className="text-xl font-semibold text-ink-heading mb-8 text-center">
-        {block.task?.title ?? 'Focus time'}
+        {block.task?.title ?? t('focusTime')}
       </h1>
 
       {/* Timer */}
@@ -202,7 +204,7 @@ export default function ActiveSessionPage() {
           disabled={isPending}
           className="px-5 py-2.5 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 transition-colors disabled:opacity-50"
         >
-          Complete
+          {t('complete')}
         </button>
 
         <div className="relative">
@@ -211,7 +213,7 @@ export default function ActiveSessionPage() {
             disabled={isPending}
             className="px-5 py-2.5 bg-primary-50 text-primary-700 rounded-xl text-sm font-medium hover:bg-primary-100 transition-colors disabled:opacity-50"
           >
-            Extend
+            {t('extend')}
           </button>
           {showExtendMenu && (
             <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-xl border border-edge py-1 min-w-[120px]">
@@ -221,7 +223,7 @@ export default function ActiveSessionPage() {
                   onClick={() => extendMutation.mutate(mins)}
                   className="block w-full text-left px-4 py-2 text-sm text-ink-body hover:bg-primary-50 transition-colors"
                 >
-                  {mins} min
+                  {t('minutesShort', { count: mins })}
                 </button>
               ))}
             </div>
@@ -233,7 +235,7 @@ export default function ActiveSessionPage() {
           disabled={isPending}
           className="px-5 py-2.5 bg-primary-50 text-primary-700 rounded-xl text-sm font-medium hover:bg-primary-100 transition-colors disabled:opacity-50"
         >
-          Done for now
+          {t('doneForNow')}
         </button>
       </div>
     </div>

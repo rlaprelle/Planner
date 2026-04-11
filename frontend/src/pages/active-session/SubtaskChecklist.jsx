@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { updateTaskStatus } from '@/api/tasks'
 
 export default function SubtaskChecklist({ subtasks, projectId }) {
+  const { t } = useTranslation('tasks')
   const queryClient = useQueryClient()
 
   const toggleMutation = useMutation({
@@ -24,7 +26,7 @@ export default function SubtaskChecklist({ subtasks, projectId }) {
   return (
     <div className="bg-surface-raised rounded-2xl p-4 w-full max-w-sm">
       <div className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">
-        Subtasks
+        {t('subtasks')}
       </div>
       <div className="space-y-1">
         {sorted.map((child) => {

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const RADIUS = 70
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 export default function TimerCircle({ endTime, totalMinutes, onTimeUp }) {
+  const { t } = useTranslation('tasks')
   const [remainingMs, setRemainingMs] = useState(() => endTime - Date.now())
   const [hasChimed, setHasChimed] = useState(false)
 
@@ -53,9 +55,9 @@ export default function TimerCircle({ endTime, totalMinutes, onTimeUp }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           {isOvertime ? (
             <>
-              <span className="text-3xl font-light text-ink-muted">+{timeStr}</span>
+              <span className="text-3xl font-light text-ink-muted">{t('overtime', { time: timeStr })}</span>
               <span className="text-sm text-primary-400 mt-1 font-medium">
-                Time&apos;s up. Good work!
+                {t('timesUp')}
               </span>
             </>
           ) : (
@@ -63,7 +65,7 @@ export default function TimerCircle({ endTime, totalMinutes, onTimeUp }) {
           )}
         </div>
       </div>
-      <span className="text-sm text-ink-muted mt-3">of {totalMinutes} min</span>
+      <span className="text-sm text-ink-muted mt-3">{t('ofTotalMinutes', { total: totalMinutes })}</span>
     </div>
   )
 }

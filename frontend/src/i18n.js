@@ -10,6 +10,7 @@ import tasks from './locales/en/tasks.json';
 import deferred from './locales/en/deferred.json';
 import timeBlocking from './locales/en/timeBlocking.json';
 import admin from './locales/en/admin.json';
+import settings from './locales/en/settings.json';
 
 i18n
   .use(LanguageDetector)
@@ -25,6 +26,7 @@ i18n
         deferred,
         timeBlocking,
         admin,
+        settings,
       },
     },
     lng: 'en',

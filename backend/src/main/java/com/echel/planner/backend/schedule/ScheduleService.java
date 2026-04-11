@@ -23,9 +23,6 @@ import java.util.UUID;
 @Transactional
 public class ScheduleService {
 
-    private static final int DEFAULT_START_HOUR = 8;
-    private static final int DEFAULT_END_HOUR = 17;
-
     private final TimeBlockRepository timeBlockRepository;
     private final TaskRepository taskRepository;
     private final EventService eventService;
@@ -47,8 +44,10 @@ public class ScheduleService {
     }
 
     public List<TimeBlockResponse> savePlan(AppUser user, SavePlanRequest request) {
-        int startHour = request.startHour() != null ? request.startHour() : DEFAULT_START_HOUR;
-        int endHour = request.endHour() != null ? request.endHour() : DEFAULT_END_HOUR;
+        int startHour = request.startHour() != null
+                ? request.startHour() : user.getDefaultStartTime().getHour();
+        int endHour = request.endHour() != null
+                ? request.endHour() : user.getDefaultEndTime().getHour();
 
         if (startHour < 0 || startHour > 23) {
             throw new ScheduleValidationException("startHour must be between 0 and 23");

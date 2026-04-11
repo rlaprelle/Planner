@@ -163,6 +163,18 @@
 - **Priority**: Low
 - **Affects**: Task list components, Active Work Session view, Morning Planning view, Dashboard
 
+### Email & Password Change
+- **Description**: Allow users to change their email address and password from the settings page. Email change requires re-verification (send confirmation to new address before switching). Password change requires current-password confirmation.
+- **Rationale**: Standard account management features, but more complex than preference fields due to security implications (re-auth, verification flows). Deferred to keep the initial settings page focused on workflow preferences.
+- **Effort**: Medium (backend verification flow for email, re-auth for password, frontend forms with validation)
+- **Priority**: Medium
+
+### Language / Internationalization (i18n)
+- **Description**: Support for multiple languages in the UI. All user-facing strings externalized to resource bundles. Language selector in user settings. MVP is English-only.
+- **Rationale**: Broadens accessibility for non-English speakers. Requires systematic string extraction across the frontend, so easier to do before the UI surface area grows further.
+- **Effort**: High (string extraction across all components, translation pipeline, locale-aware date/number formatting)
+- **Priority**: Low
+
 ### Open Design Gaps
 
 These gaps were identified in the audit but do not yet have a firm design. They need further design work before implementation.

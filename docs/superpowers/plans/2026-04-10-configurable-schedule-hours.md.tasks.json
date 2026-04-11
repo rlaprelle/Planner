@@ -1,0 +1,39 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-10-configurable-schedule-hours.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Parameterize useTimeGrid hook",
+      "status": "pending",
+      "description": "**Goal:** Make useTimeGrid accept dynamic day boundaries instead of using hardcoded constants.\n\n**Files:**\n- Modify: `frontend/src/pages/start-day/useTimeGrid.js`\n\n**Acceptance Criteria:**\n- [ ] useTimeGrid(dayStartMinutes, dayEndMinutes) accepts two parameters\n- [ ] All internal math uses the parameters instead of constants\n- [ ] Default constants still exported for backward compatibility\n- [ ] startResize uses the passed dayEndMinutes for clamping\n\n**Verify:** `cd frontend && npm run lint` → no errors\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/start-day/useTimeGrid.js\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"useTimeGrid accepts dayStartMinutes and dayEndMinutes parameters\", \"All internal math uses parameters\", \"Default constants still exported\", \"startResize uses passed dayEndMinutes\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Parameterize TimeBlockGrid component",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Make TimeBlockGrid accept dynamic day boundaries as props and compute hour marks dynamically.\n\n**Files:**\n- Modify: `frontend/src/pages/start-day/TimeBlockGrid.jsx`\n\n**Acceptance Criteria:**\n- [ ] Accepts dayStartMinutes and dayEndMinutes props\n- [ ] Hour marks computed from props\n- [ ] Grid lines and sub-lines adapt to range\n\n**Verify:** `cd frontend && npm run lint` → no errors\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/start-day/TimeBlockGrid.jsx\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Accepts dayStartMinutes and dayEndMinutes props\", \"Hour marks computed from props\", \"Grid lines adapt to range\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: Add hour-range dropdowns and wire up StartDayPage",
+      "status": "pending",
+      "blockedBy": [0, 1],
+      "description": "**Goal:** Add hour-range state, dropdown UI, range-change validation, and thread dynamic boundaries through all DnD handlers.\n\n**Files:**\n- Modify: `frontend/src/pages/StartDayPage.jsx`\n- Modify: `frontend/src/api/schedule.js`\n\n**Acceptance Criteria:**\n- [ ] Two select dropdowns above grid defaulting to 8 AM / 5 PM\n- [ ] Changing range updates all grid math\n- [ ] Narrowing past existing blocks shows warning and is rejected\n- [ ] savePlan sends startHour and endHour\n- [ ] handleAddToCalendar uses dynamic boundaries\n\n**Verify:** `cd frontend && npm run lint` → no errors\n\n```json:metadata\n{\"files\": [\"frontend/src/pages/StartDayPage.jsx\", \"frontend/src/api/schedule.js\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Dropdowns default to 8 AM / 5 PM\", \"Range change updates grid math\", \"Narrowing past blocks shows warning\", \"savePlan sends hour range\", \"handleAddToCalendar uses dynamic boundaries\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 4: Backend — accept dynamic hour range in savePlan",
+      "status": "pending",
+      "description": "**Goal:** Make backend accept optional startHour/endHour in save-plan request and validate against provided range.\n\n**Files:**\n- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/dto/SavePlanRequest.java`\n- Modify: `backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java`\n- Modify: `backend/src/test/java/com/echel/planner/backend/schedule/ScheduleServiceTest.java`\n- Modify: `backend/src/test/java/com/echel/planner/backend/schedule/ScheduleServiceEventTest.java`\n- Modify: `backend/src/test/java/com/echel/planner/backend/schedule/ScheduleControllerIntegrationTest.java`\n\n**Acceptance Criteria:**\n- [ ] SavePlanRequest has optional startHour and endHour fields\n- [ ] Defaults to 8/17 when null\n- [ ] Validation enforces blocks within provided range\n- [ ] All existing tests updated and pass\n- [ ] New tests cover custom range, out-of-range blocks, invalid range\n\n**Verify:** `cd backend && mvn test -Dtest=\"ScheduleServiceTest,ScheduleServiceEventTest,ScheduleControllerIntegrationTest\"` → all pass\n\n```json:metadata\n{\"files\": [\"backend/src/main/java/com/echel/planner/backend/schedule/dto/SavePlanRequest.java\", \"backend/src/main/java/com/echel/planner/backend/schedule/ScheduleService.java\", \"backend/src/test/java/com/echel/planner/backend/schedule/ScheduleServiceTest.java\", \"backend/src/test/java/com/echel/planner/backend/schedule/ScheduleServiceEventTest.java\", \"backend/src/test/java/com/echel/planner/backend/schedule/ScheduleControllerIntegrationTest.java\"], \"verifyCommand\": \"cd backend && mvn test -Dtest=ScheduleServiceTest,ScheduleServiceEventTest,ScheduleControllerIntegrationTest\", \"acceptanceCriteria\": [\"SavePlanRequest has optional startHour and endHour\", \"Defaults to 8/17 when null\", \"Validates blocks within provided range\", \"All existing tests pass\", \"New tests for custom range\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 5: E2E tests for hour-range dropdowns",
+      "status": "pending",
+      "blockedBy": [2],
+      "description": "**Goal:** Add E2E tests verifying dropdown UI, range change behavior, and block-prevents-narrowing validation.\n\n**Files:**\n- Modify: `e2e/tests/start-day.spec.ts`\n\n**Acceptance Criteria:**\n- [ ] Test: dropdowns default to 8 AM / 5 PM\n- [ ] Test: changing range updates grid hour labels\n- [ ] Test: narrowing range past existing block shows warning\n\n**Verify:** `cd e2e && npx playwright test tests/start-day.spec.ts` → all pass\n\n```json:metadata\n{\"files\": [\"e2e/tests/start-day.spec.ts\"], \"verifyCommand\": \"cd e2e && npx playwright test tests/start-day.spec.ts\", \"acceptanceCriteria\": [\"Dropdowns default to 8 AM / 5 PM\", \"Changing range updates grid labels\", \"Narrowing past block shows warning\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-10T00:00:00Z"
+}

@@ -65,8 +65,8 @@ export function TimeBlock({
   const endLabel = `${Math.floor(block.endMinutes / 60)}:${String(block.endMinutes % 60).padStart(2, '0')}`
 
   const isWide = blockWidth >= 140
-  const isMedium = blockWidth >= 70 && blockWidth < 140
-  const isNarrow = blockWidth < 70
+  const isMedium = blockWidth >= 40 && blockWidth < 140
+  const isNarrow = blockWidth < 40
 
   const timeSpan = (
     <span className={`text-[10px] leading-tight shrink-0 ${isCompleted ? 'text-ink-muted' : 'text-primary-200'}`}>

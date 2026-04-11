@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { getDashboard, getWeeklySummary } from '@/api/dashboard'
 import { getScheduleToday } from '@/api/schedule'
 import { Card } from '@/components/ui/Card'
@@ -17,38 +18,40 @@ function formatFocusTime(minutes) {
   return `${h}h ${m}m`
 }
 
-function WeeklyBanner({ summary }) {
+function WeeklyBanner({ summary, t }) {
   if (!summary) return null
 
   if (!summary.hasActivity) {
     return (
       <Card className="mb-4">
-        <CardLabel>Your Week</CardLabel>
-        <p className="text-sm text-ink-secondary">No activity yet this week.</p>
+        <CardLabel>{t('yourWeek')}</CardLabel>
+        <p className="text-sm text-ink-secondary">{t('noActivityThisWeek')}</p>
       </Card>
     )
   }
 
   const trendParts = []
   if (summary.streakDays > 0) {
-    trendParts.push(`${summary.streakDays}-day streak`)
+    trendParts.push(t('dayStreak', { count: summary.streakDays }))
   }
   if (summary.energyTrend) {
-    trendParts.push(`Energy: ${summary.energyTrend}`)
+    trendParts.push(t('energyTrend', { trend: summary.energyTrend }))
   }
   if (summary.moodTrend) {
-    trendParts.push(`Mood: ${summary.moodTrend}`)
+    trendParts.push(t('moodTrend', { trend: summary.moodTrend }))
   }
 
   return (
     <Card className="mb-4">
-      <CardLabel>Your Week</CardLabel>
+      <CardLabel>{t('yourWeek')}</CardLabel>
       <p className="text-lg font-semibold text-ink-heading">
-        {summary.tasksCompleted} {summary.tasksCompleted === 1 ? 'task' : 'tasks'} completed
-        <span className="text-ink-faint font-normal mx-2">·</span>
-        {summary.totalPoints} {summary.totalPoints === 1 ? 'point' : 'points'}
-        <span className="text-ink-faint font-normal mx-2">·</span>
-        {formatFocusTime(summary.totalFocusMinutes)} focused
+        {t('weekSummary', {
+          tasks: summary.tasksCompleted,
+          taskWord: t('task', { count: summary.tasksCompleted }),
+          points: summary.totalPoints,
+          pointWord: t('point', { count: summary.totalPoints }),
+          minutes: formatFocusTime(summary.totalFocusMinutes),
+        })}
       </p>
       {trendParts.length > 0 && (
         <p className="mt-1 text-sm text-ink-secondary">{trendParts.join(' · ')}</p>
@@ -68,19 +71,20 @@ export function DashboardPage() {
   const [toast, setToast] = useState(location.state?.successMessage ?? null)
   const { user } = useAuth()
   const firstName = user?.displayName?.split(' ')[0]
+  const { t } = useTranslation('dashboard')
 
-  function getGreeting() {
+  function getGreetingKey() {
     const hour = new Date().getHours()
-    if (hour < 12) return 'Good morning'
-    if (hour < 17) return 'Good afternoon'
-    return 'Good evening'
+    if (hour < 12) return 'goodMorning'
+    if (hour < 17) return 'goodAfternoon'
+    return 'goodEvening'
   }
 
   useEffect(() => {
     if (toast) {
       window.history.replaceState({}, '')
-      const t = setTimeout(() => setToast(null), 3500)
-      return () => clearTimeout(t)
+      const timer = setTimeout(() => setToast(null), 3500)
+      return () => clearTimeout(timer)
     }
   }, [toast])
 
@@ -104,7 +108,7 @@ export function DashboardPage() {
   )
 
   if (isLoading) {
-    return <div className="p-8 text-ink-muted text-sm">Loading…</div>
+    return <div className="p-8 text-ink-muted text-sm">{t('common:loading')}</div>
   }
 
   const { todayBlockCount, todayCompletedCount, streakDays, upcomingDeadlines, deferredItemCount } = data ?? {}
@@ -120,21 +124,23 @@ export function DashboardPage() {
       )}
 
       <h1 className="text-2xl font-semibold text-ink-heading mb-6">
-        {firstName ? `${getGreeting()}, ${firstName}` : getGreeting()}
+        {firstName
+          ? t('greeting', { greeting: t(getGreetingKey()), name: firstName })
+          : t(getGreetingKey())}
       </h1>
 
-      <WeeklyBanner summary={weeklySummary} />
+      <WeeklyBanner summary={weeklySummary} t={t} />
 
       <div className="grid grid-cols-2 gap-4 mb-6">
 
         {/* Card 1: Today at a glance */}
         <Card>
-          <CardLabel>Today at a Glance</CardLabel>
+          <CardLabel>{t('todayAtAGlance')}</CardLabel>
           {todayBlockCount > 0 ? (
             <>
               <p className="text-2xl font-bold text-ink-heading">
                 {todayCompletedCount} / {todayBlockCount}
-                <span className="text-sm font-normal text-ink-secondary ml-2">tasks done</span>
+                <span className="text-sm font-normal text-ink-secondary ml-2">{t('tasksDone')}</span>
               </p>
               <ProgressBar value={todayCompletedCount} max={todayBlockCount} />
               {nextBlock && (
@@ -148,12 +154,12 @@ export function DashboardPage() {
             </>
           ) : (
             <>
-              <p className="text-ink-secondary text-sm">No plan yet.</p>
+              <p className="text-ink-secondary text-sm">{t('noPlanYet')}</p>
               <Link
                 to="/start-day"
                 className="inline-block mt-2 text-sm text-primary-500 hover:text-primary-700 font-medium"
               >
-                Start planning →
+                {t('startPlanning')}
               </Link>
             </>
           )}
@@ -161,25 +167,25 @@ export function DashboardPage() {
 
         {/* Card 2: Streak */}
         <Card>
-          <CardLabel>Planning Streak</CardLabel>
+          <CardLabel>{t('planningStreak')}</CardLabel>
           {streakDays > 0 ? (
             <>
               <p className="text-2xl font-bold text-ink-heading">
                 {streakDays}
                 <span className="text-sm font-normal text-ink-secondary ml-2">
-                  {streakDays === 1 ? 'day' : 'days'} in a row
+                  {t('streakDays', { count: streakDays })}
                 </span>
               </p>
-              <p className="mt-1 text-xs text-ink-muted">Keep it going — finish tonight's reflection.</p>
+              <p className="mt-1 text-xs text-ink-muted">{t('keepItGoing')}</p>
             </>
           ) : (
-            <p className="text-sm text-ink-secondary">Start your streak tonight — finish today's reflection.</p>
+            <p className="text-sm text-ink-secondary">{t('startYourStreak')}</p>
           )}
         </Card>
 
         {/* Card 3: Upcoming deadlines */}
         <Card>
-          <CardLabel>Upcoming Deadlines</CardLabel>
+          <CardLabel>{t('upcomingDeadlines')}</CardLabel>
           {upcomingDeadlines?.length > 0 ? (
             <ul className="space-y-2">
               {upcomingDeadlines.map((d) => (
@@ -197,14 +203,14 @@ export function DashboardPage() {
                   <span className="text-sm text-ink-body truncate flex-1">{d.taskTitle}</span>
                   {DEADLINE_BADGE[d.deadlineGroup] && (
                     <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${DEADLINE_BADGE[d.deadlineGroup]}`}>
-                      {d.deadlineGroup === 'TODAY' ? 'TODAY' : d.projectName}
+                      {d.deadlineGroup === 'TODAY' ? t('deadlineToday') : d.projectName}
                     </span>
                   )}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-ink-muted">No upcoming deadlines. Nice.</p>
+            <p className="text-sm text-ink-muted">{t('noDeadlinesNice')}</p>
           )}
         </Card>
 
@@ -213,19 +219,19 @@ export function DashboardPage() {
           className={deferredItemCount > 0 ? 'cursor-pointer hover:border-primary-300 transition-colors' : ''}
           onClick={deferredItemCount > 0 ? () => navigate('/inbox') : undefined}
         >
-          <CardLabel>Inbox</CardLabel>
+          <CardLabel>{t('inboxHeading')}</CardLabel>
           {deferredItemCount > 0 ? (
             <>
               <p className="text-2xl font-bold text-ink-heading">
                 {deferredItemCount}
                 <span className="text-sm font-normal text-ink-secondary ml-2">
-                  {deferredItemCount === 1 ? 'item' : 'items'} waiting
+                  {t('inboxWaiting', { count: deferredItemCount })}
                 </span>
               </p>
-              <p className="mt-1 text-xs text-primary-500">Click to review →</p>
+              <p className="mt-1 text-xs text-primary-500">{t('clickToReview')}</p>
             </>
           ) : (
-            <p className="text-sm text-ink-muted">Inbox clear.</p>
+            <p className="text-sm text-ink-muted">{t('inboxClear')}</p>
           )}
         </Card>
       </div>
@@ -236,13 +242,13 @@ export function DashboardPage() {
           to="/start-day"
           className="px-4 py-2 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors font-medium"
         >
-          Start Morning Planning
+          {t('startMorningPlanning')}
         </Link>
         <Link
           to="/end-day"
           className="px-4 py-2 text-sm rounded-md border border-edge text-ink-secondary hover:bg-surface-soft transition-colors"
         >
-          Evening Clean-up
+          {t('eveningCleanup')}
         </Link>
       </div>
     </div>

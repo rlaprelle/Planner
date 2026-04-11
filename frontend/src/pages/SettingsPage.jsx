@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Label from '@radix-ui/react-label'
+import { getTimeZones } from '@vvo/tzdb'
 import { getPreferences, updatePreferences } from '@/api/preferences'
 
 const DAYS_OF_WEEK = [
@@ -37,7 +38,21 @@ function generateTimeOptions() {
 
 const TIME_OPTIONS = generateTimeOptions()
 
-const TIMEZONE_LIST = Intl.supportedValuesOf('timeZone')
+const TIMEZONES = getTimeZones()
+
+// Build a lookup from any IANA ID (including group members) to the canonical timezone entry
+const TIMEZONE_BY_ID = new Map()
+for (const tz of TIMEZONES) {
+  TIMEZONE_BY_ID.set(tz.name, tz)
+  for (const alias of tz.group) {
+    if (!TIMEZONE_BY_ID.has(alias)) TIMEZONE_BY_ID.set(alias, tz)
+  }
+}
+
+function formatTzLabel(tz) {
+  const offset = tz.currentTimeFormat.split(' ')[0]
+  return `(UTC${offset}) ${tz.alternativeName} — ${tz.mainCities.slice(0, 3).join(', ')}`
+}
 
 const inputClass =
   'w-full rounded-lg border border-edge px-3 py-2 text-ink-heading text-sm shadow-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-edge-focus'
@@ -84,9 +99,15 @@ export function SettingsPage() {
   }, [prefs, form])
 
   const filteredTimezones = useMemo(() => {
-    if (!tzSearch) return TIMEZONE_LIST
+    if (!tzSearch) return TIMEZONES
     const lower = tzSearch.toLowerCase()
-    return TIMEZONE_LIST.filter(tz => tz.toLowerCase().includes(lower))
+    return TIMEZONES.filter(tz =>
+      tz.alternativeName.toLowerCase().includes(lower) ||
+      tz.mainCities.some(c => c.toLowerCase().includes(lower)) ||
+      tz.countryName.toLowerCase().includes(lower) ||
+      tz.name.toLowerCase().includes(lower) ||
+      tz.group.some(g => g.toLowerCase().includes(lower))
+    )
   }, [tzSearch])
 
   const mutation = useMutation({
@@ -171,23 +192,23 @@ export function SettingsPage() {
                 <input
                   id="timezone"
                   type="text"
-                  value={tzOpen ? tzSearch : form.timezone}
+                  value={tzOpen ? tzSearch : (TIMEZONE_BY_ID.get(form.timezone) ? formatTzLabel(TIMEZONE_BY_ID.get(form.timezone)) : form.timezone)}
                   onChange={e => { setTzSearch(e.target.value); setTzOpen(true) }}
                   onFocus={() => { setTzSearch(''); setTzOpen(true) }}
                   onBlur={() => setTimeout(() => setTzOpen(false), 200)}
                   className={inputClass}
-                  placeholder="Search timezones..."
+                  placeholder="Search by city, country, or timezone name..."
                 />
                 {tzOpen && (
-                  <ul className="absolute z-10 w-full mt-1 max-h-48 overflow-y-auto bg-surface-raised border border-edge rounded-lg shadow-modal">
+                  <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-surface-raised border border-edge rounded-lg shadow-modal">
                     {filteredTimezones.map(tz => (
-                      <li key={tz}>
+                      <li key={tz.name}>
                         <button
                           type="button"
-                          className="w-full text-left px-3 py-1.5 text-sm text-ink-heading hover:bg-surface-soft"
-                          onMouseDown={() => { update('timezone', tz); setTzOpen(false) }}
+                          className="w-full text-left px-3 py-2 text-sm text-ink-heading hover:bg-surface-soft"
+                          onMouseDown={() => { update('timezone', tz.name); setTzOpen(false) }}
                         >
-                          {tz}
+                          {formatTzLabel(tz)}
                         </button>
                       </li>
                     ))}

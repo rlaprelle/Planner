@@ -1,16 +1,30 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { saveReflection } from '@/api/reflection'
 import { getTodayCompletedTasks } from '@/api/tasks'
 import { getDashboard } from '@/api/dashboard'
 
-const ENERGY_LABELS = { 1: 'Drained', 2: 'Low', 3: 'Okay', 4: 'Good', 5: 'Energized' }
-const MOOD_LABELS = { 1: 'Rough', 2: 'Meh', 3: 'Okay', 4: 'Good', 5: 'Great' }
-
 export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY' }) {
+  const { t } = useTranslation('ritual')
   const [energy, setEnergy] = useState(3)
   const [mood, setMood] = useState(3)
   const [notes, setNotes] = useState('')
+
+  const energyLabels = {
+    1: t('energyDrained'),
+    2: t('energyLow'),
+    3: t('energyOkay'),
+    4: t('energyGood'),
+    5: t('energyEnergized'),
+  }
+  const moodLabels = {
+    1: t('moodRough'),
+    2: t('moodMeh'),
+    3: t('moodOkay'),
+    4: t('moodGood'),
+    5: t('moodGreat'),
+  }
 
   const { data: completedTasks = [] } = useQuery({
     queryKey: ['tasks', 'completed-today'],
@@ -38,18 +52,18 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-ink-heading mb-6">How did today go?</h2>
+      <h2 className="text-xl font-semibold text-ink-heading mb-6">{t('howDidTodayGo')}</h2>
 
       {completedTasks.length > 0 && (
         <div className="mb-6">
           <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-2">
-            Completed today
+            {t('completedToday')}
           </p>
           <ul className="space-y-1">
-            {completedTasks.map((t) => (
-              <li key={t.id} className="text-sm text-ink-body flex items-center gap-2">
-                <span className="text-primary-400">✓</span>
-                {t.title}
+            {completedTasks.map((task) => (
+              <li key={task.id} className="text-sm text-ink-body flex items-center gap-2">
+                <span className="text-primary-400">{t('checkmark')}</span>
+                {task.title}
               </li>
             ))}
           </ul>
@@ -59,7 +73,7 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
       {celebrations.length > 0 && (
         <div className="mb-6">
           <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-2">
-            Notable today
+            {t('notableToday')}
           </p>
           <div className="space-y-2">
             {celebrations.map((c) => (
@@ -69,7 +83,7 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
               >
                 <p className="text-sm font-medium text-ink-heading">{c.taskTitle}</p>
                 <p className="text-xs text-ink-secondary mt-0.5">
-                  {c.projectName} — {c.reason}
+                  {t('notableItem', { project: c.projectName, reason: c.reason })}
                 </p>
               </div>
             ))}
@@ -80,7 +94,7 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
       <form onSubmit={(e) => { e.preventDefault(); mutation.mutate() }} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-ink-body mb-2">
-            Energy — <span className="text-primary-500">{ENERGY_LABELS[energy]}</span>
+            {t('energyLabel', { level: energyLabels[energy] })}
           </label>
           <input
             type="range" min="1" max="5" step="1"
@@ -89,13 +103,13 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
             className="w-full accent-primary-500"
           />
           <div className="flex justify-between text-xs text-ink-muted mt-1">
-            <span>Drained</span><span>Energized</span>
+            <span>{t('energyDrained')}</span><span>{t('energyEnergized')}</span>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-ink-body mb-2">
-            Mood — <span className="text-primary-500">{MOOD_LABELS[mood]}</span>
+            {t('moodLabel', { level: moodLabels[mood] })}
           </label>
           <input
             type="range" min="1" max="5" step="1"
@@ -104,17 +118,17 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
             className="w-full accent-primary-500"
           />
           <div className="flex justify-between text-xs text-ink-muted mt-1">
-            <span>Rough</span><span>Great</span>
+            <span>{t('moodRough')}</span><span>{t('moodGreat')}</span>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-ink-body mb-2">
-            Anything on your mind? <span className="text-ink-muted font-normal">(optional)</span>
+            {t('reflectionLabel')} <span className="text-ink-muted font-normal">{t('common:optional')}</span>
           </label>
           <textarea
             rows={3}
-            placeholder="Anything on your mind?"
+            placeholder={t('reflectionPlaceholder')}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             className="w-full rounded-md border border-edge px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus resize-none"
@@ -122,7 +136,7 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
         </div>
 
         {mutation.isError && (
-          <p className="text-sm text-error">Something went wrong. Try again.</p>
+          <p className="text-sm text-error">{t('common:tryAgainError')}</p>
         )}
 
         <button
@@ -130,7 +144,7 @@ export function DailyReflectionPhase({ onPhaseComplete, reflectionType = 'DAILY'
           disabled={mutation.isPending}
           className="w-full py-2.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-50 transition-colors font-medium"
         >
-          {mutation.isPending ? 'Saving…' : 'Continue'}
+          {mutation.isPending ? t('common:saving') : t('continue')}
         </button>
       </form>
     </div>

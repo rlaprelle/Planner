@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { TaskTriagePhase } from '@/components/ritual/TaskTriagePhase'
 import { InboxPhase } from '@/components/ritual/InboxPhase'
 import { DailyReflectionPhase } from '@/components/ritual/DailyReflectionPhase'
@@ -35,6 +36,7 @@ function PhaseIndicator({ phases, currentPhase }) {
 }
 
 export function EndRitualPage({ level = 'day' }) {
+  const { t } = useTranslation('ritual')
   const phases = buildPhases(level)
   const [currentPhase, setCurrentPhase] = useState(phases[0])
 
@@ -46,9 +48,9 @@ export function EndRitualPage({ level = 'day' }) {
   }
 
   const title = {
-    day: 'End of Day',
-    week: 'End of Week',
-    month: 'End of Month',
+    day: t('endOfDay'),
+    week: t('endOfWeek'),
+    month: t('endOfMonth'),
   }[level]
 
   return (
@@ -75,30 +77,30 @@ export function EndRitualPage({ level = 'day' }) {
 
         {currentPhase === 'weeklyReflection' && (
           <div>
-            <h2 className="text-xl font-semibold text-ink-heading mb-6">How was your week?</h2>
+            <h2 className="text-xl font-semibold text-ink-heading mb-6">{t('howWasYourWeek')}</h2>
             <p className="text-sm text-ink-secondary mb-6">
-              Coming soon — weekly reflection will be available here.
+              {t('weeklyReflectionComingSoon')}
             </p>
             <button
               onClick={advancePhase}
               className="w-full py-2.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors font-medium"
             >
-              Continue
+              {t('continue')}
             </button>
           </div>
         )}
 
         {currentPhase === 'monthlyReflection' && (
           <div>
-            <h2 className="text-xl font-semibold text-ink-heading mb-6">How was your month?</h2>
+            <h2 className="text-xl font-semibold text-ink-heading mb-6">{t('howWasYourMonth')}</h2>
             <p className="text-sm text-ink-secondary mb-6">
-              Coming soon — monthly reflection will be available here.
+              {t('monthlyReflectionComingSoon')}
             </p>
             <button
               onClick={advancePhase}
               className="w-full py-2.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors font-medium"
             >
-              Continue
+              {t('continue')}
             </button>
           </div>
         )}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Label from '@radix-ui/react-label'
 import { getTimeZones } from '@vvo/tzdb'
@@ -72,31 +72,51 @@ function Field({ label, htmlFor, children }) {
 }
 
 export function SettingsPage() {
-  const queryClient = useQueryClient()
   const { data: prefs, isLoading } = useQuery({
     queryKey: ['preferences'],
     queryFn: getPreferences,
   })
 
-  const [form, setForm] = useState(null)
-  const [tzSearch, setTzSearch] = useState('')
-  const [tzOpen, setTzOpen] = useState(false)
+  // Success/error live here so they survive the form remount after save
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    if (prefs && !form) {
-      setForm({
-        displayName: prefs.displayName,
-        timezone: prefs.timezone,
-        defaultStartTime: prefs.defaultStartTime,
-        defaultEndTime: prefs.defaultEndTime,
-        defaultSessionMinutes: prefs.defaultSessionMinutes,
-        weekStartDay: prefs.weekStartDay,
-        ceremonyDay: prefs.ceremonyDay,
-      })
-    }
-  }, [prefs, form])
+  if (isLoading || !prefs) {
+    return (
+      <div className="max-w-xl mx-auto px-6 py-10">
+        <p className="text-ink-muted text-sm">Loading preferences...</p>
+      </div>
+    )
+  }
+
+  // key-prop remount: when prefs change (e.g., after save), the form
+  // remounts with fresh initial values — no useEffect + setState needed
+  return (
+    <SettingsForm
+      key={JSON.stringify(prefs)}
+      prefs={prefs}
+      success={success}
+      error={error}
+      onSuccess={() => { setSuccess(true); setError(null); setTimeout(() => setSuccess(false), 3000) }}
+      onError={(msg) => { setError(msg); setSuccess(false) }}
+    />
+  )
+}
+
+function SettingsForm({ prefs, success, error, onSuccess, onError }) {
+  const queryClient = useQueryClient()
+
+  const [form, setForm] = useState({
+    displayName: prefs.displayName,
+    timezone: prefs.timezone,
+    defaultStartTime: prefs.defaultStartTime,
+    defaultEndTime: prefs.defaultEndTime,
+    defaultSessionMinutes: prefs.defaultSessionMinutes,
+    weekStartDay: prefs.weekStartDay,
+    ceremonyDay: prefs.ceremonyDay,
+  })
+  const [tzSearch, setTzSearch] = useState('')
+  const [tzOpen, setTzOpen] = useState(false)
 
   const filteredTimezones = useMemo(() => {
     if (!tzSearch) return TIMEZONES
@@ -114,21 +134,15 @@ export function SettingsPage() {
     mutationFn: updatePreferences,
     onSuccess: (data) => {
       queryClient.setQueryData(['preferences'], data)
-      setForm(null) // reset so useEffect re-syncs from updated prefs
-      setSuccess(true)
-      setError(null)
-      setTimeout(() => setSuccess(false), 3000)
+      onSuccess()
     },
     onError: (err) => {
-      setError(err.message || 'Failed to save preferences')
-      setSuccess(false)
+      onError(err.message || 'Failed to save preferences')
     },
   })
 
   function handleSubmit(e) {
     e.preventDefault()
-    setSuccess(false)
-    setError(null)
 
     const payload = {}
     if (form.displayName !== prefs.displayName) payload.displayName = form.displayName
@@ -140,8 +154,7 @@ export function SettingsPage() {
     if (form.ceremonyDay !== prefs.ceremonyDay) payload.ceremonyDay = form.ceremonyDay
 
     if (Object.keys(payload).length === 0) {
-      setSuccess(true)
-      setTimeout(() => setSuccess(false), 3000)
+      onSuccess()
       return
     }
 
@@ -150,14 +163,6 @@ export function SettingsPage() {
 
   function update(field, value) {
     setForm(prev => ({ ...prev, [field]: value }))
-  }
-
-  if (isLoading || !form) {
-    return (
-      <div className="max-w-xl mx-auto px-6 py-10">
-        <p className="text-ink-muted text-sm">Loading preferences...</p>
-      </div>
-    )
   }
 
   return (

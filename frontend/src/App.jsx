@@ -8,7 +8,6 @@ import { RegisterPage } from '@/pages/RegisterPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { TodayPage } from '@/pages/TodayPage'
 import { ProjectsPage } from '@/pages/ProjectsPage'
-import ProjectDetailPage from '@/pages/ProjectDetailPage'
 import { InboxPage } from '@/pages/InboxPage'
 import { EndRitualPage } from '@/pages/EndRitualPage'
 import { StartDayPage } from '@/pages/StartDayPage'
@@ -65,7 +64,6 @@ function App() {
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/today" element={<TodayPage />} />
                   <Route path="/projects" element={<ProjectsPage />} />
-                  <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
                   <Route path="/inbox" element={<InboxPage />} />
                   <Route path="/end-day" element={<EndRitualPage level="day" />} />
                   <Route path="/end-week" element={<EndRitualPage level="week" />} />

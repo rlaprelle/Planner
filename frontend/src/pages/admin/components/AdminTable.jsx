@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function AdminTable({ columns, data, onEdit, onDelete, entityName }) {
+  const { t } = useTranslation('admin')
   const [sortCol, setSortCol] = useState(null)
   const [sortDir, setSortDir] = useState('asc')
 
@@ -24,6 +26,15 @@ export function AdminTable({ columns, data, onEdit, onDelete, entityName }) {
 
   const truncateId = (id) => id ? String(id).slice(0, 8) : ''
 
+  const formatValue = (val) => {
+    if (val == null) return t('emptyDash')
+    if (typeof val === 'boolean') return val ? t('yes') : t('no')
+    if (typeof val === 'string' && val.match(/^\d{4}-\d{2}-\d{2}T/)) {
+      return new Date(val).toLocaleDateString()
+    }
+    return String(val)
+  }
+
   return (
     <div className="overflow-x-auto border border-gray-200 rounded-lg">
       <table className="w-full text-sm">
@@ -31,7 +42,7 @@ export function AdminTable({ columns, data, onEdit, onDelete, entityName }) {
           <tr className="bg-gray-50 border-b border-gray-200">
             <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600 cursor-pointer"
                 onClick={() => handleSort('id')}>
-              ID {sortCol === 'id' && (sortDir === 'asc' ? '\u2191' : '\u2193')}
+              {t('id')} {sortCol === 'id' && (sortDir === 'asc' ? '\u2191' : '\u2193')}
             </th>
             {columns.map(col => (
               <th key={col.key}
@@ -40,14 +51,14 @@ export function AdminTable({ columns, data, onEdit, onDelete, entityName }) {
                 {col.label} {sortCol === col.key && (sortDir === 'asc' ? '\u2191' : '\u2193')}
               </th>
             ))}
-            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">Actions</th>
+            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">{t('actions')}</th>
           </tr>
         </thead>
         <tbody>
           {sorted.length === 0 && (
             <tr>
               <td colSpan={columns.length + 2} className="px-3 py-8 text-center text-gray-400">
-                No {entityName} found
+                {t('noEntityFound', { entity: entityName })}
               </td>
             </tr>
           )}
@@ -66,11 +77,11 @@ export function AdminTable({ columns, data, onEdit, onDelete, entityName }) {
               <td className="px-3 py-2 text-right space-x-2">
                 <button onClick={() => onEdit(row)}
                         className="text-xs text-blue-600 hover:text-blue-800 font-medium">
-                  Edit
+                  {t('common:edit')}
                 </button>
                 <button onClick={() => onDelete(row)}
                         className="text-xs text-red-600 hover:text-red-800 font-medium">
-                  Delete
+                  {t('common:delete')}
                 </button>
               </td>
             </tr>
@@ -79,13 +90,4 @@ export function AdminTable({ columns, data, onEdit, onDelete, entityName }) {
       </table>
     </div>
   )
-}
-
-function formatValue(val) {
-  if (val == null) return '\u2014'
-  if (typeof val === 'boolean') return val ? 'Yes' : 'No'
-  if (typeof val === 'string' && val.match(/^\d{4}-\d{2}-\d{2}T/)) {
-    return new Date(val).toLocaleDateString()
-  }
-  return String(val)
 }

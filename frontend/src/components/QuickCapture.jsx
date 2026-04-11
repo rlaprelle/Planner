@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { createDeferredItem } from '@/api/deferred'
 
 function playChime() {
@@ -42,6 +43,7 @@ function playChime() {
 }
 
 export function QuickCapture() {
+  const { t } = useTranslation('deferred')
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
   const [confirmed, setConfirmed] = useState(false)
@@ -64,7 +66,7 @@ export function QuickCapture() {
       }, 1000)
     },
     onError: () => {
-      setError("Couldn't save — try again.")
+      setError(t('couldntSave'))
     },
   })
 
@@ -112,7 +114,7 @@ export function QuickCapture() {
         <button
           className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-primary-500 hover:bg-primary-50 hover:text-primary-700 transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1"
         >
-          + Quick capture
+          {t('quickCaptureButton')}
         </button>
       </Dialog.Trigger>
 
@@ -120,7 +122,7 @@ export function QuickCapture() {
         <Dialog.Overlay className="fixed inset-0 bg-black/30 z-40" />
         <Dialog.Content
           className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none"
-          aria-label="Quick capture"
+          aria-label={t('quickCapture')}
         >
           {confirmed ? (
             <div className="flex flex-col items-center gap-3 py-4">
@@ -134,22 +136,22 @@ export function QuickCapture() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              <p className="text-ink-body font-medium">Captured.</p>
+              <p className="text-ink-body font-medium">{t('captured')}</p>
             </div>
           ) : (
             <>
               <Dialog.Title className="text-base font-semibold text-ink-heading mb-3">
-                Quick capture
+                {t('quickCapture')}
               </Dialog.Title>
               <Dialog.Description className="sr-only">
-                Type a quick thought to save it to your inbox.
+                {t('quickCaptureHint')}
               </Dialog.Description>
 
               <textarea
                 autoFocus
                 rows={3}
                 className="w-full rounded-md border border-edge px-3 py-2 text-sm text-ink-heading placeholder-ink-muted resize-none focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-edge-focus"
-                placeholder="What's on your mind?"
+                placeholder={t('whatsOnYourMind')}
                 value={text}
                 onChange={e => { setText(e.target.value); setError(null) }}
                 onKeyDown={handleTextareaKeyDown}
@@ -162,7 +164,7 @@ export function QuickCapture() {
               <div className="mt-4 flex justify-end gap-2">
                 <Dialog.Close asChild>
                   <button className="px-4 py-2 text-sm text-ink-secondary hover:text-ink-heading focus:outline-none focus:ring-2 focus:ring-edge-focus rounded-md transition-colors duration-100">
-                    Cancel
+                    {t('common:cancel')}
                   </button>
                 </Dialog.Close>
                 <button
@@ -170,7 +172,7 @@ export function QuickCapture() {
                   onClick={() => mutation.mutate()}
                   className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors duration-100"
                 >
-                  {mutation.isPending ? 'Saving…' : 'Capture'}
+                  {mutation.isPending ? t('common:saving') : t('capture')}
                 </button>
               </div>
             </>

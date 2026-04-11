@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { getProjects } from '@/api/projects'
 import { convertDeferredItem } from '@/api/deferred'
 
 export function ConvertForm({ item, onDone, onCancel }) {
+  const { t } = useTranslation('deferred')
   const [title, setTitle] = useState(item.rawText)
   const [projectId, setProjectId] = useState('')
   const [description, setDescription] = useState('')
@@ -35,14 +37,14 @@ export function ConvertForm({ item, onDone, onCancel }) {
       onSubmit={(e) => { e.preventDefault(); mutation.mutate() }}
     >
       <div>
-        <label className="block text-xs font-medium text-ink-secondary mb-1">Project *</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">{t('projectRequired')}</label>
         <select
           className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
           required
         >
-          <option value="">Select a project…</option>
+          <option value="">{t('selectAProject')}</option>
           {projects.map((p) => (
             <option key={p.id} value={p.id}>{p.name}</option>
           ))}
@@ -50,7 +52,7 @@ export function ConvertForm({ item, onDone, onCancel }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-ink-secondary mb-1">Title *</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">{t('titleRequired')}</label>
         <input
           className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
           value={title}
@@ -61,7 +63,7 @@ export function ConvertForm({ item, onDone, onCancel }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-ink-secondary mb-1">Due date</label>
+          <label className="block text-xs font-medium text-ink-secondary mb-1">{t('common:dueDate')}</label>
           <input
             type="date"
             className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
@@ -70,7 +72,7 @@ export function ConvertForm({ item, onDone, onCancel }) {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-ink-secondary mb-1">Priority (1–5)</label>
+          <label className="block text-xs font-medium text-ink-secondary mb-1">{t('priorityRange')}</label>
           <input
             type="number" min="1" max="5"
             className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
@@ -81,7 +83,7 @@ export function ConvertForm({ item, onDone, onCancel }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-ink-secondary mb-1">Points estimate</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">{t('pointsEstimate')}</label>
         <input
           type="number" min="1"
           className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus"
@@ -91,7 +93,7 @@ export function ConvertForm({ item, onDone, onCancel }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-ink-secondary mb-1">Description</label>
+        <label className="block text-xs font-medium text-ink-secondary mb-1">{t('common:description')}</label>
         <textarea
           rows={2}
           className="w-full rounded-md border border-edge px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-edge-focus resize-none"
@@ -101,7 +103,7 @@ export function ConvertForm({ item, onDone, onCancel }) {
       </div>
 
       {mutation.isError && (
-        <p className="text-xs text-error">Something went wrong. Try again.</p>
+        <p className="text-xs text-error">{t('common:tryAgainError')}</p>
       )}
 
       <div className="flex gap-2 justify-end">
@@ -110,14 +112,14 @@ export function ConvertForm({ item, onDone, onCancel }) {
           onClick={onCancel}
           className="px-3 py-1.5 text-sm rounded-md text-ink-secondary hover:bg-surface-soft transition-colors"
         >
-          Cancel
+          {t('common:cancel')}
         </button>
         <button
           type="submit"
           disabled={mutation.isPending}
           className="px-3 py-1.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-50 transition-colors"
         >
-          {mutation.isPending ? 'Creating…' : 'Create task'}
+          {mutation.isPending ? t('creating') : t('createTask')}
         </button>
       </div>
     </form>

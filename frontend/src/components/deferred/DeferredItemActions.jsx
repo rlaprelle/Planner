@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { deferDeferredItem, dismissDeferredItem } from '@/api/deferred'
 import { ConvertForm } from './ConvertForm'
 import { ConvertToEventForm } from './ConvertToEventForm'
 import { formatDistanceToNow } from 'date-fns'
 
 export function DeferredItemActions({ item, onDone }) {
+  const { t } = useTranslation('deferred')
   const [mode, setMode] = useState(null) // null | 'convert' | 'convert-event' | 'defer' | 'dismiss-confirm'
 
   const deferMutation = useMutation({
@@ -31,25 +33,25 @@ export function DeferredItemActions({ item, onDone }) {
             onClick={() => setMode('convert')}
             className="px-3 py-1.5 text-sm rounded-md bg-primary-100 text-primary-700 hover:bg-primary-200 transition-colors font-medium"
           >
-            Task
+            {t('task')}
           </button>
           <button
             onClick={() => setMode('convert-event')}
             className="px-3 py-1.5 text-sm rounded-md bg-primary-100 text-primary-700 hover:bg-primary-200 transition-colors font-medium"
           >
-            Event
+            {t('event')}
           </button>
           <button
             onClick={() => setMode('defer')}
             className="px-3 py-1.5 text-sm rounded-md border border-edge text-ink-secondary hover:bg-surface-soft transition-colors"
           >
-            Defer
+            {t('defer')}
           </button>
           <button
             onClick={() => setMode('dismiss-confirm')}
             className="px-3 py-1.5 text-sm rounded-md border border-edge text-ink-muted hover:bg-surface-soft transition-colors"
           >
-            Dismiss
+            {t('dismissAction')}
           </button>
         </div>
       )}
@@ -64,11 +66,11 @@ export function DeferredItemActions({ item, onDone }) {
 
       {mode === 'defer' && (
         <div className="flex gap-2 mt-1">
-          <span className="text-sm text-ink-muted self-center mr-1">Defer for:</span>
+          <span className="text-sm text-ink-muted self-center mr-1">{t('deferFor')}</span>
           {[
-            { label: '1 day', value: 'ONE_DAY' },
-            { label: '1 week', value: 'ONE_WEEK' },
-            { label: '1 month', value: 'ONE_MONTH' },
+            { label: t('oneDay'), value: 'ONE_DAY' },
+            { label: t('oneWeek'), value: 'ONE_WEEK' },
+            { label: t('oneMonth'), value: 'ONE_MONTH' },
           ].map(({ label, value }) => (
             <button
               key={value}
@@ -90,19 +92,19 @@ export function DeferredItemActions({ item, onDone }) {
 
       {mode === 'dismiss-confirm' && (
         <div className="flex gap-2 mt-1 items-center">
-          <span className="text-sm text-ink-muted">Sure?</span>
+          <span className="text-sm text-ink-muted">{t('sure')}</span>
           <button
             onClick={() => dismissMutation.mutate()}
             disabled={dismissMutation.isPending}
             className="px-3 py-1.5 text-sm rounded-md bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 disabled:opacity-50 transition-colors"
           >
-            Yes, dismiss
+            {t('yesDismiss')}
           </button>
           <button
             onClick={() => setMode(null)}
             className="px-2 py-1.5 text-sm text-ink-muted hover:text-ink-secondary"
           >
-            Cancel
+            {t('common:cancel')}
           </button>
         </div>
       )}

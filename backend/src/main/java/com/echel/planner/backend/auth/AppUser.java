@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,21 @@ public class AppUser implements UserDetails {
 
     @Column(nullable = false)
     private String timezone = "UTC";
+
+    @Column(name = "default_start_time", nullable = false)
+    private LocalTime defaultStartTime = LocalTime.of(8, 0);
+
+    @Column(name = "default_end_time", nullable = false)
+    private LocalTime defaultEndTime = LocalTime.of(17, 0);
+
+    @Column(name = "default_session_minutes", nullable = false)
+    private int defaultSessionMinutes = 60;
+
+    @Column(name = "week_start_day", nullable = false)
+    private int weekStartDay = 1;
+
+    @Column(name = "ceremony_day", nullable = false)
+    private int ceremonyDay = 5;
 
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private Instant createdAt;
@@ -115,4 +132,19 @@ public class AppUser implements UserDetails {
     public void setDisplayName(String displayName) { this.displayName = displayName; }
     public void setTimezone(String timezone) { this.timezone = timezone; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public LocalTime getDefaultStartTime() { return defaultStartTime; }
+    public void setDefaultStartTime(LocalTime defaultStartTime) { this.defaultStartTime = defaultStartTime; }
+
+    public LocalTime getDefaultEndTime() { return defaultEndTime; }
+    public void setDefaultEndTime(LocalTime defaultEndTime) { this.defaultEndTime = defaultEndTime; }
+
+    public int getDefaultSessionMinutes() { return defaultSessionMinutes; }
+    public void setDefaultSessionMinutes(int defaultSessionMinutes) { this.defaultSessionMinutes = defaultSessionMinutes; }
+
+    public DayOfWeek getWeekStartDay() { return DayOfWeek.of(weekStartDay); }
+    public void setWeekStartDay(DayOfWeek weekStartDay) { this.weekStartDay = weekStartDay.getValue(); }
+
+    public DayOfWeek getCeremonyDay() { return DayOfWeek.of(ceremonyDay); }
+    public void setCeremonyDay(DayOfWeek ceremonyDay) { this.ceremonyDay = ceremonyDay.getValue(); }
 }

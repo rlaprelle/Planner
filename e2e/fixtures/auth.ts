@@ -15,6 +15,20 @@ export const test = base.extend({
     await page.route('**/api/v1/deferred', route =>
       route.fulfill({ json: [] })
     )
+    // User preferences: fetched by settings page and ritual components
+    await page.route('**/api/v1/user/preferences', route =>
+      route.fulfill({
+        json: {
+          displayName: 'Test User',
+          timezone: 'America/New_York',
+          defaultStartTime: '08:00:00',
+          defaultEndTime: '17:00:00',
+          defaultSessionMinutes: 60,
+          weekStartDay: 'MONDAY',
+          ceremonyDay: 'FRIDAY',
+        },
+      })
+    )
     await use(page)
   },
 })

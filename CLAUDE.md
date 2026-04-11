@@ -150,8 +150,8 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 ## E2E Testing
 
 - **Always import from `../fixtures/auth`**, not from `@playwright/test`, for tests on protected pages. The auth fixture pre-mocks `/auth/refresh` and `/deferred` so the app boots into an authenticated state. Without it, pages redirect to login.
-- **Kill stale Vite servers before running E2E tests.** Playwright's `reuseExistingServer: true` will use whatever is already on port 5173, which may be serving old code. Use `node dev.js stop` (from the project root) to shut down any running server, then let Playwright start a fresh one. Alternatively, use `BASE_URL` to point at a worktree-specific port.
-- `e2e/playwright.config.ts` should not be modified by feature branches — the port (5173) and webServer config are shared defaults. Worktree dev servers should use `BASE_URL` env var if they need a different port, not change the config file.
+- **Use `dev.js` to start a Vite server before running E2E tests**, then pass its port via `BASE_URL`. Do NOT kill other Vite servers — multiple development sessions may be running concurrently. The workflow: `node dev.js start` (from project root) ��� note the port → `cd e2e && BASE_URL=http://localhost:<port> npx playwright test`. When `BASE_URL` is set, Playwright skips its own `webServer` launch and uses your server directly.
+- `e2e/playwright.config.ts` conditionally skips `webServer` when `BASE_URL` is set. The main checkout (no `BASE_URL`) auto-starts Vite on 5173 as the default. Do not modify the config for other reasons in feature branches.
 - When adding new page features, check whether existing E2E tests need a mock for new API endpoints the page now calls (e.g., adding `mockEventsForDate` when the page starts fetching events).
 
 ## Known Issues / Quirks

@@ -13,7 +13,7 @@ export default defineConfig({
   projects: [
     { name: 'chromium', use: { browserName: 'chromium' } },
   ],
-  webServer: {
+  webServer: process.env.BASE_URL ? undefined : {
     command: 'npx vite --port 5173',
     cwd: '../frontend',
     url: 'http://localhost:5173',

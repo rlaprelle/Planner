@@ -13,20 +13,23 @@ const DAYS_OF_WEEK = [
   { value: 'SUNDAY', label: 'Sunday' },
 ]
 
-const WEEK_START_OPTIONS = [
-  { value: 'MONDAY', label: 'Monday' },
-  { value: 'SUNDAY', label: 'Sunday' },
-]
+const WEEK_START_OPTIONS = DAYS_OF_WEEK
 
 const SESSION_DURATIONS = Array.from({ length: 16 }, (_, i) => (i + 1) * 15)
+
+function formatTimeLabel(h, m) {
+  const period = h < 12 ? 'AM' : 'PM'
+  const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h
+  const displayMin = m === 0 ? '' : `:${String(m).padStart(2, '0')}`
+  return `${displayHour}${displayMin} ${period}`
+}
 
 function generateTimeOptions() {
   const options = []
   for (let h = 0; h < 24; h++) {
     for (let m = 0; m < 60; m += 15) {
       const value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`
-      const label = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
-      options.push({ value, label })
+      options.push({ value, label: formatTimeLabel(h, m) })
     }
   }
   return options
@@ -81,9 +84,9 @@ export function SettingsPage() {
   }, [prefs, form])
 
   const filteredTimezones = useMemo(() => {
-    if (!tzSearch) return TIMEZONE_LIST.slice(0, 20)
+    if (!tzSearch) return TIMEZONE_LIST
     const lower = tzSearch.toLowerCase()
-    return TIMEZONE_LIST.filter(tz => tz.toLowerCase().includes(lower)).slice(0, 20)
+    return TIMEZONE_LIST.filter(tz => tz.toLowerCase().includes(lower))
   }, [tzSearch])
 
   const mutation = useMutation({

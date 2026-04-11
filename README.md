@@ -66,6 +66,27 @@ All defaults work for local dev out of the box. To override:
 
 ---
 
+## Dev Server Manager
+
+When working in multiple git worktrees simultaneously, use `dev.js` to manage frontend dev servers without port conflicts:
+
+```bash
+# Start a dev server (or see which one is already running)
+node dev.js start
+
+# See all running dev servers across worktrees
+node dev.js status
+
+# Stop the dev server for this worktree
+node dev.js stop
+```
+
+Each worktree gets a **deterministic port** (5200–5299 range), so the same worktree always lands on the same port. The main checkout uses port 5173.
+
+The script writes a `.dev-port` file to track the assigned port. If a server crashes (e.g., power loss), the next `start` or `status` detects the stale file, cleans it up, and starts fresh.
+
+---
+
 ## Documentation
 
 ### Architecture & Implementation

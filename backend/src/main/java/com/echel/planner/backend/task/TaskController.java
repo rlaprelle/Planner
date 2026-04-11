@@ -2,6 +2,8 @@ package com.echel.planner.backend.task;
 
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.task.dto.TaskCreateRequest;
+import com.echel.planner.backend.task.dto.TaskDeferRequest;
+import com.echel.planner.backend.task.dto.TaskRescheduleRequest;
 import com.echel.planner.backend.task.dto.TaskResponse;
 import com.echel.planner.backend.task.dto.TaskStatusRequest;
 import com.echel.planner.backend.task.dto.TaskUpdateRequest;
@@ -74,6 +76,35 @@ public class TaskController {
     public ResponseEntity<List<TaskResponse>> listCompletedToday(
             @AuthenticationPrincipal AppUser user) {
         return ResponseEntity.ok(taskService.listCompletedToday(user));
+    }
+
+    @GetMapping("/api/v1/tasks/active")
+    public ResponseEntity<List<TaskResponse>> listActive(
+            @AuthenticationPrincipal AppUser user) {
+        return ResponseEntity.ok(taskService.listActive(user));
+    }
+
+    @PatchMapping("/api/v1/tasks/{id}/defer")
+    public ResponseEntity<TaskResponse> defer(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable UUID id,
+            @Valid @RequestBody TaskDeferRequest request) {
+        return ResponseEntity.ok(taskService.deferTask(user, id, request));
+    }
+
+    @PatchMapping("/api/v1/tasks/{id}/cancel")
+    public ResponseEntity<TaskResponse> cancel(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable UUID id) {
+        return ResponseEntity.ok(taskService.cancelTask(user, id));
+    }
+
+    @PatchMapping("/api/v1/tasks/{id}/reschedule")
+    public ResponseEntity<TaskResponse> reschedule(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable UUID id,
+            @Valid @RequestBody TaskRescheduleRequest request) {
+        return ResponseEntity.ok(taskService.rescheduleTask(user, id, request));
     }
 
     @GetMapping("/api/v1/tasks/suggested")

@@ -56,7 +56,7 @@ class AdminTaskControllerIntegrationTest {
                 "Write tests",
                 "Integration tests for admin controllers",
                 null,
-                "TODO",
+                "OPEN",
                 (short) 0,
                 (short) 3,
                 null,
@@ -85,7 +85,7 @@ class AdminTaskControllerIntegrationTest {
     void create_validRequest_returns201WithTask() throws Exception {
         AdminTaskRequest request = new AdminTaskRequest(
                 USER_ID, PROJECT_ID, "Write tests", "Integration tests for admin controllers",
-                null, "TODO", (short) 0, (short) 3, null, "MEDIUM", null, 0, null);
+                null, "OPEN", (short) 0, (short) 3, null, "MEDIUM", null, 0, null);
         when(adminTaskService.create(any(AdminTaskRequest.class))).thenReturn(sampleResponse());
 
         mockMvc.perform(post("/api/v1/admin/tasks")
@@ -101,7 +101,7 @@ class AdminTaskControllerIntegrationTest {
     void update_existingId_returns200WithUpdatedTask() throws Exception {
         AdminTaskRequest request = new AdminTaskRequest(
                 USER_ID, PROJECT_ID, "Write tests (updated)", null,
-                null, "IN_PROGRESS", (short) 1, (short) 5, null, "HIGH", null, 0, null);
+                null, "OPEN", (short) 1, (short) 5, null, "HIGH", null, 0, null);
         AdminTaskResponse updated = new AdminTaskResponse(
                 TASK_ID,
                 USER_ID,
@@ -111,7 +111,7 @@ class AdminTaskControllerIntegrationTest {
                 "Write tests (updated)",
                 null,
                 null,
-                "IN_PROGRESS",
+                "OPEN",
                 (short) 1,
                 (short) 5,
                 null,
@@ -131,7 +131,7 @@ class AdminTaskControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Write tests (updated)"))
-                .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+                .andExpect(jsonPath("$.status").value("OPEN"));
     }
 
     @Test

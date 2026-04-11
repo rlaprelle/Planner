@@ -8,10 +8,11 @@ import { RegisterPage } from '@/pages/RegisterPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { TodayPage } from '@/pages/TodayPage'
 import { ProjectsPage } from '@/pages/ProjectsPage'
-import ProjectDetailPage from '@/pages/ProjectDetailPage'
 import { InboxPage } from '@/pages/InboxPage'
-import { EndDayPage } from '@/pages/EndDayPage'
+import { EndRitualPage } from '@/pages/EndRitualPage'
 import { StartDayPage } from '@/pages/StartDayPage'
+import { StartWeekPage } from '@/pages/StartWeekPage'
+import { StartMonthPage } from '@/pages/StartMonthPage'
 import { ActiveSessionProvider } from '@/contexts/ActiveSessionContext'
 import ActiveSessionPage from '@/pages/ActiveSessionPage'
 import AdminPage from '@/pages/admin/AdminPage'
@@ -63,10 +64,13 @@ function App() {
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/today" element={<TodayPage />} />
                   <Route path="/projects" element={<ProjectsPage />} />
-                  <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
                   <Route path="/inbox" element={<InboxPage />} />
-                  <Route path="/end-day" element={<EndDayPage />} />
+                  <Route path="/end-day" element={<EndRitualPage level="day" />} />
+                  <Route path="/end-week" element={<EndRitualPage level="week" />} />
+                  <Route path="/end-month" element={<EndRitualPage level="month" />} />
                   <Route path="/start-day" element={<StartDayPage />} />
+                  <Route path="/start-week" element={<StartWeekPage />} />
+                  <Route path="/start-month" element={<StartMonthPage />} />
                 </Route>
               </Route>
 

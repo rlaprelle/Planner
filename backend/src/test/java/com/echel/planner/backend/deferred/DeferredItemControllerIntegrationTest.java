@@ -150,10 +150,11 @@ class DeferredItemControllerIntegrationTest {
                 new com.echel.planner.backend.task.dto.TaskResponse(
                         UUID.randomUUID(), UUID.randomUUID(), "Test Project", "#6366f1",
                         UUID.randomUUID(), "Buy oat milk", null, null,
-                        com.echel.planner.backend.task.TaskStatus.TODO,
+                        com.echel.planner.backend.task.TaskStatus.OPEN,
                         (short) 3, null, null, null, null, 0, null,
                         com.echel.planner.backend.task.DeadlineGroup.NO_DEADLINE,
-                        null, null, null, null, java.util.List.of());
+                        null, null, 0, null, null, null, null, null,
+                        java.util.List.of());
 
         when(deferredItemService.convert(any(AppUser.class), any(UUID.class),
                 any(ConvertToTaskRequest.class))).thenReturn(taskResp);

@@ -23,7 +23,7 @@ export function TimeBlock({
   durationToPercent,
   startResize,
 }) {
-  const isCompleted = block.task?.status === 'DONE'
+  const isCompleted = block.task?.status === 'COMPLETED'
   const navigate = useNavigate()
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -73,7 +73,7 @@ export function TimeBlock({
       </div>
 
       {/* Start button — appears on hover for incomplete blocks */}
-      {block.task?.status !== 'DONE' && (
+      {block.task?.status !== 'COMPLETED' && (
         <button
           onClick={(e) => {
             e.stopPropagation()

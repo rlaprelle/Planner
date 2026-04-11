@@ -4,6 +4,8 @@ import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.project.Project;
 import com.echel.planner.backend.project.ProjectRepository;
 import com.echel.planner.backend.task.dto.TaskCreateRequest;
+import com.echel.planner.backend.task.dto.TaskDeferRequest;
+import com.echel.planner.backend.task.dto.TaskRescheduleRequest;
 import com.echel.planner.backend.task.dto.TaskResponse;
 import com.echel.planner.backend.task.dto.TaskStatusRequest;
 import com.echel.planner.backend.task.dto.TaskUpdateRequest;
@@ -124,13 +126,84 @@ public class TaskService {
     public TaskResponse changeStatus(AppUser user, UUID id, TaskStatusRequest request) {
         Task task = findOwnedTask(user, id);
         task.setStatus(request.status());
-        if (request.status() == TaskStatus.DONE) {
+        if (request.status() == TaskStatus.COMPLETED) {
             task.setCompletedAt(Instant.now());
         } else {
             task.setCompletedAt(null);
         }
+        if (request.status() == TaskStatus.CANCELLED) {
+            task.setCancelledAt(Instant.now());
+        } else {
+            task.setCancelledAt(null);
+        }
         List<TaskResponse> children = buildChildResponses(task.getId(), user);
         return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), children);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TaskResponse> listActive(AppUser user) {
+        LocalDate today = LocalDate.now(java.time.ZoneId.of(user.getTimezone()));
+        List<Task> tasks = taskRepository.findActiveForUser(user.getId(), today);
+        return tasks.stream()
+                .map(t -> TaskResponse.from(t, computeDeadlineGroup(t.getDueDate()), List.of()))
+                .toList();
+    }
+
+    /**
+     * Defers a task to a future date. Validates against the task's due date —
+     * cannot defer past a deadline without first changing it.
+     */
+    public TaskResponse deferTask(AppUser user, UUID id, TaskDeferRequest request) {
+        Task task = findOwnedTask(user, id);
+        LocalDate today = LocalDate.now(java.time.ZoneId.of(user.getTimezone()));
+
+        LocalDate visibleFrom;
+        SchedulingScope scope;
+        switch (request.target()) {
+            case TOMORROW -> {
+                visibleFrom = today.plusDays(1);
+                scope = SchedulingScope.DAY;
+            }
+            case NEXT_WEEK -> {
+                visibleFrom = today.with(java.time.DayOfWeek.MONDAY).plusWeeks(1);
+                scope = SchedulingScope.WEEK;
+            }
+            case NEXT_MONTH -> {
+                visibleFrom = today.withDayOfMonth(1).plusMonths(1);
+                scope = SchedulingScope.MONTH;
+            }
+            default -> throw new TaskValidationException("Unknown deferral target: " + request.target());
+        }
+
+        if (task.getDueDate() != null && visibleFrom.isAfter(task.getDueDate())) {
+            throw new TaskValidationException(
+                    "Cannot defer past deadline " + task.getDueDate() + ". Change the deadline first.");
+        }
+
+        task.setVisibleFrom(visibleFrom);
+        task.setSchedulingScope(scope);
+        task.setDeferralCount(task.getDeferralCount() + 1);
+
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
+    }
+
+    /** Cancels a task — a conscious decision that it no longer matters. */
+    public TaskResponse cancelTask(AppUser user, UUID id) {
+        Task task = findOwnedTask(user, id);
+        task.setStatus(TaskStatus.CANCELLED);
+        task.setCancelledAt(Instant.now());
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
+    }
+
+    /**
+     * Reschedules a task to a specific date (used by Start Month / Start Week rituals).
+     * Sets visibleFrom and optionally a scheduling scope.
+     */
+    public TaskResponse rescheduleTask(AppUser user, UUID id, TaskRescheduleRequest request) {
+        Task task = findOwnedTask(user, id);
+        task.setVisibleFrom(request.visibleFrom());
+        task.setSchedulingScope(request.schedulingScope());
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
     }
 
     // --- Private helpers ---

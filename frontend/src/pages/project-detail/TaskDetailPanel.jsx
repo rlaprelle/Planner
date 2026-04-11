@@ -81,7 +81,7 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
 // ─── Child task row inside detail panel ──────────────────────────────────────
 
 function ChildTaskItem({ child, projectId }) {
-  const isDone = child.status === 'DONE'
+  const isDone = child.status === 'COMPLETED'
   const queryClient = useQueryClient()
 
   const statusMutation = useMutation({
@@ -92,7 +92,7 @@ function ChildTaskItem({ child, projectId }) {
   })
 
   function handleToggle() {
-    const newStatus = isDone ? 'TODO' : 'DONE'
+    const newStatus = isDone ? 'OPEN' : 'COMPLETED'
     statusMutation.mutate({ taskId: child.id, status: newStatus })
   }
 
@@ -107,7 +107,7 @@ function ChildTaskItem({ child, projectId }) {
           isDone ? 'bg-success border-success text-white' : 'border-primary-300 hover:border-primary-400',
           statusMutation.isPending ? 'opacity-50' : 'cursor-pointer',
         ].join(' ')}
-        aria-label={isDone ? 'Mark as To Do' : 'Mark as Done'}
+        aria-label={isDone ? 'Mark as Open' : 'Mark as Completed'}
       >
         {isDone && (
           <svg width="8" height="8" viewBox="0 0 12 12" fill="none" aria-hidden="true">

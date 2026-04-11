@@ -24,13 +24,13 @@ function PriorityDot({ priority }) {
 }
 
 function StatusCheckbox({ status, onChange, isPending }) {
-  const isDone = status === 'DONE'
+  const isDone = status === 'COMPLETED'
   return (
     <button
       type="button"
       onClick={onChange}
       disabled={isPending}
-      title={isDone ? 'Mark as To Do' : 'Mark as Done'}
+      title={isDone ? 'Mark as Open' : 'Mark as Completed'}
       className={[
         'flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
         isDone
@@ -38,7 +38,7 @@ function StatusCheckbox({ status, onChange, isPending }) {
           : 'border-primary-300 hover:border-primary-400',
         isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
       ].join(' ')}
-      aria-label={isDone ? 'Mark as To Do' : 'Mark as Done'}
+      aria-label={isDone ? 'Mark as Open' : 'Mark as Completed'}
     >
       {isDone && (
         <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -62,12 +62,12 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
 
   function handleStatusToggle(e) {
     e.stopPropagation()
-    const newStatus = task.status === 'DONE' ? 'TODO' : 'DONE'
+    const newStatus = task.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED'
     statusMutation.mutate({ taskId: task.id, status: newStatus })
   }
 
   const hasChildren = task.children && task.children.length > 0
-  const isDone = task.status === 'DONE'
+  const isDone = task.status === 'COMPLETED'
   const isSelected = selectedTaskId === task.id
   const deadlineBadgeColor = DEADLINE_BADGE_COLORS[task.deadlineGroup] || ''
 

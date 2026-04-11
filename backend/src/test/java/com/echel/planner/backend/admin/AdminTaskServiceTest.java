@@ -124,7 +124,7 @@ class AdminTaskServiceTest {
 
         AdminTaskRequest request = new AdminTaskRequest(
                 userId, projectId, "New Task", "A description",
-                null, "IN_PROGRESS", (short) 2, (short) 3,
+                null, "OPEN", (short) 2, (short) 3,
                 90, "HIGH", null, 4, null);
 
         UUID savedId = UUID.randomUUID();
@@ -144,7 +144,7 @@ class AdminTaskServiceTest {
         assertThat(captured.getProject()).isEqualTo(project);
         assertThat(captured.getTitle()).isEqualTo("New Task");
         assertThat(captured.getDescription()).isEqualTo("A description");
-        assertThat(captured.getStatus()).isEqualTo(TaskStatus.IN_PROGRESS);
+        assertThat(captured.getStatus()).isEqualTo(TaskStatus.OPEN);
 
         assertThat(response.id()).isEqualTo(savedId);
     }
@@ -214,7 +214,7 @@ class AdminTaskServiceTest {
 
         AdminTaskRequest request = new AdminTaskRequest(
                 newUserId, newProjectId, "Updated Title", "Updated desc",
-                null, "TODO", (short) 1, null,
+                null, "OPEN", (short) 1, null,
                 null, null, null, null, null);
 
         adminTaskService.update(taskId, request);
@@ -223,7 +223,7 @@ class AdminTaskServiceTest {
         assertThat(task.getProject()).isEqualTo(newProject);
         assertThat(task.getTitle()).isEqualTo("Updated Title");
         assertThat(task.getDescription()).isEqualTo("Updated desc");
-        assertThat(task.getStatus()).isEqualTo(TaskStatus.TODO);
+        assertThat(task.getStatus()).isEqualTo(TaskStatus.OPEN);
     }
 
     // -------------------------------------------------------------------------

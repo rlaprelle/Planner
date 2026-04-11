@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Dialog from '@radix-ui/react-dialog'
 import { getProjects, createProject, updateProject, archiveProject } from '@/api/projects'
+import { getProjectTasks } from '@/api/tasks'
+import { TaskDetailModal } from './project-detail/TaskDetailModal'
+import { AddTaskModal } from './project-detail/AddTaskModal'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -290,59 +292,117 @@ function ArchiveConfirmModal({ open, onOpenChange, project, onConfirm, isPending
   )
 }
 
-// ─── Project Row ──────────────────────────────────────────────────────────────
+// ─── Project Card Tasks ──────────────────────────────────────────────────────
 
-function ProjectRow({ project, onEdit, onArchive }) {
+const MAX_VISIBLE_TASKS = 3
+
+function ProjectCardTasks({ projectId, onSelectTask }) {
+  const { data: tasks } = useQuery({
+    queryKey: ['projects', projectId, 'tasks'],
+    queryFn: () => getProjectTasks(projectId),
+  })
+
+  const today = new Date().toISOString().split('T')[0]
+  const activeTasks = (tasks ?? [])
+    .filter((t) => !t.parentTaskId && t.status === 'OPEN'
+      && (!t.visibleFrom || t.visibleFrom <= today))
+
+  if (activeTasks.length === 0) {
+    return (
+      <p className="text-xs text-ink-muted italic">No active tasks</p>
+    )
+  }
+
+  const visible = activeTasks.slice(0, MAX_VISIBLE_TASKS)
+  const overflow = activeTasks.length - MAX_VISIBLE_TASKS
+
+  return (
+    <ul className="space-y-1.5">
+      {visible.map((task) => (
+        <li key={task.id} className="flex items-center gap-2 min-w-0">
+          <span className="inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 bg-primary-400" aria-hidden="true" />
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSelectTask(task) }}
+            className="text-xs text-ink-body truncate hover:text-primary-600 transition-colors text-left focus:outline-none focus:underline"
+          >
+            {task.title}
+          </button>
+        </li>
+      ))}
+      {overflow > 0 && (
+        <li className="text-xs text-ink-muted">
+          +{overflow} more
+        </li>
+      )}
+    </ul>
+  )
+}
+
+// ─── Project Card ─────────────────────────────────────────────────────────────
+
+function ProjectCard({ project, onEdit, onArchive, onSelectTask, onAddTask }) {
   const color = project.color || DEFAULT_COLOR
   return (
-    <div className="flex items-center gap-4 px-4 py-3 bg-surface-raised rounded-lg border border-edge hover:border-edge hover:shadow-card transition-all group">
-      {/* Color swatch */}
-      <div
-        className="w-4 h-4 rounded flex-shrink-0"
-        style={{ backgroundColor: color }}
-        aria-hidden="true"
-      />
+    <div className="relative bg-surface-raised rounded-2xl border border-edge shadow-card hover:shadow-card-hover hover:border-primary-200 transition-all group overflow-hidden">
+      {/* Top color accent */}
+      <div className="h-1" style={{ backgroundColor: color }} aria-hidden="true" />
 
-      {/* Icon + Name + Description */}
-      <div className="flex-1 min-w-0">
-        <Link
-          to={`/projects/${project.id}`}
-          className="flex items-center gap-2 hover:text-primary-700 transition-colors focus:outline-none focus:underline"
-        >
+      <div className="p-5">
+        {/* Header: Icon + Name */}
+        <div className="flex items-center gap-2">
           {project.icon && (
-            <span className="text-base leading-none flex-shrink-0" aria-hidden="true">
+            <span className="text-xl leading-none flex-shrink-0" aria-hidden="true">
               {project.icon}
             </span>
           )}
-          <span className="font-medium text-ink-heading text-sm truncate">
+          <span className="font-semibold text-ink-heading text-[15px] truncate">
             {project.name}
           </span>
-        </Link>
-        {project.description && (
-          <p className="mt-0.5 text-xs text-ink-muted truncate">{project.description}</p>
-        )}
-      </div>
+        </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex-shrink-0">
-        <button
-          type="button"
-          onClick={() => onEdit(project)}
-          title="Edit project"
-          className="p-1.5 text-ink-muted hover:text-ink-body hover:bg-surface-soft rounded focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
-          aria-label={`Edit ${project.name}`}
-        >
-          <PencilIcon />
-        </button>
-        <button
-          type="button"
-          onClick={() => onArchive(project)}
-          title="Archive project"
-          className="p-1.5 text-ink-muted hover:text-red-600 hover:bg-red-50 rounded focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-colors"
-          aria-label={`Archive ${project.name}`}
-        >
-          <ArchiveIcon />
-        </button>
+        {/* Description */}
+        {project.description && (
+          <p className="mt-2 text-[13px] text-ink-secondary leading-relaxed line-clamp-2">
+            {project.description}
+          </p>
+        )}
+
+        {/* Active tasks */}
+        <div className="mt-3 pt-3 border-t border-edge-subtle">
+          <ProjectCardTasks projectId={project.id} onSelectTask={onSelectTask} />
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1 mt-4 pt-3 border-t border-edge-subtle opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+          <button
+            type="button"
+            onClick={() => onAddTask(project)}
+            title="New task"
+            className="p-1.5 text-ink-muted hover:text-primary-600 hover:bg-primary-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
+            aria-label={`Add task to ${project.name}`}
+          >
+            <PlusIcon />
+          </button>
+          <button
+            type="button"
+            onClick={() => onEdit(project)}
+            title="Edit project"
+            className="p-1.5 text-ink-muted hover:text-ink-body hover:bg-surface-soft rounded-lg focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
+            aria-label={`Edit ${project.name}`}
+          >
+            <PencilIcon />
+          </button>
+          <button
+            type="button"
+            onClick={() => onArchive(project)}
+            title="Archive project"
+            className="p-1.5 text-ink-muted hover:text-red-600 hover:bg-red-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-colors"
+            aria-label={`Archive ${project.name}`}
+          >
+            <ArchiveIcon />
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -361,6 +421,15 @@ export function ProjectsPage() {
   // Form modal state
   const [formOpen, setFormOpen] = useState(false)
   const [editingProject, setEditingProject] = useState(null)
+
+  // Task detail modal state
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
+  const [selectedProjectName, setSelectedProjectName] = useState(null)
+
+  // Add task modal state
+  const [addTaskOpen, setAddTaskOpen] = useState(false)
+  const [addTaskProjectId, setAddTaskProjectId] = useState(null)
 
   // Archive modal state
   const [archiveOpen, setArchiveOpen] = useState(false)
@@ -385,9 +454,28 @@ export function ProjectsPage() {
     setFormOpen(true)
   }
 
+  function handleAddTask(project) {
+    setAddTaskProjectId(project.id)
+    setAddTaskOpen(true)
+  }
+
   function handleArchiveProject(project) {
     setArchivingProject(project)
     setArchiveOpen(true)
+  }
+
+  function handleSelectTask(task, project) {
+    setSelectedTask(task)
+    setSelectedProjectId(project.id)
+    setSelectedProjectName(project.name)
+  }
+
+  function handleCloseTaskModal(open) {
+    if (!open) {
+      setSelectedTask(null)
+      setSelectedProjectId(null)
+      setSelectedProjectName(null)
+    }
   }
 
   function handleConfirmArchive() {
@@ -397,7 +485,7 @@ export function ProjectsPage() {
   }
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
+    <div className="p-8 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-ink-heading">Projects</h1>
@@ -435,17 +523,19 @@ export function ProjectsPage() {
       )}
 
       {!isLoading && !isError && projects?.length > 0 && (
-        <ul className="space-y-2" role="list">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="list">
           {projects.map((project) => (
-            <li key={project.id}>
-              <ProjectRow
+            <div key={project.id} role="listitem">
+              <ProjectCard
                 project={project}
                 onEdit={handleEditProject}
                 onArchive={handleArchiveProject}
+                onSelectTask={(task) => handleSelectTask(task, project)}
+                onAddTask={handleAddTask}
               />
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       {/* Create / Edit modal */}
@@ -463,6 +553,25 @@ export function ProjectsPage() {
         onConfirm={handleConfirmArchive}
         isPending={archiveMutation.isPending}
       />
+
+      {/* Add task modal */}
+      <AddTaskModal
+        open={addTaskOpen}
+        onOpenChange={setAddTaskOpen}
+        projectId={addTaskProjectId}
+      />
+
+      {/* Task detail modal */}
+      {selectedTask && (
+        <TaskDetailModal
+          key={selectedTask.id}
+          open
+          onOpenChange={handleCloseTaskModal}
+          task={selectedTask}
+          projectName={selectedProjectName}
+          projectId={selectedProjectId}
+        />
+      )}
     </div>
   )
 }

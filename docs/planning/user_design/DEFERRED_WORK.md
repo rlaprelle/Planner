@@ -38,10 +38,15 @@
 - **Priority**: Medium
 
 ### Weekly/Monthly/Yearly Review Ceremonies
-- **Description**: Structured review workflows at multiple time scales. Weekly review: review week's stats, process weekly deferred items, plan next week. Monthly review: reflect on month's progress, adjust areas/projects. Yearly review: big-picture achievements and priorities. MVP focuses on daily ritual only.
+- **Description**: Structured review workflows at multiple time scales. Weekly review: review week's stats, process weekly deferred items, plan next week. Monthly review: reflect on month's progress, adjust areas/projects. Yearly review: big-picture achievements and priorities.
 - **Rationale**: Important for ADHD users to see progress patterns across longer time horizons. Also expected to help with re-entry after gaps by encouraging users to archive stale work.
-- **Effort**: High (new views, stats aggregation, prompts)
+- **Effort**: Medium (stats aggregation + reflection UIs for what remains)
 - **Priority**: High
+- **Partially built (2026-04-10)**: The ritual system is in place with 6 rituals (Start Month, Start Week, Start Day, End Day, End Week, End Month). End Day has full task triage + inbox processing + daily reflection. End Week and End Month pages exist and include all End Day phases, but their **weekly and monthly reflection phases are placeholder stubs** that need to be fleshed out:
+  - **End Week reflection**: weekly wins summary, what went well / what was hard, review of tasks completed vs deferred vs cancelled that week
+  - **End Month reflection**: everything in End Week, plus project health check ("Is this project still important to you?" per active project), bigger-picture reflection
+  - Both should show aggregated stats for the period (tasks completed, focus time, energy/mood trends)
+  - The `daily_reflection` table already supports `reflection_type = 'WEEKLY' | 'MONTHLY'` — backend is ready, just needs frontend UIs
 
 ### Task Breakdown Assistance / "Breakthrough" UIs
 - **Description**: Optional guided help for breaking down overwhelming tasks. "Just make it smaller" paradigm with optional "Suggest help" button. Flexible architecture for adding new "breakthrough" UIs for different freeze types. Microservices for workflow/guidance suggestions. MVP doesn't include guided task breakdown; users manually add child tasks.

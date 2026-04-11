@@ -13,11 +13,9 @@ const COLUMNS = [
 ]
 
 const STATUS_OPTIONS = [
-  { value: 'TODO', label: 'Todo' },
-  { value: 'IN_PROGRESS', label: 'In Progress' },
-  { value: 'BLOCKED', label: 'Blocked' },
-  { value: 'DONE', label: 'Done' },
-  { value: 'SKIPPED', label: 'Skipped' },
+  { value: 'OPEN', label: 'Open' },
+  { value: 'COMPLETED', label: 'Completed' },
+  { value: 'CANCELLED', label: 'Cancelled' },
 ]
 
 const ENERGY_OPTIONS = [
@@ -39,7 +37,7 @@ export default function AdminTasksTable() {
     { name: 'projectId', label: 'Project', type: 'select', options: projectOptions, required: true },
     { name: 'title', label: 'Title', required: true },
     { name: 'description', label: 'Description', type: 'textarea' },
-    { name: 'status', label: 'Status', type: 'select', options: STATUS_OPTIONS, defaultValue: 'TODO' },
+    { name: 'status', label: 'Status', type: 'select', options: STATUS_OPTIONS, defaultValue: 'OPEN' },
     { name: 'priority', label: 'Priority', type: 'number', defaultValue: 3 },
     { name: 'pointsEstimate', label: 'Points Estimate', type: 'number' },
     { name: 'energyLevel', label: 'Energy Level', type: 'select', options: ENERGY_OPTIONS },

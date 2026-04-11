@@ -47,3 +47,31 @@ export async function getTodayCompletedTasks() {
   const res = await authFetch(`/api/v1/tasks/completed-today`)
   return handleResponse(res)
 }
+
+export async function getActiveTasks() {
+  const res = await authFetch(`${BASE}/tasks/active`)
+  return handleResponse(res)
+}
+
+export async function deferTask(taskId, target) {
+  const res = await authFetch(`${BASE}/tasks/${taskId}/defer`, {
+    method: 'PATCH',
+    body: JSON.stringify({ target }),
+  })
+  return handleResponse(res)
+}
+
+export async function cancelTask(taskId) {
+  const res = await authFetch(`${BASE}/tasks/${taskId}/cancel`, {
+    method: 'PATCH',
+  })
+  return handleResponse(res)
+}
+
+export async function rescheduleTask(taskId, data) {
+  const res = await authFetch(`${BASE}/tasks/${taskId}/reschedule`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
+  return handleResponse(res)
+}

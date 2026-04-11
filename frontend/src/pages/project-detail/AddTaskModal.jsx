@@ -17,6 +17,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
     mutationFn: (data) => createTask(projectId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'tasks'] })
       onOpenChange(false)
       resetForm()
     },

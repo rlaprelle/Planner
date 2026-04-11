@@ -4,9 +4,12 @@ $ErrorActionPreference = "Stop"
 
 # ── constants ────────────────────────────────────────────────────────────────
 $ScriptDir              = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$RepoRoot               = (& git -C $ScriptDir rev-parse --show-toplevel 2>$null) -replace '/', '\'
+if (-not $RepoRoot) { $RepoRoot = $ScriptDir }
 $BackendLog             = "$ScriptDir\backend.log"
 $BackendErrorLog        = "$ScriptDir\backend-error.log"
-$ComposeFile            = "$ScriptDir\docker-compose.yml"
+$ComposeFile            = "$RepoRoot\docker-compose.yml"
+$ComposeProjectName     = "planner"
 $DatabaseTimeoutSeconds = 30
 $BackendTimeoutSeconds  = 60
 $HealthPollSeconds      = 2
@@ -33,9 +36,28 @@ function Find-Maven {
 }
 
 function Start-Database {
-    info "Starting database..."
-    & docker compose -f $ComposeFile up -d
-    if ($LASTEXITCODE -ne 0) { fail "docker compose up failed" }
+    # If the container already exists (e.g. from another worktree), reuse it
+    $state = docker inspect planner-db --format "{{.State.Status}}" 2>$null
+    if ($state -eq "running") {
+        $health = docker inspect planner-db --format "{{.State.Health.Status}}" 2>$null
+        if ($health -eq "healthy") {
+            ok "Database already running"
+            return
+        }
+        info "Database container running but not healthy yet, waiting..."
+    } elseif ($state) {
+        # Container exists but is stopped/exited — start it directly
+        info "Starting existing database container..."
+        & docker start planner-db | Out-Null
+        if ($LASTEXITCODE -ne 0) { fail "docker start planner-db failed" }
+        $script:StartedDatabase = $true
+    } else {
+        # No container exists — create it via compose
+        info "Starting database..."
+        & docker compose -p $ComposeProjectName -f $ComposeFile up -d
+        if ($LASTEXITCODE -ne 0) { fail "docker compose up failed" }
+        $script:StartedDatabase = $true
+    }
 
     info "Waiting for PostgreSQL..."
     for ($i = 0; $i -lt $DatabaseTimeoutSeconds; $i++) {
@@ -61,7 +83,20 @@ function Test-BackendHealth {
 function Show-BackendLogs {
     param($prefix)
     Write-Host "$prefix Last $LogTailLines lines of backend.log:" -ForegroundColor Red
-    if (Test-Path $BackendLog) { Get-Content $BackendLog -Tail $LogTailLines }
+    if (Test-Path $BackendLog) {
+        Get-Content $BackendLog -Tail $LogTailLines
+        # Check for schema mismatch (shared DB across worktrees with different migrations)
+        $logContent = Get-Content $BackendLog -Raw -ErrorAction SilentlyContinue
+        if ($logContent -match "Schema-validation|FlywayValidateException|Missing column|wrong column type") {
+            Write-Host ""
+            Write-Host "!! This looks like a database schema mismatch." -ForegroundColor Red
+            Write-Host "!! The database was likely migrated by a different branch/worktree." -ForegroundColor Red
+            Write-Host "!! To fix: stop the DB, delete the volume, and restart:" -ForegroundColor Red
+            Write-Host "!!   docker compose -p planner down -v" -ForegroundColor Yellow
+            Write-Host "!!   Then re-run this script." -ForegroundColor Yellow
+            Write-Host ""
+        }
+    }
 }
 
 function Start-Backend {
@@ -114,15 +149,20 @@ function Stop-All {
         taskkill /F /T /PID $script:BackendProcess.Id 2>&1 | Out-Null
         ok "Backend stopped"
     }
-    $prev = $ErrorActionPreference
-    $ErrorActionPreference = "Continue"
-    docker compose -f $ComposeFile stop 2>&1 | Out-Null
-    $ErrorActionPreference = $prev
-    ok "Database stopped"
+    if ($script:StartedDatabase) {
+        $prev = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"
+        docker compose -p $ComposeProjectName -f $ComposeFile stop 2>&1 | Out-Null
+        $ErrorActionPreference = $prev
+        ok "Database stopped"
+    } else {
+        ok "Database left running (shared)"
+    }
 }
 
 # ── main ─────────────────────────────────────────────────────────────────────
 $script:BackendProcess = $null
+$script:StartedDatabase = $false
 $mvn = Find-Maven
 
 try {

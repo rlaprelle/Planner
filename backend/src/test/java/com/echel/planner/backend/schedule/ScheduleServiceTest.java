@@ -334,7 +334,7 @@ class ScheduleServiceTest {
         assertThat(block.getActualEnd()).isBetween(before, after);
         assertThat(block.isWasCompleted()).isTrue();
 
-        assertThat(task.getStatus()).isEqualTo(TaskStatus.DONE);
+        assertThat(task.getStatus()).isEqualTo(TaskStatus.COMPLETED);
         assertThat(task.getCompletedAt()).isNotNull();
         assertThat(task.getActualMinutes()).isGreaterThanOrEqualTo(1);
 

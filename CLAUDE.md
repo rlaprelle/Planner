@@ -40,15 +40,16 @@ All have working defaults for local dev:
 ```
 backend/src/main/java/com/echel/planner/backend/
   auth/       — JWT login, register, refresh
-  task/       — Task CRUD, status, energy level
+  task/       — Task CRUD, deferral, status, energy level
   project/    — Project CRUD
   deferred/   — Deferred items (inbox)
-  reflection/ — Daily reflection
+  reflection/ — Daily/weekly/monthly reflection
+  schedule/   — Time blocks, schedule management
   stats/      — Points/completion stats
   admin/      — Admin CRUD for all entities, schedule, time blocks
 frontend/src/
   pages/                — Route-level components
-  pages/project-detail/ — Task list, detail panel, row components
+  pages/project-detail/ — Task list, detail panel/modal, row components
   pages/admin/          — Admin panel (users, projects, tasks, deferred, reflections, time blocks)
   pages/active-session/ — Timer, subtask checklist, chime
   pages/start-day/      — Start day flow components
@@ -56,6 +57,7 @@ frontend/src/
   contexts/             — ActiveSessionContext
   layouts/              — App shell (AppLayout)
   components/           — Shared UI (QuickCapture, deferred/)
+  components/ritual/    — Ritual phase components (TaskTriagePhase, InboxPhase, DailyReflectionPhase, TaskSchedulePhase, CompletionPhase)
   api/                  — TanStack Query + authFetch wrappers (admin, auth, dashboard, deferred, projects, reflection, schedule, tasks)
 ```
 
@@ -74,18 +76,43 @@ frontend/src/
 - Points-based estimation (`points_estimate`), not time-based
 - Project status is `is_active` boolean (no priority on projects)
 - JWT auth: refresh token in HttpOnly cookie, access token in response body
+- Task statuses are `OPEN`, `COMPLETED`, `CANCELLED` — enforced by DB CHECK constraint (V10 migration)
+- Task deferral via `visible_from` (DATE) and `scheduling_scope` (DAY/WEEK/MONTH) fields on the task table
 
-## Implementation Approach
+## Ritual System
 
-Vertical slices, built sequentially. See `docs/planning/2026-03-30-implementation-plan-design.md` for the full spec.
+The app is organized around 6 rituals: Start Month, Start Week, Start Day, End Day, End Week, End Month.
 
-The spec is a checklist. Always check off items as they are completed. **Before pushing or creating a PR, verify all completed work is checked off in the spec** — this is easy to miss at the end of a session.
+- **Start rituals** help users schedule active tasks into the future (assign to a week, day, or time block)
+- **End rituals** are supersets — End Week includes all End Day phases plus weekly reflection; End Month includes all End Week phases plus monthly reflection
+- **End Day phases**: task triage (one-at-a-time review of all active tasks) → inbox processing → daily reflection → completion screen
+- **Task triage** is the core mechanic: for each active task, defer (tomorrow/next week/next month), cancel, or keep. This creates pressure to keep the task list small.
+- Start Month and Start Week are optional — if skipped, all active tasks simply appear in Start Day
+
+### Active Task Definition
+
+An **active task** is one that is visible and actionable right now. This definition is used consistently across backend queries and frontend filters:
+
+```
+status = 'OPEN'
+AND archived_at IS NULL
+AND parent_task_id IS NULL
+AND (visible_from IS NULL OR visible_from <= today)
+```
+
+Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any client-side filtering must apply all four conditions. Missing the `visible_from` check will show deferred tasks that shouldn't be visible yet.
+
+## Worktree Caveats
+
+- All worktrees share a single PostgreSQL container (`planner-db`) and database. Flyway migrations from one branch affect all others.
+- If a worktree applies a new migration (e.g. V9 adds columns), then an older branch's backend may fail with Hibernate schema validation errors. The start scripts detect this and suggest `docker compose -p planner down -v` to reset.
+- The DB has CHECK constraints enforcing valid status values (`OPEN`, `COMPLETED`, `CANCELLED`). Old code that tries to insert `TODO` or `DONE` will get a constraint violation.
 
 ## Key Documents
 
 - `docs/ARCHITECTURE.md` — Data model, API endpoints, tech stack
-- `docs/IMPLEMENTATION_PLAN.md` — Design decisions, slice overview
-- `docs/planning/2026-03-30-implementation-plan-design.md` — Detailed vertical slice spec
+- `docs/IMPLEMENTATION_PLAN.md` — Design decisions and rationale behind key choices
+- `docs/planning/user_design/DEFERRED_WORK.md` — Roadmap of deferred features and future work
 - `docs/planning/user_design/` — User design docs (use cases, workflows, wireframes)
 
 ## Conventions
@@ -115,3 +142,11 @@ The spec is a checklist. Always check off items as they are completed. **Before 
 4. **Generous breathing room** — Relaxed whitespace and padding throughout. Elements should not feel crowded. Give each item space to be read without competing with its neighbors. Comfortable touch targets, spacious row heights.
 5. **Warm, not clinical** — The palette and tone should feel personal and inviting, not sterile or corporate. Slight warmth in backgrounds (tinted off-whites, not pure white), soft shadows over hard borders. The app should feel like opening a journal, not a spreadsheet.
 6. **Guide gently** — Use subtle visual hierarchy (tinted backgrounds, font weight, muted color shifts) to guide the eye toward what matters now, without demanding attention. Nothing should shout.
+7. **Evoke physical artifacts** — UI elements should feel like tangible objects: notebooks, index cards, sticky notes. Rounded corners, soft shadows, and subtle depth cues create a tactile quality that makes the digital feel personal and approachable.
+
+## Known Issues / Quirks
+
+- **Worktrees need `npm install`** — `node_modules` aren't shared across git worktrees. Run `cd frontend && npm install` before starting a dev server in any new worktree.
+- **Preview server can't verify auth-gated pages** — The Claude Preview tool has no way to log in, so changes behind authentication can't be spot-checked through it. Use the full dev stack (`./start.sh`) for visual verification of protected routes.
+- **ESLint false "unused" warnings** — The linter reports components defined and used within the same file as unused. This is a known quirk of single-file analysis — not real errors. Ignore these warnings.
+- **`setState` in `useEffect` lint error** — Several form components (e.g., `ProjectFormModal`) sync local state from props via `useEffect` + `setState`. The linter flags this, but it's the established pattern. When feasible, prefer the `key`-prop remount approach to avoid the warning entirely.

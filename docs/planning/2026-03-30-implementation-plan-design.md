@@ -140,6 +140,6 @@ Stand up the dev environment with auth. No business logic.
 **Frontend:**
 - [x] Dashboard weekly summary card: tasks completed, points earned, trends
 - [x] Intelligent celebration in Evening Clean-up reflection: highlight significant completions by effort, complexity, time spent
-- [ ] UI polish pass: consistent animations/transitions between views, responsive layout adjustments
+- [x] UI polish pass: consistent animations/transitions between views, responsive layout adjustments
 
 **Done when:** Dashboard shows weekly stats, evening reflection highlights significant accomplishments, UX feels cohesive.

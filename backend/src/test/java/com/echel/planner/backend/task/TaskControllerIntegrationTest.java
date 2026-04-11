@@ -75,7 +75,7 @@ class TaskControllerIntegrationTest {
                 "Write unit tests",
                 "Cover all endpoints",
                 null,
-                TaskStatus.TODO,
+                TaskStatus.OPEN,
                 (short) 0,
                 (short) 3,
                 null,
@@ -84,6 +84,10 @@ class TaskControllerIntegrationTest {
                 0,
                 null,
                 DeadlineGroup.NO_DEADLINE,
+                null,
+                null,
+                0,
+                null,
                 null,
                 null,
                 now,
@@ -103,7 +107,7 @@ class TaskControllerIntegrationTest {
                 "Write unit tests",
                 "Cover all endpoints",
                 null,
-                TaskStatus.TODO,
+                TaskStatus.OPEN,
                 null,
                 (short) 3,
                 null,
@@ -122,7 +126,7 @@ class TaskControllerIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(taskId.toString()))
                 .andExpect(jsonPath("$.title").value("Write unit tests"))
-                .andExpect(jsonPath("$.status").value("TODO"));
+                .andExpect(jsonPath("$.status").value("OPEN"));
     }
 
     // --- GET /api/v1/projects/{projectId}/tasks ---
@@ -169,7 +173,7 @@ class TaskControllerIntegrationTest {
                 "Write unit tests",
                 "Cover all endpoints",
                 null,
-                TaskStatus.DONE,
+                TaskStatus.COMPLETED,
                 (short) 0,
                 (short) 3,
                 null,
@@ -179,13 +183,17 @@ class TaskControllerIntegrationTest {
                 null,
                 DeadlineGroup.NO_DEADLINE,
                 null,
+                null,
+                0,
+                null,
                 now,
+                null,
                 now,
                 now,
                 List.of()
         );
 
-        TaskStatusRequest req = new TaskStatusRequest(TaskStatus.DONE);
+        TaskStatusRequest req = new TaskStatusRequest(TaskStatus.COMPLETED);
 
         when(taskService.changeStatus(any(AppUser.class), eq(taskId), any(TaskStatusRequest.class)))
                 .thenReturn(completedTask);
@@ -196,7 +204,7 @@ class TaskControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(taskId.toString()))
-                .andExpect(jsonPath("$.status").value("DONE"))
+                .andExpect(jsonPath("$.status").value("COMPLETED"))
                 .andExpect(jsonPath("$.completedAt").isNotEmpty());
     }
 
@@ -214,7 +222,7 @@ class TaskControllerIntegrationTest {
                 "Write unit tests",
                 "Cover all endpoints",
                 null,
-                TaskStatus.TODO,
+                TaskStatus.OPEN,
                 (short) 0,
                 (short) 3,
                 null,
@@ -223,7 +231,11 @@ class TaskControllerIntegrationTest {
                 0,
                 null,
                 DeadlineGroup.NO_DEADLINE,
+                null,
+                null,
+                0,
                 now,
+                null,
                 null,
                 now,
                 now,

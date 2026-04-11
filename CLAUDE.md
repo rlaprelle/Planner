@@ -1,6 +1,8 @@
-# Planner
+# Echel Planner
 
-ADHD-friendly daily work management tool.
+ADHD-friendly daily work management tool. *Planning that works with your brain, not against it.*
+
+**Brand:** Echel Planner by Echel Software. See `docs/superpowers/specs/2026-04-11-branding-design.md` for logo, colors, and brand guidelines.
 
 ## Quick Start
 

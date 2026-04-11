@@ -131,7 +131,7 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 ## Frontend Workflow
 
-- When starting a worktree for frontend work, start a dev server from the worktree on a non-default port (e.g., `npm run dev -- --port 5174`). Vite will silently pick a different port if the requested one is taken, so always read the server output to confirm the actual port before navigating to it.
+- **Dev server management:** Use `node dev.js start` to start a frontend dev server. It assigns a deterministic port per worktree (5200–5299 range; 5173 for the main checkout), detects if one is already running, and writes a `.dev-port` file. Use `node dev.js status` to see all running servers, and `node dev.js stop` to shut down. The `.dev-port` file is validated against live state on every operation, so stale files from crashes are cleaned up automatically.
 - For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
 - After merging dev into a feature branch, do a visual spot-check — merges can introduce UI regressions that aren't caught by tests (e.g., new features from dev appearing in contexts where they don't belong).
 

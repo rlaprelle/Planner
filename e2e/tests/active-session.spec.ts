@@ -15,13 +15,13 @@ test.describe('Active Work Session', () => {
 
   test('shows task title and project name', async ({ page }) => {
     await page.goto('/session/block-session-1')
-    await expect(page.getByText('Work')).toBeVisible()
-    await expect(page.getByText('Write tests')).toBeVisible()
+    await expect(page.getByText('Work', { exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Write tests' })).toBeVisible()
   })
 
   test('shows countdown timer', async ({ page }) => {
     await page.goto('/session/block-session-1')
-    await expect(page.getByText(/\d{2}:\d{2}/)).toBeVisible()
+    await expect(page.getByRole('main').getByText(/\d{2}:\d{2}/)).toBeVisible()
     await expect(page.getByText(/of \d+ min/)).toBeVisible()
   })
 
@@ -36,7 +36,7 @@ test.describe('Active Work Session', () => {
   test('hides subtask section when task has no children', async ({ page }) => {
     await mockTaskDetail(page, { id: 'task-1', title: 'Write tests', children: [] })
     await page.goto('/session/block-session-1')
-    await expect(page.getByText('Write tests')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Write tests' })).toBeVisible()
     await expect(page.getByText('Subtasks')).not.toBeVisible()
   })
 

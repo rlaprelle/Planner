@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Dialog from '@radix-ui/react-dialog'
 import { getProjects, createProject, updateProject, archiveProject } from '@/api/projects'
@@ -101,14 +101,6 @@ function ProjectFormModal({ open, onOpenChange, project, onSuccess }) {
   const [color, setColor] = useState(project?.color ?? DEFAULT_COLOR)
   const [icon, setIcon] = useState(project?.icon ?? '')
   const [nameError, setNameError] = useState('')
-
-  useEffect(() => {
-    setName(project?.name ?? '')
-    setDescription(project?.description ?? '')
-    setColor(project?.color ?? DEFAULT_COLOR)
-    setIcon(project?.icon ?? '')
-    setNameError('')
-  }, [project])
 
   const queryClient = useQueryClient()
 
@@ -540,6 +532,7 @@ export function ProjectsPage() {
 
       {/* Create / Edit modal */}
       <ProjectFormModal
+        key={editingProject?.id ?? 'new'}
         open={formOpen}
         onOpenChange={setFormOpen}
         project={editingProject}

@@ -133,7 +133,7 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 ## Frontend Workflow
 
-- **Dev server management:** Use `node dev.js start` to start a frontend dev server. It assigns a deterministic port per worktree (5200–5299 range; 5173 for the main checkout), detects if one is already running, and writes a `.dev-port` file. Use `node dev.js status` to see all running servers, and `node dev.js stop` to shut down. The `.dev-port` file is validated against live state on every operation, so stale files from crashes are cleaned up automatically.
+- **Dev server management:** Use `node dev.js start` **from the project root** (not `frontend/`) to start a frontend dev server. It assigns a deterministic port per worktree (5200–5299 range; 5173 for the main checkout), detects if one is already running, and writes a `.dev-port` file. Use `node dev.js status` to see all running servers, and `node dev.js stop` to shut down. The `.dev-port` file is validated against live state on every operation, so stale files from crashes are cleaned up automatically. Always use this script instead of `npm run dev` directly — it prevents port collisions between worktrees.
 - For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
 - After merging dev into a feature branch, do a visual spot-check — merges can introduce UI regressions that aren't caught by tests (e.g., new features from dev appearing in contexts where they don't belong).
 
@@ -149,7 +149,9 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 ## E2E Testing
 
-- `e2e/playwright.config.ts` should not be modified by feature branches — the port (5173) and webServer config are shared defaults. Worktree dev servers should use `BASE_URL` env var if they need a different port, not change the config file.
+- **Always import from `../fixtures/auth`**, not from `@playwright/test`, for tests on protected pages. The auth fixture pre-mocks `/auth/refresh` and `/deferred` so the app boots into an authenticated state. Without it, pages redirect to login.
+- **Use `dev.js` to start a Vite server before running E2E tests**, then pass its port via `BASE_URL`. Do NOT kill other Vite servers — multiple development sessions may be running concurrently. The workflow: `node dev.js start` (from project root) ��� note the port → `cd e2e && BASE_URL=http://localhost:<port> npx playwright test`. When `BASE_URL` is set, Playwright skips its own `webServer` launch and uses your server directly.
+- `e2e/playwright.config.ts` conditionally skips `webServer` when `BASE_URL` is set. The main checkout (no `BASE_URL`) auto-starts Vite on 5173 as the default. Do not modify the config for other reasons in feature branches.
 - When adding new page features, check whether existing E2E tests need a mock for new API endpoints the page now calls (e.g., adding `mockEventsForDate` when the page starts fetching events).
 
 ## Known Issues / Quirks
@@ -157,4 +159,4 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 - **Worktrees need `npm install`** — `node_modules` aren't shared across git worktrees. Run `cd frontend && npm install` before starting a dev server in any new worktree.
 - **Preview server can't verify auth-gated pages** — The Claude Preview tool has no way to log in, so changes behind authentication can't be spot-checked through it. Use the full dev stack (`./start.sh`) for visual verification of protected routes.
 - **ESLint false "unused" warnings** — The linter reports components defined and used within the same file as unused. This is a known quirk of single-file analysis — not real errors. Ignore these warnings.
-- **`setState` in `useEffect` lint error** — Several form components (e.g., `ProjectFormModal`) sync local state from props via `useEffect` + `setState`. The linter flags this, but it's the established pattern. When feasible, prefer the `key`-prop remount approach to avoid the warning entirely.
+- **`setState` in `useEffect` lint error** — Several form components (e.g., `ProjectFormModal`, `SettingsPage`) sync local state from props via `useEffect` + `setState`. The linter flags this, but it's the established pattern. When feasible, prefer the `key`-prop remount approach to avoid the warning entirely.

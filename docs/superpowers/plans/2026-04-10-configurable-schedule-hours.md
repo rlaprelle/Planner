@@ -1,6 +1,6 @@
 # Configurable Schedule Hours Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers-extended-cc:subagent-driven-development (recommended) or superpowers-extended-cc:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers-extended-cc:subagent-driven-development (recommended) or superpowers-extended-cc:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Allow users to change the schedule grid's hour range from the default 8 AM–5 PM to any whole-hour range via dropdowns above the grid.
 
@@ -18,16 +18,16 @@
 - Modify: `frontend/src/pages/start-day/useTimeGrid.js`
 
 **Acceptance Criteria:**
-- [ ] `useTimeGrid(dayStartMinutes, dayEndMinutes)` accepts two parameters
-- [ ] All internal math uses the parameters instead of constants
-- [ ] Default constants still exported for backward compatibility
-- [ ] `startResize` uses the passed `dayEndMinutes` for clamping
+- [x] `useTimeGrid(dayStartMinutes, dayEndMinutes)` accepts two parameters
+- [x] All internal math uses the parameters instead of constants
+- [x] Default constants still exported for backward compatibility
+- [x] `startResize` uses the passed `dayEndMinutes` for clamping
 
 **Verify:** `cd frontend && npm run lint` → no errors
 
 **Steps:**
 
-- [ ] **Step 1: Update useTimeGrid signature and internal math**
+- [x] **Step 1: Update useTimeGrid signature and internal math**
 
 Change the hook to accept parameters and compute duration internally:
 
@@ -60,7 +60,7 @@ export function useTimeGrid(dayStartMinutes = DAY_START_MINUTES, dayEndMinutes =
   }
 ```
 
-- [ ] **Step 2: Update startResize to use dynamic dayEndMinutes**
+- [x] **Step 2: Update startResize to use dynamic dayEndMinutes**
 
 In the `startResize` function, change the `pushBlocks` call on line 85:
 
@@ -70,12 +70,12 @@ const pushed = pushBlocks(newBlocks, ref.blockIndex, dayEndMinutes)
 
 This already references `dayEndMinutes` but currently it's the module-level constant. After step 1, it will close over the parameter instead. No code change needed — it naturally captures the parameter.
 
-- [ ] **Step 3: Verify lint passes**
+- [x] **Step 3: Verify lint passes**
 
 Run: `cd frontend && npm run lint`
 Expected: No errors
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add frontend/src/pages/start-day/useTimeGrid.js
@@ -92,16 +92,16 @@ git commit -m "refactor: parameterize useTimeGrid with dynamic day boundaries"
 - Modify: `frontend/src/pages/start-day/TimeBlockGrid.jsx`
 
 **Acceptance Criteria:**
-- [ ] Accepts `dayStartMinutes` and `dayEndMinutes` props
-- [ ] Hour marks computed from props, not imported constants
-- [ ] Grid lines and 15-min sub-lines adapt to the range
-- [ ] Positioning math uses props
+- [x] Accepts `dayStartMinutes` and `dayEndMinutes` props
+- [x] Hour marks computed from props, not imported constants
+- [x] Grid lines and 15-min sub-lines adapt to the range
+- [x] Positioning math uses props
 
 **Verify:** `cd frontend && npm run lint` → no errors
 
 **Steps:**
 
-- [ ] **Step 1: Update component to accept and use dynamic range props**
+- [x] **Step 1: Update component to accept and use dynamic range props**
 
 Replace the constant imports and derived values at the top of the file, and add the props:
 
@@ -160,12 +160,12 @@ Update the 15-min sub-lines to use `totalHours` instead of `TOTAL_HOURS`:
 
 Remove the import of `DAY_START_MINUTES` and `DAY_DURATION` from `useTimeGrid`.
 
-- [ ] **Step 2: Verify lint passes**
+- [x] **Step 2: Verify lint passes**
 
 Run: `cd frontend && npm run lint`
 Expected: No errors
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add frontend/src/pages/start-day/TimeBlockGrid.jsx
@@ -182,17 +182,17 @@ git commit -m "refactor: parameterize TimeBlockGrid with dynamic day boundaries"
 - Modify: `frontend/src/pages/StartDayPage.jsx`
 
 **Acceptance Criteria:**
-- [ ] Two `<select>` dropdowns appear above the grid, right-aligned, defaulting to 8 AM / 5 PM
-- [ ] Changing the range updates all grid math (positions, DnD clamping, push boundaries)
-- [ ] Narrowing the range past existing blocks shows an inline warning and is rejected
-- [ ] `savePlan` sends `startHour` and `endHour` to the backend
-- [ ] `handleAddToCalendar` uses dynamic boundaries for overflow detection
+- [x] Two `<select>` dropdowns appear above the grid, right-aligned, defaulting to 8 AM / 5 PM
+- [x] Changing the range updates all grid math (positions, DnD clamping, push boundaries)
+- [x] Narrowing the range past existing blocks shows an inline warning and is rejected
+- [x] `savePlan` sends `startHour` and `endHour` to the backend
+- [x] `handleAddToCalendar` uses dynamic boundaries for overflow detection
 
 **Verify:** `cd frontend && npm run lint` → no errors; manual test in browser at http://localhost:5174
 
 **Steps:**
 
-- [ ] **Step 1: Add state and derive minute values**
+- [x] **Step 1: Add state and derive minute values**
 
 Add state at the top of `StartDayPage`:
 
@@ -204,7 +204,7 @@ const dayStartMinutes = dayStartHour * 60
 const dayEndMinutes = dayEndHour * 60
 ```
 
-- [ ] **Step 2: Pass dynamic boundaries to useTimeGrid**
+- [x] **Step 2: Pass dynamic boundaries to useTimeGrid**
 
 Update the `useTimeGrid` call:
 
@@ -215,7 +215,7 @@ const { gridRef, minutesToPercent, durationToPercent, pixelDeltaToMinutes, clien
 
 Remove the import of `DAY_START_MINUTES` and `DAY_END_MINUTES` from `useTimeGrid` (no longer needed at this level — the state-derived values replace them).
 
-- [ ] **Step 3: Update all DnD handlers to use dynamic boundaries**
+- [x] **Step 3: Update all DnD handlers to use dynamic boundaries**
 
 Replace every reference to `DAY_START_MINUTES` and `DAY_END_MINUTES` in the component with the state-derived `dayStartMinutes` and `dayEndMinutes`:
 
@@ -248,7 +248,7 @@ const lastEnd =
 if (currentStart + 60 > dayEndMinutes) break
 ```
 
-- [ ] **Step 4: Add range-change validation handler**
+- [x] **Step 4: Add range-change validation handler**
 
 ```jsx
 function handleStartHourChange(newHour) {
@@ -283,7 +283,7 @@ function formatDropdownHour(h) {
 }
 ```
 
-- [ ] **Step 5: Render the dropdown UI**
+- [x] **Step 5: Render the dropdown UI**
 
 Add the dropdowns inside the "Today's Plan" section, above the `<TimeBlockGrid>`:
 
@@ -322,7 +322,7 @@ Add the dropdowns inside the "Today's Plan" section, above the `<TimeBlockGrid>`
 
 Remove the old static heading `<div>` that contained "Today's Plan" — it's replaced by the flex container above.
 
-- [ ] **Step 6: Pass dynamic boundaries to TimeBlockGrid**
+- [x] **Step 6: Pass dynamic boundaries to TimeBlockGrid**
 
 ```jsx
 <TimeBlockGrid
@@ -339,7 +339,7 @@ Remove the old static heading `<div>` that contained "Today's Plan" — it's rep
 />
 ```
 
-- [ ] **Step 7: Update savePlan call to include hour range**
+- [x] **Step 7: Update savePlan call to include hour range**
 
 ```jsx
 const saveMutation = useMutation({
@@ -364,7 +364,7 @@ const saveMutation = useMutation({
 })
 ```
 
-- [ ] **Step 8: Update the API wrapper to accept hour range**
+- [x] **Step 8: Update the API wrapper to accept hour range**
 
 In `frontend/src/api/schedule.js`, update `savePlan`:
 
@@ -378,12 +378,12 @@ export async function savePlan(blockDate, blocks, startHour, endHour) {
 }
 ```
 
-- [ ] **Step 9: Verify lint passes**
+- [x] **Step 9: Verify lint passes**
 
 Run: `cd frontend && npm run lint`
 Expected: No errors
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add frontend/src/pages/StartDayPage.jsx frontend/src/api/schedule.js
@@ -404,17 +404,17 @@ git commit -m "feat: add hour-range dropdowns to Start Day schedule grid"
 - Modify: `backend/src/test/java/com/echel/planner/backend/schedule/ScheduleControllerIntegrationTest.java`
 
 **Acceptance Criteria:**
-- [ ] `SavePlanRequest` has optional `startHour` and `endHour` fields
-- [ ] Defaults to 8/17 when null
-- [ ] Validation enforces blocks within the provided range
-- [ ] Existing tests updated to reflect the new validation message format
-- [ ] New tests cover: custom range accepted, blocks outside custom range rejected, invalid range rejected
+- [x] `SavePlanRequest` has optional `startHour` and `endHour` fields
+- [x] Defaults to 8/17 when null
+- [x] Validation enforces blocks within the provided range
+- [x] Existing tests updated to reflect the new validation message format
+- [x] New tests cover: custom range accepted, blocks outside custom range rejected, invalid range rejected
 
 **Verify:** `cd backend && mvn test -Dtest="ScheduleServiceTest,ScheduleServiceEventTest,ScheduleControllerIntegrationTest"` → all tests pass
 
 **Steps:**
 
-- [ ] **Step 1: Update SavePlanRequest DTO**
+- [x] **Step 1: Update SavePlanRequest DTO**
 
 ```java
 public record SavePlanRequest(
@@ -431,7 +431,7 @@ public record SavePlanRequest(
 }
 ```
 
-- [ ] **Step 2: Update ScheduleService validation**
+- [x] **Step 2: Update ScheduleService validation**
 
 Replace the hardcoded `DAY_START`/`DAY_END` constants and update `savePlan` and `validateBlocks`:
 
@@ -477,7 +477,7 @@ private void validateBlocks(List<SavePlanRequest.BlockEntry> blocks, LocalTime d
 }
 ```
 
-- [ ] **Step 3: Update existing tests for new validation message**
+- [x] **Step 3: Update existing tests for new validation message**
 
 The `savePlan_rejectsBlockBeforeDayStart` and `savePlan_rejectsBlockAfterDayEnd` tests check for `"within 08:00"`. The message format now includes the full range. Update the assertions:
 
@@ -521,7 +521,7 @@ Update ALL existing test calls that construct `SavePlanRequest` to include the t
 var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 ```
 
-- [ ] **Step 4: Add new tests for dynamic range**
+- [x] **Step 4: Add new tests for dynamic range**
 
 ```java
 @Test
@@ -591,12 +591,12 @@ void savePlan_defaultsToStandardRangeWhenNull() {
 }
 ```
 
-- [ ] **Step 5: Run tests**
+- [x] **Step 5: Run tests**
 
 Run: `cd backend && mvn test -Dtest=ScheduleServiceTest`
 Expected: All tests pass
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add backend/src/main/java/com/echel/planner/backend/schedule/dto/SavePlanRequest.java \
@@ -617,15 +617,15 @@ git commit -m "feat: accept dynamic hour range in savePlan backend validation"
 - Modify: `e2e/tests/start-day.spec.ts`
 
 **Acceptance Criteria:**
-- [ ] Test: dropdowns default to 8 AM / 5 PM
-- [ ] Test: changing range updates grid hour labels
-- [ ] Test: narrowing range past an existing block shows warning
+- [x] Test: dropdowns default to 8 AM / 5 PM
+- [x] Test: changing range updates grid hour labels
+- [x] Test: narrowing range past an existing block shows warning
 
 **Verify:** `cd e2e && npx playwright test tests/start-day.spec.ts` → all tests pass
 
 **Steps:**
 
-- [ ] **Step 1: Add test for default dropdown values**
+- [x] **Step 1: Add test for default dropdown values**
 
 ```typescript
 test('hour range dropdowns default to 8 AM and 5 PM', async ({ page }) => {
@@ -641,7 +641,7 @@ test('hour range dropdowns default to 8 AM and 5 PM', async ({ page }) => {
 })
 ```
 
-- [ ] **Step 2: Add test for range change updating grid labels**
+- [x] **Step 2: Add test for range change updating grid labels**
 
 ```typescript
 test('changing start hour updates grid labels', async ({ page }) => {
@@ -660,7 +660,7 @@ test('changing start hour updates grid labels', async ({ page }) => {
 })
 ```
 
-- [ ] **Step 3: Add test for block-prevents-narrowing**
+- [x] **Step 3: Add test for block-prevents-narrowing**
 
 ```typescript
 test('narrowing range past existing block shows warning', async ({ page }) => {
@@ -684,12 +684,12 @@ test('narrowing range past existing block shows warning', async ({ page }) => {
 })
 ```
 
-- [ ] **Step 4: Run E2E tests**
+- [x] **Step 4: Run E2E tests**
 
 Run: `cd e2e && npx playwright test tests/start-day.spec.ts`
 Expected: All tests pass
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add e2e/tests/start-day.spec.ts

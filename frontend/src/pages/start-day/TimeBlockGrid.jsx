@@ -3,6 +3,7 @@ import { TimeBlock } from './TimeBlock'
 import { EventBlock } from './EventBlock'
 
 function formatHour(h) {
+  if (h === 0 || h === 24) return '12 AM'
   if (h === 12) return '12 PM'
   if (h < 12) return `${h} AM`
   return `${h - 12} PM`

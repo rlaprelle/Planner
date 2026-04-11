@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 
 import { getSuggestedTasks, getScheduleToday, savePlan } from '@/api/schedule'
 import { getEventsForDate } from '@/api/events'
-import { useTimeGrid, DAY_START_MINUTES, DAY_END_MINUTES } from './start-day/useTimeGrid'
+import { useTimeGrid } from './start-day/useTimeGrid'
 import { pushBlocks, toGridBlock, snapTo15, minutesToTime, timeToMinutes } from './start-day/pushBlocks'
 import { TimeBlockGrid } from './start-day/TimeBlockGrid'
 import { TaskBrowserRow } from './start-day/TaskBrowserRow'
@@ -17,9 +17,15 @@ export function StartDayPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  const [dayStartHour, setDayStartHour] = useState(8)
+  const [dayEndHour, setDayEndHour] = useState(17)
+
+  const dayStartMinutes = dayStartHour * 60
+  const dayEndMinutes = dayEndHour * 60
+
   // --- Grid helpers ---
   const { gridRef, minutesToPercent, durationToPercent, pixelDeltaToMinutes, clientXToMinutes, startResize } =
-    useTimeGrid()
+    useTimeGrid(dayStartMinutes, dayEndMinutes)
 
   // --- Server data ---
   const { data: suggestedTasks = [], isLoading: loadingTasks } = useQuery({
@@ -126,7 +132,7 @@ export function StartDayPage() {
       .sort((a, b) => a.start - b.start)
 
     const lastEnd =
-      gridBlocks.length > 0 ? Math.max(...gridBlocks.map((b) => b.endMinutes)) : DAY_START_MINUTES
+      gridBlocks.length > 0 ? Math.max(...gridBlocks.map((b) => b.endMinutes)) : dayStartMinutes
 
     let currentStart = lastEnd
     const newBlocks = []
@@ -137,7 +143,7 @@ export function StartDayPage() {
           currentStart = range.end
         }
       }
-      if (currentStart + 60 > DAY_END_MINUTES) break
+      if (currentStart + 60 > dayEndMinutes) break
       newBlocks.push(makeBlock(task, currentStart, currentStart + 60, gridBlocks.length + newBlocks.length))
       currentStart += 60
     }
@@ -169,6 +175,38 @@ export function StartDayPage() {
     }
   }
 
+  // --- Range-change validation ---
+  function handleStartHourChange(newHour) {
+    const earliestBlock = gridBlocks.length > 0
+      ? Math.min(...gridBlocks.map((b) => b.startMinutes))
+      : Infinity
+    if (newHour * 60 > earliestBlock) {
+      setAddWarning(`You have blocks before ${formatDropdownHour(newHour)}`)
+      return
+    }
+    setAddWarning(null)
+    setDayStartHour(newHour)
+  }
+
+  function handleEndHourChange(newHour) {
+    const latestBlock = gridBlocks.length > 0
+      ? Math.max(...gridBlocks.map((b) => b.endMinutes))
+      : -Infinity
+    if (newHour * 60 < latestBlock) {
+      setAddWarning(`You have blocks after ${formatDropdownHour(newHour)}`)
+      return
+    }
+    setAddWarning(null)
+    setDayEndHour(newHour)
+  }
+
+  function formatDropdownHour(h) {
+    if (h === 0 || h === 24) return '12 AM'
+    if (h === 12) return '12 PM'
+    if (h < 12) return `${h} AM`
+    return `${h - 12} PM`
+  }
+
   // --- Save plan ---
   const saveMutation = useMutation({
     mutationFn: () =>
@@ -180,7 +218,9 @@ export function StartDayPage() {
             taskId: b.task.id,
             startTime: minutesToTime(b.startMinutes),
             endTime: minutesToTime(b.endMinutes),
-          }))
+          })),
+        dayStartHour,
+        dayEndHour
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['schedule'] })
@@ -196,7 +236,7 @@ export function StartDayPage() {
   function cursorToSnappedStart(clientX) {
     const rawCenter = clientXToMinutes(clientX)
     const rawStart = rawCenter - 30 // center the 1-hour block on cursor
-    return Math.max(DAY_START_MINUTES, Math.min(DAY_END_MINUTES - 60, snapTo15(rawStart)))
+    return Math.max(dayStartMinutes, Math.min(dayEndMinutes - 60, snapTo15(rawStart)))
   }
 
   function handleDragStart(event) {
@@ -235,14 +275,14 @@ export function StartDayPage() {
       const deltaMins = pixelDeltaToMinutes(delta.x)
       const duration = block.endMinutes - block.startMinutes
       const rawStart = block.startMinutes + deltaMins
-      const snapped = Math.max(DAY_START_MINUTES, Math.min(DAY_END_MINUTES - duration, snapTo15(rawStart)))
+      const snapped = Math.max(dayStartMinutes, Math.min(dayEndMinutes - duration, snapTo15(rawStart)))
 
       const updated = gridBlocks.map((b, i) =>
         i === blockIndex ? { ...b, startMinutes: snapped, endMinutes: snapped + duration } : { ...b }
       )
       const sorted = [...updated].sort((a, b) => a.startMinutes - b.startMinutes)
       const movedIndex = sorted.findIndex((b) => b.id === block.id)
-      const pushed = pushBlocks(sorted, movedIndex, DAY_END_MINUTES)
+      const pushed = pushBlocks(sorted, movedIndex, dayEndMinutes)
       if (pushed) setBlocks(pushed)
     } else if (activeData.type === 'task-card') {
       // Dropping a task card from the browser onto the calendar
@@ -255,7 +295,7 @@ export function StartDayPage() {
       const newBlock = makeBlock(task, snapped, snapped + 60, gridBlocks.length)
       const combined = [...gridBlocks, newBlock].sort((a, b) => a.startMinutes - b.startMinutes)
       const insertedIdx = combined.findIndex((b) => b.id === newBlock.id)
-      const pushed = pushBlocks(combined, insertedIdx, DAY_END_MINUTES)
+      const pushed = pushBlocks(combined, insertedIdx, dayEndMinutes)
       if (pushed) setBlocks(pushed)
     }
   }
@@ -340,11 +380,35 @@ export function StartDayPage() {
 
         {/* Row 3: Horizontal calendar */}
         <section className="bg-surface-raised border border-edge rounded-lg p-4 shadow-card">
-          <div className="text-xs font-semibold text-primary-700 uppercase tracking-wider mb-3">
-            Today's Plan
-            <span className="ml-2 font-normal text-ink-muted normal-case tracking-normal">
-              — drag blocks to move · drag right edge to resize
-            </span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-xs font-semibold text-primary-700 uppercase tracking-wider">
+              Today's Plan
+              <span className="ml-2 font-normal text-ink-muted normal-case tracking-normal">
+                — drag blocks to move · drag right edge to resize
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-ink-muted">
+              <span>Hours:</span>
+              <select
+                value={dayStartHour}
+                onChange={(e) => handleStartHourChange(Number(e.target.value))}
+                className="border border-edge rounded-md px-1.5 py-0.5 text-xs bg-surface-raised text-ink-base focus:outline-none focus:ring-1 focus:ring-primary-400"
+              >
+                {Array.from({ length: 24 }, (_, i) => i).filter((h) => h < dayEndHour).map((h) => (
+                  <option key={h} value={h}>{formatDropdownHour(h)}</option>
+                ))}
+              </select>
+              <span>–</span>
+              <select
+                value={dayEndHour}
+                onChange={(e) => handleEndHourChange(Number(e.target.value))}
+                className="border border-edge rounded-md px-1.5 py-0.5 text-xs bg-surface-raised text-ink-base focus:outline-none focus:ring-1 focus:ring-primary-400"
+              >
+                {Array.from({ length: 24 }, (_, i) => i + 1).filter((h) => h > dayStartHour).map((h) => (
+                  <option key={h} value={h}>{formatDropdownHour(h)}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <TimeBlockGrid
@@ -356,6 +420,8 @@ export function StartDayPage() {
             minutesToPercent={minutesToPercent}
             durationToPercent={durationToPercent}
             startResize={startResize}
+            dayStartMinutes={dayStartMinutes}
+            dayEndMinutes={dayEndMinutes}
           />
 
           {saveMutation.isError && (

@@ -7,10 +7,10 @@ export async function getScheduleToday() {
   return handleResponse(res)
 }
 
-export async function savePlan(blockDate, blocks) {
+export async function savePlan(blockDate, blocks, startHour, endHour) {
   const res = await authFetch(`${BASE}/schedule/today/plan`, {
     method: 'POST',
-    body: JSON.stringify({ blockDate, blocks }),
+    body: JSON.stringify({ blockDate, blocks, startHour, endHour }),
   })
   return handleResponse(res)
 }

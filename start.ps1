@@ -36,7 +36,7 @@ function Find-Maven {
 }
 
 function Start-Database {
-    # If the container already exists and is running (e.g. started from another worktree), reuse it
+    # If the container already exists (e.g. from another worktree), reuse it
     $state = docker inspect planner-db --format "{{.State.Status}}" 2>$null
     if ($state -eq "running") {
         $health = docker inspect planner-db --format "{{.State.Health.Status}}" 2>$null
@@ -44,8 +44,15 @@ function Start-Database {
             ok "Database already running"
             return
         }
-        info "Database container exists but not healthy yet, waiting..."
+        info "Database container running but not healthy yet, waiting..."
+    } elseif ($state) {
+        # Container exists but is stopped/exited — start it directly
+        info "Starting existing database container..."
+        & docker start planner-db | Out-Null
+        if ($LASTEXITCODE -ne 0) { fail "docker start planner-db failed" }
+        $script:StartedDatabase = $true
     } else {
+        # No container exists — create it via compose
         info "Starting database..."
         & docker compose -p $ComposeProjectName -f $ComposeFile up -d
         if ($LASTEXITCODE -ne 0) { fail "docker compose up failed" }

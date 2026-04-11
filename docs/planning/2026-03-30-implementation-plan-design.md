@@ -143,16 +143,3 @@ Stand up the dev environment with auth. No business logic.
 - [ ] UI polish pass: consistent animations/transitions between views, responsive layout adjustments
 
 **Done when:** Dashboard shows weekly stats, evening reflection highlights significant accomplishments, UX feels cohesive.
-
----
-
-## Deferred Work
-
-### End Week and End Month Reflection Phases
-The ritual system (Slice 7) added Start Month, Start Week, End Day (reworked with task triage), End Week, and End Month. The End Week and End Month pages currently include placeholder stubs for their reflection phases — they pass through with a "Continue" button but don't capture any weekly/monthly-specific reflection content.
-
-**What needs to be built:**
-- **End Week reflection**: weekly wins summary, what went well / what was hard, review of tasks completed vs deferred vs cancelled that week
-- **End Month reflection**: everything in End Week, plus project health check ("Is this project still important to you?" per active project), bigger-picture reflection
-- Both should show aggregated stats for the period (tasks completed, focus time, energy/mood trends)
-- The `daily_reflection` table already supports `reflection_type = 'WEEKLY' | 'MONTHLY'` — the backend is ready, just needs frontend UIs

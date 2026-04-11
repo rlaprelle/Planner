@@ -28,7 +28,11 @@ public class UserPreferencesService {
             if (request.displayName().isBlank()) {
                 throw new PreferencesValidationException("Preferred display name must not be blank");
             }
-            user.setDisplayName(request.displayName().trim());
+            String trimmed = request.displayName().trim();
+            if (trimmed.length() > 100) {
+                throw new PreferencesValidationException("Display name must be 100 characters or fewer");
+            }
+            user.setDisplayName(trimmed);
         }
 
         if (request.timezone() != null) {

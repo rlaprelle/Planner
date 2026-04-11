@@ -57,7 +57,7 @@ export async function handleResponse(res) {
     let message = `HTTP ${res.status}`
     try {
       const body = await res.json()
-      message = body.message || body.error || message
+      message = body.message || body.error || body.detail || message
     } catch {
       // ignore parse errors
     }

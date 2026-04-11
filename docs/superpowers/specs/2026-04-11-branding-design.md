@@ -14,7 +14,9 @@ Rebrand the app from the generic "Planner" to "Echel Planner" by Echel Software.
 
 ### Name Origin
 
-"Echel" is a phonetic representation of the founder's initials (Hutchens-LaPrelle → HL → Echel). It's a coined word — distinctive, trademarkable, and free of conflicts in the software/planning space. "Echelon" was considered but rejected due to heavy existing use (Echelon Front sells a competing planner product, plus Echelon Software Group, Echelon Fit, Echelon Corporation, etc.).
+"Echel" is a phonetic representation of the founder's initials (Hutchens-LaPrelle → HL → Echel). The hyphenated surname itself is meaningful — the founder's birth name is LaPrelle, and "Hutchens" was added upon marriage. So the full "HL" encodes both halves of a partnership, making "Echel" personally significant beyond its phonetic cleverness. This backstory is private and not intended for public branding, but it informs the decision to keep the name intact (not abbreviate or shorten it).
+
+"Echel" is a coined word — distinctive, trademarkable, and free of conflicts in the software/planning space. "Echelon" was considered but rejected due to heavy existing use (Echelon Front sells a competing planner product, plus Echelon Software Group, Echelon Fit, Echelon Corporation, etc.).
 
 ## Logo
 

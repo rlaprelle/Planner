@@ -1,0 +1,54 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-11-session-retrospective.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Create SKILL.md with Frontmatter and Overview",
+      "status": "pending",
+      "description": "**Goal:** Create the skill file with metadata, hard rules, and overview.\n\n**Files:**\n- Create: `~/.claude/skills/session-retrospective/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] Valid YAML frontmatter with name and description\n- [ ] Hard rules section with all 5 rules\n- [ ] Overview section\n\n```json:metadata\n{\"files\": [\"~/.claude/skills/session-retrospective/SKILL.md\"], \"verifyCommand\": \"head -30 ~/.claude/skills/session-retrospective/SKILL.md\", \"acceptanceCriteria\": [\"Valid frontmatter\", \"5 hard rules\", \"Overview present\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Write Phase 1 (Analyze) and Phase 2 (Solicit)",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Add analysis and solicitation phases.\n\n**Files:**\n- Modify: `~/.claude/skills/session-retrospective/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] Phase 1 produces numbered friction list with what/why/target\n- [ ] Phase 2 solicits user additions\n\n```json:metadata\n{\"files\": [\"~/.claude/skills/session-retrospective/SKILL.md\"], \"verifyCommand\": \"grep -c 'Phase' ~/.claude/skills/session-retrospective/SKILL.md\", \"acceptanceCriteria\": [\"Phase 1 with friction list format\", \"Phase 2 solicits additions\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: Write Phase 3 (Discuss)",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add discussion phase with intent/wording stages.\n\n**Files:**\n- Modify: `~/.claude/skills/session-retrospective/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] Stage A (Intent) with push-back instructions\n- [ ] Stage B (Wording) with text proposal and target file\n\n```json:metadata\n{\"files\": [\"~/.claude/skills/session-retrospective/SKILL.md\"], \"verifyCommand\": \"grep -c 'Stage' ~/.claude/skills/session-retrospective/SKILL.md\", \"acceptanceCriteria\": [\"Stage A intent discussion\", \"Stage B wording discussion\", \"Push-back instructions\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 4: Write Phase 4 (Review)",
+      "status": "pending",
+      "blockedBy": [2],
+      "description": "**Goal:** Add review phase with agent dispatch.\n\n**Files:**\n- Modify: `~/.claude/skills/session-retrospective/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] Agent checks consistency, quality, scope\n- [ ] Local-contradicts-global flagged as possible global flaw\n- [ ] No auto-resolution\n\n```json:metadata\n{\"files\": [\"~/.claude/skills/session-retrospective/SKILL.md\"], \"verifyCommand\": \"grep 'agent' ~/.claude/skills/session-retrospective/SKILL.md\", \"acceptanceCriteria\": [\"Agent dispatch instructions\", \"Three review checks\", \"No auto-resolution rule\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 5: Write Phase 5 (Write) and Phase 6 (Follow-ups)",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** Add write and follow-up phases.\n\n**Files:**\n- Modify: `~/.claude/skills/session-retrospective/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] Phase 5 writes with explicit confirmation\n- [ ] Phase 6 lists follow-up actions\n- [ ] Follow-ups are informational only\n\n```json:metadata\n{\"files\": [\"~/.claude/skills/session-retrospective/SKILL.md\"], \"verifyCommand\": \"grep -c 'Phase' ~/.claude/skills/session-retrospective/SKILL.md\", \"acceptanceCriteria\": [\"Write with confirmation\", \"Follow-up action list\", \"No enforcement on follow-ups\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 6: Write Patterns and Anti-Patterns",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Add patterns and anti-patterns with examples.\n\n**Files:**\n- Modify: `~/.claude/skills/session-retrospective/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] 8 patterns with examples where specified\n- [ ] 9 anti-patterns with examples where specified\n- [ ] 0 or 1 example per entry\n\n```json:metadata\n{\"files\": [\"~/.claude/skills/session-retrospective/SKILL.md\"], \"verifyCommand\": \"grep -c 'Bad:\\\\|Good:' ~/.claude/skills/session-retrospective/SKILL.md\", \"acceptanceCriteria\": [\"All patterns from spec\", \"All anti-patterns from spec\", \"Examples in Bad/Good format\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 7: Final Review and Verification",
+      "status": "pending",
+      "blockedBy": [5],
+      "description": "**Goal:** Verify complete skill file is well-formed and discoverable.\n\n**Files:**\n- Verify: `~/.claude/skills/session-retrospective/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] Under 500 lines\n- [ ] All 6 phases present\n- [ ] No placeholder text\n- [ ] Discoverable in skills list\n\n```json:metadata\n{\"files\": [\"~/.claude/skills/session-retrospective/SKILL.md\"], \"verifyCommand\": \"wc -l ~/.claude/skills/session-retrospective/SKILL.md\", \"acceptanceCriteria\": [\"Under 500 lines\", \"All phases present\", \"No placeholders\", \"Discoverable\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-11T12:00:00Z"
+}

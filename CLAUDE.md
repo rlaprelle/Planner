@@ -29,6 +29,7 @@ cd e2e && npx playwright test   # E2E regression suite (no backend required — 
 
 - Backend tests are integration tests that hit a real database — no mocks
 - E2E tests mock all `/api/*` calls via `page.route()` — just needs Vite running (auto-started by Playwright)
+- **All tests must pass before merging to dev.** A Claude Code hook enforces this — `git merge` triggers the full backend + E2E suite automatically. GitHub Actions CI also runs on every push to dev and every PR to main.
 
 ## Environment
 

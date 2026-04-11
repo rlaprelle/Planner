@@ -131,7 +131,7 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 ## Frontend Workflow
 
-- When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout. However, if the main worktree already has a dev server running on 5173, use that for visual checks — don't lose track of which port has the current code.
+- When starting a worktree for frontend work, immediately start a dev server from the worktree (e.g., on a different port like 5174) so changes can be previewed throughout. Before doing visual checks, confirm which port has the current worktree's code — don't assume.
 - For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
 - After merging dev into a feature branch, do a visual spot-check — merges can introduce UI regressions that aren't caught by tests (e.g., new features from dev appearing in contexts where they don't belong).
 

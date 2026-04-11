@@ -4,9 +4,12 @@ $ErrorActionPreference = "Stop"
 
 # ── constants ────────────────────────────────────────────────────────────────
 $ScriptDir              = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$RepoRoot               = (& git -C $ScriptDir rev-parse --show-toplevel 2>$null) -replace '/', '\'
+if (-not $RepoRoot) { $RepoRoot = $ScriptDir }
 $BackendLog             = "$ScriptDir\backend.log"
 $BackendErrorLog        = "$ScriptDir\backend-error.log"
-$ComposeFile            = "$ScriptDir\docker-compose.yml"
+$ComposeFile            = "$RepoRoot\docker-compose.yml"
+$ComposeProjectName     = "planner"
 $DatabaseTimeoutSeconds = 30
 $BackendTimeoutSeconds  = 60
 $HealthPollSeconds      = 2
@@ -34,7 +37,7 @@ function Find-Maven {
 
 function Start-Database {
     info "Starting database..."
-    & docker compose -f $ComposeFile up -d
+    & docker compose -p $ComposeProjectName -f $ComposeFile up -d
     if ($LASTEXITCODE -ne 0) { fail "docker compose up failed" }
 
     info "Waiting for PostgreSQL..."
@@ -116,7 +119,7 @@ function Stop-All {
     }
     $prev = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    docker compose -f $ComposeFile stop 2>&1 | Out-Null
+    docker compose -p $ComposeProjectName -f $ComposeFile stop 2>&1 | Out-Null
     $ErrorActionPreference = $prev
     ok "Database stopped"
 }

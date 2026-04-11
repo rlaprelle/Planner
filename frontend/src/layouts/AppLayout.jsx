@@ -168,17 +168,17 @@ function RitualGroup({ group }) {
         {group.label}
       </button>
       {open && (
-        <div className="space-y-0.5 ml-2">
+        <div className="space-y-0.5 ml-7">
           {group.items.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
                 [
-                  'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
+                  'flex items-center gap-2 px-3 py-1 rounded-md text-xs font-normal transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
                   isActive
-                    ? 'bg-primary-100 text-primary-800'
-                    : 'text-primary-400 hover:bg-primary-50 hover:text-primary-700',
+                    ? 'bg-primary-50 text-primary-700 font-medium'
+                    : 'text-ink-secondary hover:bg-surface-soft hover:text-ink-heading',
                 ].join(' ')
               }
             >

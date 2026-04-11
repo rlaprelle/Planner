@@ -38,9 +38,12 @@ test.describe('Inbox', () => {
     await expect(page.getByText('Buy more coffee beans')).toBeVisible()
     await expect(page.getByText('Schedule dentist appointment')).toBeVisible()
 
-    // Each item should have Convert, Defer, and Dismiss action buttons
-    const convertButtons = page.getByRole('button', { name: 'Convert' })
-    await expect(convertButtons).toHaveCount(2)
+    // Each item should have Task, Event, Defer, and Dismiss action buttons
+    const taskButtons = page.getByRole('button', { name: 'Task' })
+    await expect(taskButtons).toHaveCount(2)
+
+    const eventButtons = page.getByRole('button', { name: 'Event' })
+    await expect(eventButtons).toHaveCount(2)
 
     const deferButtons = page.getByRole('button', { name: 'Defer' })
     await expect(deferButtons).toHaveCount(2)
@@ -54,6 +57,6 @@ test.describe('Inbox', () => {
     await page.goto('/inbox')
 
     await expect(page.getByRole('heading', { name: 'Inbox' })).toBeVisible()
-    await expect(page.getByText('Nothing to process.')).toBeVisible()
+    await expect(page.getByText('All clear. Nothing waiting for you.')).toBeVisible()
   })
 })

@@ -1,5 +1,4 @@
 import { test, expect } from '../fixtures/auth'
-import { TASKS } from '../fixtures/data'
 
 const PROJECTS = [
   {
@@ -24,64 +23,86 @@ const PROJECTS = [
   },
 ]
 
-async function mockProjects(page: import('@playwright/test').Page, projects = PROJECTS) {
-  await page.route('**/api/v1/projects', route =>
-    route.fulfill({ json: projects })
-  )
-}
+const TASKS = [
+  {
+    id: 'task-1',
+    projectId: 'proj-1',
+    title: 'Write tests',
+    parentTaskId: null,
+    status: 'OPEN',
+    visibleFrom: null,
+    archivedAt: null,
+  },
+  {
+    id: 'task-2',
+    projectId: 'proj-1',
+    title: 'Review PR',
+    parentTaskId: null,
+    status: 'OPEN',
+    visibleFrom: null,
+    archivedAt: null,
+  },
+  {
+    id: 'task-3',
+    projectId: 'proj-1',
+    title: 'Update docs',
+    parentTaskId: null,
+    status: 'OPEN',
+    visibleFrom: null,
+    archivedAt: null,
+  },
+]
 
-async function mockProjectDetail(
-  page: import('@playwright/test').Page,
-  project = PROJECTS[0],
-  tasks: readonly unknown[] = TASKS
-) {
-  await page.route(`**/api/v1/projects/${project.id}`, route =>
-    route.fulfill({ json: project })
+async function mockProjectsPage(page: import('@playwright/test').Page) {
+  await page.route('**/api/v1/projects', route =>
+    route.fulfill({ json: PROJECTS })
   )
-  await page.route(`**/api/v1/projects/${project.id}/tasks`, route =>
-    route.fulfill({ json: tasks })
+  // Card UI fetches tasks inline for each project
+  await page.route('**/api/v1/projects/proj-1/tasks', route =>
+    route.fulfill({ json: TASKS })
+  )
+  await page.route('**/api/v1/projects/proj-2/tasks', route =>
+    route.fulfill({ json: [] })
   )
 }
 
 test.describe('Projects list (/projects)', () => {
   test('shows active projects', async ({ page }) => {
-    await mockProjects(page)
+    await mockProjectsPage(page)
     await page.goto('/projects')
 
     await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Work' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Personal' })).toBeVisible()
+    await expect(page.getByText('Work', { exact: true })).toBeVisible()
+    await expect(page.getByText('Personal', { exact: true })).toBeVisible()
     await expect(page.getByText('Day-to-day work tasks')).toBeVisible()
   })
 
-  test('can navigate to project detail by clicking a project', async ({ page }) => {
-    await mockProjects(page)
-    await mockProjectDetail(page)
+  test('shows task previews on project cards', async ({ page }) => {
+    await mockProjectsPage(page)
     await page.goto('/projects')
 
-    await page.getByRole('link', { name: 'Work' }).click()
-
-    await expect(page).toHaveURL(/\/projects\/proj-1/)
-    await expect(page.getByRole('heading', { name: 'Work' })).toBeVisible()
-  })
-})
-
-test.describe('Project detail (/projects/:id)', () => {
-  test('shows project name in header', async ({ page }) => {
-    await mockProjectDetail(page)
-    await page.goto('/projects/proj-1')
-
-    await expect(page.getByRole('heading', { name: 'Work' })).toBeVisible()
-    await expect(page.getByRole('link', { name: '← Projects' })).toBeVisible()
-  })
-
-  test("shows project's task list", async ({ page }) => {
-    await mockProjectDetail(page)
-    await page.goto('/projects/proj-1')
-
-    // All three tasks from the fixture should appear
+    // Work project card shows its active tasks
     await expect(page.getByText('Write tests')).toBeVisible()
     await expect(page.getByText('Review PR')).toBeVisible()
     await expect(page.getByText('Update docs')).toBeVisible()
+
+    // Personal project card shows empty state
+    await expect(page.getByText('No active tasks')).toBeVisible()
+  })
+
+  test('shows action buttons on project cards', async ({ page }) => {
+    await mockProjectsPage(page)
+    await page.goto('/projects')
+
+    await expect(page.getByRole('button', { name: 'Add task to Work' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Edit Work' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Archive Work' })).toBeVisible()
+  })
+
+  test('shows New project button', async ({ page }) => {
+    await mockProjectsPage(page)
+    await page.goto('/projects')
+
+    await expect(page.getByRole('button', { name: 'New project' })).toBeVisible()
   })
 })

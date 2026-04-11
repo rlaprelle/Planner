@@ -109,10 +109,20 @@ test.describe('Register page', () => {
   })
 
   test('successful registration redirects to dashboard', async ({ page }) => {
-    await mockRefreshUnauthorized(page)
+    // First refresh call (page load): unauthenticated
+    // Subsequent calls (after login): return valid session
+    let refreshCallCount = 0
+    await page.route('**/api/v1/auth/refresh', route => {
+      refreshCallCount++
+      if (refreshCallCount === 1) {
+        route.fulfill({ status: 401, json: { message: 'Unauthorized' } })
+      } else {
+        route.fulfill({ json: AUTH_RESPONSE })
+      }
+    })
 
     await page.route('**/api/v1/auth/register', route =>
-      route.fulfill({ status: 201, json: {} })
+      route.fulfill({ status: 201, json: AUTH_RESPONSE })
     )
 
     // After registration, the page auto-logs in via /auth/login then navigates to /

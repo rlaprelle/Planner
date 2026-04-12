@@ -4,7 +4,7 @@
   "editProject": "Edit project",
   "name": "Name",
   "namePlaceholder": "e.g. Website redesign",
-  "whatIsThisAbout": "What\u2019s this project about?",
+  "whatIsThisAbout": "What's this project about?",
   "color": "Color",
   "icon": "Icon",
   "iconPlaceholder": "e.g. \ud83d\ude80 or any text",
@@ -72,7 +72,7 @@
   "failedToComplete": "Failed to complete: {{message}}",
   "somethingWentWrong": "Something went wrong: {{message}}",
   "failedToExtend": "Failed to extend: {{message}}",
-  "timesUp": "Time\u2019s up. Good work!",
+  "timesUp": "Time's up. Good work!",
   "ofTotalMinutes": "of {{total}} min",
   "overtime": "+{{time}}"
 }

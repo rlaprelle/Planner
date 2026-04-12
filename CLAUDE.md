@@ -115,6 +115,7 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 - `docs/ARCHITECTURE.md` — Data model, API endpoints, tech stack
 - `docs/IMPLEMENTATION_PLAN.md` — Design decisions and rationale behind key choices
 - `docs/planning/user_design/DEFERRED_WORK.md` — Roadmap of deferred features and future work
+- `docs/INTERNATIONALIZATION.md` — i18n approach, namespace assignments, phased implementation plan
 - `docs/planning/user_design/` — User design docs (use cases, workflows, wireframes)
 
 ## Conventions
@@ -122,6 +123,10 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 - API prefix: `/api/v1/`
 - Database migrations: Flyway (SQL files)
 - ADHD-friendly UX tone: "Done for now" not "Skip", "Time's up. Good work!" not "Timer expired"
+
+## Internationalization
+
+All user-facing strings must use `react-i18next`. Import `useTranslation` with the appropriate namespace, add strings to the corresponding JSON file in `frontend/src/locales/en/`, and use `t()` calls — never hardcode English text in JSX. See `docs/INTERNATIONALIZATION.md` for namespace assignments and conventions.
 
 ## Design Principles
 
@@ -135,7 +140,9 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 - **Dev server management:** Use `node dev.js start` **from the project root** (not `frontend/`) to start a frontend dev server. It assigns a deterministic port per worktree (5200–5299 range; 5173 for the main checkout), detects if one is already running, and writes a `.dev-port` file. Use `node dev.js status` to see all running servers, and `node dev.js stop` to shut down. The `.dev-port` file is validated against live state on every operation, so stale files from crashes are cleaned up automatically. Always use this script instead of `npm run dev` directly — it prevents port collisions between worktrees.
 - For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
-- After merging dev into a feature branch, do a visual spot-check — merges can introduce UI regressions that aren't caught by tests (e.g., new features from dev appearing in contexts where they don't belong).
+- After merging dev into a feature branch, review the merge:
+  - Do a visual spot-check for UI regressions not caught by tests
+  - Review auto-resolved files (run `git diff --name-only` on the merge commit) for silent reversions of your branch's work, especially when your branch made broad changes across many files
 
 ## Frontend Design Principles
 

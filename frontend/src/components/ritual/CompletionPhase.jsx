@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { getStreak } from '@/api/reflection'
 
 export function CompletionPhase({ level }) {
   const navigate = useNavigate()
+  const { t } = useTranslation('ritual')
   const [streak, setStreak] = useState(null)
 
   useEffect(() => {
@@ -11,16 +13,16 @@ export function CompletionPhase({ level }) {
   }, [])
 
   const streakMessage = streak === 1
-    ? 'Day 1 — you showed up.'
+    ? t('streakDay1')
     : streak > 1
-    ? `${streak} days in a row. Keep it going.`
-    : 'Good work today.'
+    ? t('streakKeepGoing', { count: streak })
+    : t('goodWorkToday')
 
   const wrapMessage = {
-    day: "That's a wrap for today.",
-    week: "That's a wrap for the week.",
-    month: "That's a wrap for the month.",
-  }[level] || "That's a wrap."
+    day: t('wrapDay'),
+    week: t('wrapWeek'),
+    month: t('wrapMonth'),
+  }[level] || t('wrapGeneric')
 
   return (
     <div className="text-center py-8">
@@ -31,7 +33,7 @@ export function CompletionPhase({ level }) {
         onClick={() => navigate('/')}
         className="mt-8 px-5 py-2 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors"
       >
-        Done
+        {t('done')}
       </button>
     </div>
   )

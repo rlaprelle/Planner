@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useTranslation } from 'react-i18next'
 import { updateTask, archiveTask, updateTaskStatus } from '@/api/tasks'
 import {
   STATUS_OPTIONS,
@@ -43,16 +44,17 @@ function SelectField({ label, value, onChange, options, emptyLabel }) {
 // ─── Archive Confirm Modal ────────────────────────────────────────────────────
 
 function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPending }) {
+  const { t } = useTranslation('tasks')
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-50" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
           <Dialog.Title className="text-base font-semibold text-ink-heading mb-2">
-            Archive this task?
+            {t('archiveThisTask')}
           </Dialog.Title>
           <Dialog.Description className="text-sm text-ink-secondary mb-5">
-            <strong>{taskTitle}</strong> will be archived and hidden from your task list.
+            {t('archiveTaskConfirm', { title: taskTitle })}
           </Dialog.Description>
           <div className="flex justify-end gap-3">
             <Dialog.Close asChild>
@@ -60,7 +62,7 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
                 type="button"
                 className="px-4 py-2 text-sm font-medium text-ink-body bg-surface-raised border border-edge rounded-md hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
               >
-                Cancel
+                {t('common:cancel')}
               </button>
             </Dialog.Close>
             <button
@@ -69,7 +71,7 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
               disabled={isPending}
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
             >
-              {isPending ? 'Archiving…' : 'Archive'}
+              {isPending ? t('common:archiving') : t('common:archive')}
             </button>
           </div>
         </Dialog.Content>
@@ -81,6 +83,7 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
 // ─── Child task row ──────────────────────────────────────────────────────────
 
 function ChildTaskItem({ child, projectId }) {
+  const { t } = useTranslation('tasks')
   const isDone = child.status === 'COMPLETED'
   const queryClient = useQueryClient()
 
@@ -107,7 +110,7 @@ function ChildTaskItem({ child, projectId }) {
           isDone ? 'bg-success border-success text-white' : 'border-primary-300 hover:border-primary-400',
           statusMutation.isPending ? 'opacity-50' : 'cursor-pointer',
         ].join(' ')}
-        aria-label={isDone ? 'Mark as Open' : 'Mark as Completed'}
+        aria-label={isDone ? t('common:markAsOpen') : t('common:markAsCompleted')}
       >
         {isDone && (
           <svg width="8" height="8" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -125,6 +128,7 @@ function ChildTaskItem({ child, projectId }) {
 // ─── Task Detail Modal ───────────────────────────────────────────────────────
 
 export function TaskDetailModal({ open, onOpenChange, task, projectName, projectId }) {
+  const { t } = useTranslation('tasks')
   const queryClient = useQueryClient()
   const [archiveOpen, setArchiveOpen] = useState(false)
   const [addChildOpen, setAddChildOpen] = useState(false)
@@ -216,7 +220,7 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
                   onChange={(e) => setTitle(e.target.value)}
                   onBlur={handleTitleBlur}
                   className="w-full text-base font-semibold text-ink-heading bg-transparent border-0 border-b border-transparent hover:border-edge focus:border-edge-focus focus:outline-none px-0 py-0.5 transition-colors"
-                  aria-label="Task title"
+                  aria-label={t('taskTitle')}
                 />
                 <p className="text-xs text-ink-muted mt-1">{projectName}</p>
               </div>
@@ -224,7 +228,7 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
                 <button
                   type="button"
                   className="flex-shrink-0 p-1 text-ink-muted hover:text-ink-secondary rounded focus:outline-none focus:ring-2 focus:ring-edge-focus transition-colors mt-0.5"
-                  aria-label="Close"
+                  aria-label={t('close')}
                 >
                   <XIcon size={16} />
                 </button>
@@ -233,13 +237,13 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
 
             {/* Fields */}
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
-              <SelectField label="Status" value={status} onChange={handleStatusChange} options={STATUS_OPTIONS} />
-              <SelectField label="Priority" value={priority} onChange={handlePriorityChange} options={PRIORITY_OPTIONS} />
-              <SelectField label="Points estimate" value={pointsEstimate} onChange={handlePointsChange} options={POINTS_OPTIONS} emptyLabel="— none —" />
-              <SelectField label="Energy level" value={energyLevel} onChange={handleEnergyChange} options={ENERGY_OPTIONS} emptyLabel="— none —" />
+              <SelectField label={t('status')} value={status} onChange={handleStatusChange} options={STATUS_OPTIONS} />
+              <SelectField label={t('priority')} value={priority} onChange={handlePriorityChange} options={PRIORITY_OPTIONS} />
+              <SelectField label={t('pointsEstimate')} value={pointsEstimate} onChange={handlePointsChange} options={POINTS_OPTIONS} emptyLabel={t('common:noneSelected')} />
+              <SelectField label={t('energyLevel')} value={energyLevel} onChange={handleEnergyChange} options={ENERGY_OPTIONS} emptyLabel={t('common:noneSelected')} />
 
               <div>
-                <FieldLabel>Due date</FieldLabel>
+                <FieldLabel>{t('common:dueDate')}</FieldLabel>
                 <input
                   type="date"
                   value={dueDate}
@@ -250,12 +254,12 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
               </div>
 
               <div>
-                <FieldLabel>Description</FieldLabel>
+                <FieldLabel>{t('common:description')}</FieldLabel>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   onBlur={handleDescriptionBlur}
-                  placeholder="Add some details…"
+                  placeholder={t('addSomeDetails')}
                   rows={4}
                   className="w-full px-2 py-1.5 text-sm border border-edge-subtle rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors resize-none"
                 />
@@ -264,18 +268,18 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
               {/* Child tasks */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <FieldLabel>Subtasks</FieldLabel>
+                  <FieldLabel>{t('subtasks')}</FieldLabel>
                   <button
                     type="button"
                     onClick={() => setAddChildOpen(true)}
                     className="inline-flex items-center gap-1 text-xs text-primary-500 hover:text-primary-700 focus:outline-none focus:underline transition-colors"
                   >
                     <PlusIcon size={12} />
-                    Add subtask
+                    {t('addSubtask')}
                   </button>
                 </div>
                 {children.length === 0 ? (
-                  <p className="text-xs text-ink-muted italic">No subtasks yet.</p>
+                  <p className="text-xs text-ink-muted italic">{t('noSubtasksYet')}</p>
                 ) : (
                   <div className="space-y-0.5">
                     {children.map((child) => (
@@ -287,7 +291,9 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
 
               {updateMutation.isError && (
                 <p className="text-xs text-error">
-                  Save failed: {updateMutation.error?.message || 'Please try again.'}
+                  {updateMutation.error?.message
+                    ? t('saveFailed', { message: updateMutation.error.message })
+                    : t('saveFailedGeneric')}
                 </p>
               )}
             </div>
@@ -300,7 +306,7 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
                 className="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-error focus:outline-none focus:ring-2 focus:ring-error focus:ring-offset-1 rounded transition-colors"
               >
                 <ArchiveIcon size={14} />
-                Archive task
+                {t('archiveTask')}
               </button>
             </div>
           </Dialog.Content>

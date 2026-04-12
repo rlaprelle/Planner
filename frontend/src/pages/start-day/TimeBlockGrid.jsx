@@ -1,13 +1,7 @@
 import { useDroppable } from '@dnd-kit/core'
+import { useTranslation } from 'react-i18next'
 import { TimeBlock } from './TimeBlock'
 import { EventBlock } from './EventBlock'
-
-function formatHour(h) {
-  if (h === 0 || h === 24) return '12 AM'
-  if (h === 12) return '12 PM'
-  if (h < 12) return `${h} AM`
-  return `${h - 12} PM`
-}
 
 /**
  * The horizontal planner grid.
@@ -28,6 +22,10 @@ export function TimeBlockGrid({
   dayStartMinutes,
   dayEndMinutes,
 }) {
+  const { i18n } = useTranslation('timeBlocking')
+  const formatHour = (h) =>
+    new Intl.DateTimeFormat(i18n.language, { hour: 'numeric' }).format(new Date(2000, 0, 1, h))
+
   const { setNodeRef, isOver } = useDroppable({ id: 'time-block-grid' })
 
   const dayDuration = dayEndMinutes - dayStartMinutes

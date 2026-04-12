@@ -1,8 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { getDeferredItems } from '@/api/deferred'
 import { DeferredItemActions } from '@/components/deferred/DeferredItemActions'
 
 export function InboxPage() {
+  const { t } = useTranslation('deferred')
   const queryClient = useQueryClient()
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['deferred'],
@@ -14,15 +16,15 @@ export function InboxPage() {
   }
 
   if (isLoading) {
-    return <div className="p-8 text-ink-muted">Loading…</div>
+    return <div className="p-8 text-ink-muted">{t('common:loading')}</div>
   }
 
   return (
     <div className="p-8 max-w-2xl">
-      <h1 className="text-2xl font-semibold text-ink-heading mb-6">Inbox</h1>
+      <h1 className="text-2xl font-semibold text-ink-heading mb-6">{t('inbox')}</h1>
 
       {items.length === 0 ? (
-        <p className="text-ink-muted">All clear. Nothing waiting for you.</p>
+        <p className="text-ink-muted">{t('allClear')}</p>
       ) : (
         <ul className="space-y-4">
           {items.map((item) => (

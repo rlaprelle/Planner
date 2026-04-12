@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { format } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 
 import { getSuggestedTasks, getScheduleToday, savePlan } from '@/api/schedule'
 import { getEventsForDate } from '@/api/events'
@@ -16,6 +17,7 @@ const TODAY = format(new Date(), 'yyyy-MM-dd')
 export function StartDayPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { t, i18n } = useTranslation('timeBlocking')
 
   const [dayStartHour, setDayStartHour] = useState(8)
   const [dayEndHour, setDayEndHour] = useState(17)
@@ -152,7 +154,7 @@ export function StartDayPage() {
     setBlocks([...gridBlocks, ...newBlocks])
     setSelectedTaskIds(new Set())
     if (skipped > 0) {
-      setAddWarning(`${skipped} task${skipped > 1 ? 's' : ''} didn't fit — you can resize blocks to make room`)
+      setAddWarning(t('tasksDontFit', { count: skipped }))
     }
   }
 
@@ -181,7 +183,7 @@ export function StartDayPage() {
       ? Math.min(...gridBlocks.map((b) => b.startMinutes))
       : Infinity
     if (newHour * 60 > earliestBlock) {
-      setAddWarning(`You have blocks before ${formatDropdownHour(newHour)}`)
+      setAddWarning(t('blocksBeforeHour', { hour: formatDropdownHour(newHour) }))
       return
     }
     setAddWarning(null)
@@ -193,19 +195,15 @@ export function StartDayPage() {
       ? Math.max(...gridBlocks.map((b) => b.endMinutes))
       : -Infinity
     if (newHour * 60 < latestBlock) {
-      setAddWarning(`You have blocks after ${formatDropdownHour(newHour)}`)
+      setAddWarning(t('blocksAfterHour', { hour: formatDropdownHour(newHour) }))
       return
     }
     setAddWarning(null)
     setDayEndHour(newHour)
   }
 
-  function formatDropdownHour(h) {
-    if (h === 0 || h === 24) return '12 AM'
-    if (h === 12) return '12 PM'
-    if (h < 12) return `${h} AM`
-    return `${h - 12} PM`
-  }
+  const formatDropdownHour = (h) =>
+    new Intl.DateTimeFormat(i18n.language, { hour: 'numeric' }).format(new Date(2000, 0, 1, h))
 
   // --- Save plan ---
   const saveMutation = useMutation({
@@ -225,7 +223,7 @@ export function StartDayPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['schedule'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      navigate('/', { state: { successMessage: 'Plan saved. Good luck today!' } })
+      navigate('/', { state: { successMessage: t('planSaved') } })
     },
   })
 
@@ -303,7 +301,7 @@ export function StartDayPage() {
   const selectedCount = [...selectedTaskIds].filter((id) => !scheduledTaskIds.has(id)).length
 
   if (loadingTasks) {
-    return <div className="p-8 text-ink-muted text-sm">Loading your tasks…</div>
+    return <div className="p-8 text-ink-muted text-sm">{t('loadingTasks')}</div>
   }
 
   return (
@@ -311,15 +309,15 @@ export function StartDayPage() {
       <div className="p-6 max-w-7xl mx-auto space-y-4">
 
         <h1 className="text-2xl font-semibold text-ink-heading">
-          Start Day — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          Start Day — {new Date().toLocaleDateString(i18n.language, { weekday: 'long', month: 'long', day: 'numeric' })}
         </h1>
 
         {/* Row 1: All tasks by project */}
         <section className="bg-surface-raised border border-edge rounded-lg p-4 shadow-card">
           <div className="text-xs font-semibold text-primary-700 uppercase tracking-wider mb-3">
-            All Tasks
+            {t('allTasks')}
             <span className="ml-2 font-normal text-ink-muted normal-case tracking-normal">
-              — drag or check to schedule
+              {t('dragToSchedule')}
             </span>
           </div>
           <TaskBrowserRow
@@ -332,14 +330,14 @@ export function StartDayPage() {
           />
           <div className="mt-3 flex items-center gap-3">
             <span className="text-xs text-ink-muted">
-              {selectedCount > 0 ? `${selectedCount} selected` : 'None selected'}
+              {selectedCount > 0 ? t('selectedCount', { count: selectedCount }) : t('noneSelected')}
             </span>
             <button
               onClick={handleAddToCalendar}
               disabled={selectedCount === 0}
               className="px-3 py-1.5 text-xs rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-40 transition-colors font-medium"
             >
-              + Add to calendar
+              {t('addToCalendar')}
             </button>
             {addWarning && (
               <span className="text-xs text-deadline-week-text">{addWarning}</span>
@@ -351,28 +349,28 @@ export function StartDayPage() {
         <div className="flex gap-4">
           <section className="flex-1 min-w-0 bg-surface-raised border border-deadline-today-bg rounded-lg p-4 shadow-card">
             <div className="text-xs font-semibold text-deadline-today-text uppercase tracking-wider mb-3">
-              Due Today
+              {t('dueToday')}
             </div>
             <TaskBrowserRow
               tasks={dueTodayTasks}
               selectedTaskIds={selectedTaskIds}
               scheduledTaskIds={scheduledTaskIds}
               onToggle={toggleTask}
-              emptyMessage="Nothing due today"
+              emptyMessage={t('nothingDueToday')}
               section="due-today"
             />
           </section>
 
           <section className="flex-1 min-w-0 bg-surface-raised border border-deadline-week-bg rounded-lg p-4 shadow-card">
             <div className="text-xs font-semibold text-deadline-week-text uppercase tracking-wider mb-3">
-              Due This Week
+              {t('dueThisWeek')}
             </div>
             <TaskBrowserRow
               tasks={dueThisWeekTasks}
               selectedTaskIds={selectedTaskIds}
               scheduledTaskIds={scheduledTaskIds}
               onToggle={toggleTask}
-              emptyMessage="Nothing due this week"
+              emptyMessage={t('nothingDueThisWeek')}
               section="due-week"
             />
           </section>
@@ -382,13 +380,13 @@ export function StartDayPage() {
         <section className="bg-surface-raised border border-edge rounded-lg p-4 shadow-card">
           <div className="flex items-center justify-between mb-3">
             <div className="text-xs font-semibold text-primary-700 uppercase tracking-wider">
-              Today's Plan
+              {t('todaysPlan')}
               <span className="ml-2 font-normal text-ink-muted normal-case tracking-normal">
-                — drag blocks to move · drag right edge to resize
+                {t('dragInstructions')}
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-ink-muted">
-              <span>Hours:</span>
+              <span>{t('hours')}</span>
               <select
                 value={dayStartHour}
                 onChange={(e) => handleStartHourChange(Number(e.target.value))}
@@ -398,7 +396,7 @@ export function StartDayPage() {
                   <option key={h} value={h}>{formatDropdownHour(h)}</option>
                 ))}
               </select>
-              <span>–</span>
+              <span>{t('hourSeparator')}</span>
               <select
                 value={dayEndHour}
                 onChange={(e) => handleEndHourChange(Number(e.target.value))}
@@ -426,7 +424,7 @@ export function StartDayPage() {
 
           {saveMutation.isError && (
             <p className="mt-2 text-xs text-error">
-              {saveMutation.error?.message ?? 'Something went wrong. Please try again.'}
+              {saveMutation.error?.message ?? t('common:genericError')}
             </p>
           )}
 
@@ -436,7 +434,7 @@ export function StartDayPage() {
               disabled={gridBlocks.length === 0 || saveMutation.isPending}
               className="px-4 py-2 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-40 transition-colors font-medium"
             >
-              {saveMutation.isPending ? 'Saving…' : 'Confirm plan'}
+              {saveMutation.isPending ? t('common:saving') : t('confirmPlan')}
             </button>
           </div>
         </section>

@@ -1,25 +1,28 @@
 import { NavLink, Outlet, Navigate } from 'react-router-dom'
-
-const NAV_ITEMS = [
-  { to: '/admin/users', label: 'Users' },
-  { to: '/admin/projects', label: 'Projects' },
-  { to: '/admin/tasks', label: 'Tasks' },
-  { to: '/admin/deferred', label: 'Deferred Items' },
-  { to: '/admin/reflections', label: 'Reflections' },
-  { to: '/admin/time-blocks', label: 'Time Blocks' },
-  { to: '/admin/events', label: 'Events' },
-]
+import { useTranslation } from 'react-i18next'
 
 export default function AdminPage() {
+  const { t } = useTranslation('admin')
+
+  const navItems = [
+    { to: '/admin/users', label: t('users') },
+    { to: '/admin/projects', label: t('projects') },
+    { to: '/admin/tasks', label: t('tasks') },
+    { to: '/admin/deferred', label: t('deferredItems') },
+    { to: '/admin/reflections', label: t('reflections') },
+    { to: '/admin/time-blocks', label: t('timeBlocks') },
+    { to: '/admin/events', label: t('events') },
+  ]
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
       <nav className="w-56 bg-gray-900 text-gray-300 flex flex-col shrink-0">
         <div className="px-4 py-4 text-white font-bold text-lg border-b border-gray-700">
-          Admin
+          {t('admin')}
         </div>
         <div className="flex-1 py-2">
-          {NAV_ITEMS.map(item => (
+          {navItems.map(item => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -32,7 +35,7 @@ export default function AdminPage() {
           ))}
         </div>
         <div className="px-4 py-3 border-t border-gray-700">
-          <a href="/" className="text-xs text-gray-500 hover:text-gray-300">&larr; Back to app</a>
+          <a href="/" className="text-xs text-gray-500 hover:text-gray-300">{t('backToApp')}</a>
         </div>
       </nav>
 

@@ -1,7 +1,13 @@
-import { DEADLINE_GROUP_LABELS } from './constants'
+import { useTranslation } from 'react-i18next'
 import { TaskRow } from './TaskRow'
 
 const DEADLINE_GROUP_ORDER = ['TODAY', 'THIS_WEEK', 'NO_DEADLINE']
+
+const DEADLINE_GROUP_KEYS = {
+  TODAY: 'deadlineToday',
+  THIS_WEEK: 'deadlineThisWeek',
+  NO_DEADLINE: 'deadlineNone',
+}
 
 function groupTopLevelTasks(tasks) {
   const groups = { TODAY: [], THIS_WEEK: [], NO_DEADLINE: [] }
@@ -17,6 +23,7 @@ function groupTopLevelTasks(tasks) {
 }
 
 export function TaskList({ tasks, projectId, selectedTask, onSelectTask }) {
+  const { t } = useTranslation('tasks')
   // Only top-level tasks — children are nested inside each task object
   const topLevel = tasks.filter((t) => !t.parentTaskId)
   const selectedTaskId = selectedTask?.id ?? null
@@ -24,7 +31,7 @@ export function TaskList({ tasks, projectId, selectedTask, onSelectTask }) {
   if (topLevel.length === 0) {
     return (
       <div className="py-16 text-center">
-        <p className="text-ink-muted text-sm">No tasks yet.</p>
+        <p className="text-ink-muted text-sm">{t('noTasksYet')}</p>
       </div>
     )
   }
@@ -40,7 +47,7 @@ export function TaskList({ tasks, projectId, selectedTask, onSelectTask }) {
         return (
           <section key={groupKey}>
             <h3 className="text-xs font-semibold text-ink-muted uppercase tracking-wider px-3 mb-2">
-              {DEADLINE_GROUP_LABELS[groupKey]}
+              {t(DEADLINE_GROUP_KEYS[groupKey])}
             </h3>
             <div className="space-y-0.5">
               {groupTasks.map((task) => (

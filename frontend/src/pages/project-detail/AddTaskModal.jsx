@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { createTask } from '@/api/tasks'
 import { PRIORITY_OPTIONS } from './constants'
 import { PlusIcon } from './icons'
 
 export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = null, parentTitle = null }) {
+  const { t } = useTranslation('tasks')
   const [title, setTitle] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [priority, setPriority] = useState('')
@@ -40,7 +42,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
     e.preventDefault()
     if (mutation.isPending) return
     if (!title.trim()) {
-      setTitleError('Title is required.')
+      setTitleError(t('titleRequired'))
       return
     }
     setTitleError('')
@@ -53,7 +55,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
     mutation.mutate(data)
   }
 
-  const modalTitle = parentTitle ? `Add subtask to "${parentTitle}"` : 'Add task'
+  const modalTitle = parentTitle ? t('addSubtaskTo', { title: parentTitle }) : t('addTask')
 
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
@@ -68,14 +70,14 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
             {/* Title */}
             <div>
               <label htmlFor="task-title" className="block text-sm font-medium text-ink-body mb-1">
-                Title <span className="text-error">*</span>
+                {t('title')} <span className="text-error">*</span>
               </label>
               <input
                 id="task-title"
                 type="text"
                 value={title}
                 onChange={(e) => { setTitle(e.target.value); setTitleError('') }}
-                placeholder="What needs to be done?"
+                placeholder={t('whatNeedsToBeDone')}
                 className={[
                   'w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors',
                   titleError ? 'border-error' : 'border-edge',
@@ -88,7 +90,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
             {/* Due date */}
             <div>
               <label htmlFor="task-due-date" className="block text-sm font-medium text-ink-body mb-1">
-                Due date <span className="text-ink-muted font-normal">(optional)</span>
+                {t('common:dueDate')} <span className="text-ink-muted font-normal">{t('common:optional')}</span>
               </label>
               <input
                 id="task-due-date"
@@ -102,7 +104,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
             {/* Priority */}
             <div>
               <label htmlFor="task-priority" className="block text-sm font-medium text-ink-body mb-1">
-                Priority <span className="text-ink-muted font-normal">(optional)</span>
+                {t('priority')} <span className="text-ink-muted font-normal">{t('common:optional')}</span>
               </label>
               <select
                 id="task-priority"
@@ -110,7 +112,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
                 onChange={(e) => setPriority(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-edge rounded-md focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-transparent transition-colors bg-surface-raised"
               >
-                <option value="">— none —</option>
+                <option value="">{t('common:noneSelected')}</option>
                 {PRIORITY_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
@@ -119,7 +121,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
 
             {mutation.isError && (
               <p className="text-sm text-error">
-                {mutation.error?.message || 'Something went wrong. Please try again.'}
+                {mutation.error?.message || t('common:genericError')}
               </p>
             )}
 
@@ -129,7 +131,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
                   type="button"
                   className="px-4 py-2 text-sm font-medium text-ink-body bg-surface-raised border border-edge rounded-md hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
                 >
-                  Cancel
+                  {t('common:cancel')}
                 </button>
               </Dialog.Close>
               <button
@@ -137,7 +139,7 @@ export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = nul
                 disabled={mutation.isPending}
                 className="px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
-                {mutation.isPending ? 'Adding…' : 'Add task'}
+                {mutation.isPending ? t('adding') : t('addTask')}
               </button>
             </div>
           </form>

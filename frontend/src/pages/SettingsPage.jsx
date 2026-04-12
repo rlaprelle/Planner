@@ -1,42 +1,33 @@
 import { useState, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import * as Label from '@radix-ui/react-label'
 import { getTimeZones } from '@vvo/tzdb'
 import { getPreferences, updatePreferences } from '@/api/preferences'
 
-const DAYS_OF_WEEK = [
-  { value: 'MONDAY', label: 'Monday' },
-  { value: 'TUESDAY', label: 'Tuesday' },
-  { value: 'WEDNESDAY', label: 'Wednesday' },
-  { value: 'THURSDAY', label: 'Thursday' },
-  { value: 'FRIDAY', label: 'Friday' },
-  { value: 'SATURDAY', label: 'Saturday' },
-  { value: 'SUNDAY', label: 'Sunday' },
+const DAY_KEYS = [
+  { value: 'MONDAY', labelKey: 'monday' },
+  { value: 'TUESDAY', labelKey: 'tuesday' },
+  { value: 'WEDNESDAY', labelKey: 'wednesday' },
+  { value: 'THURSDAY', labelKey: 'thursday' },
+  { value: 'FRIDAY', labelKey: 'friday' },
+  { value: 'SATURDAY', labelKey: 'saturday' },
+  { value: 'SUNDAY', labelKey: 'sunday' },
 ]
-
-const WEEK_START_OPTIONS = DAYS_OF_WEEK
 
 const SESSION_DURATIONS = Array.from({ length: 16 }, (_, i) => (i + 1) * 15)
 
-function formatTimeLabel(h, m) {
-  const period = h < 12 ? 'AM' : 'PM'
-  const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h
-  const displayMin = m === 0 ? '' : `:${String(m).padStart(2, '0')}`
-  return `${displayHour}${displayMin} ${period}`
-}
-
-function generateTimeOptions() {
+function generateTimeOptions(language) {
+  const fmt = new Intl.DateTimeFormat(language, { hour: 'numeric', minute: '2-digit' })
   const options = []
   for (let h = 0; h < 24; h++) {
     for (let m = 0; m < 60; m += 15) {
       const value = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`
-      options.push({ value, label: formatTimeLabel(h, m) })
+      options.push({ value, label: fmt.format(new Date(2000, 0, 1, h, m)) })
     }
   }
   return options
 }
-
-const TIME_OPTIONS = generateTimeOptions()
 
 const TIMEZONES = getTimeZones()
 
@@ -72,6 +63,7 @@ function Field({ label, htmlFor, children }) {
 }
 
 export function SettingsPage() {
+  const { t } = useTranslation('settings')
   const { data: prefs, isLoading } = useQuery({
     queryKey: ['preferences'],
     queryFn: getPreferences,
@@ -84,7 +76,7 @@ export function SettingsPage() {
   if (isLoading || !prefs) {
     return (
       <div className="max-w-xl mx-auto px-6 py-10">
-        <p className="text-ink-muted text-sm">Loading preferences...</p>
+        <p className="text-ink-muted text-sm">{t('loadingPreferences')}</p>
       </div>
     )
   }
@@ -104,7 +96,11 @@ export function SettingsPage() {
 }
 
 function SettingsForm({ prefs, success, error, onSuccess, onError }) {
+  const { t, i18n } = useTranslation('settings')
   const queryClient = useQueryClient()
+  const timeOptions = useMemo(() => generateTimeOptions(i18n.language), [i18n.language])
+  const daysOfWeek = DAY_KEYS.map(d => ({ value: d.value, label: t(d.labelKey) }))
+  const weekStartOptions = daysOfWeek
 
   const [form, setForm] = useState({
     displayName: prefs.displayName,
@@ -137,7 +133,7 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
       onSuccess()
     },
     onError: (err) => {
-      onError(err.message || 'Failed to save preferences')
+      onError(err.message || t('failedToSave'))
     },
   })
 
@@ -167,22 +163,22 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
 
   return (
     <div className="max-w-xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold text-ink-heading mb-1">Settings</h1>
-      <p className="text-sm text-ink-secondary mb-8">Customize how Planner works for you</p>
+      <h1 className="text-2xl font-bold text-ink-heading mb-1">{t('settings')}</h1>
+      <p className="text-sm text-ink-secondary mb-8">{t('subtitle')}</p>
 
       <form onSubmit={handleSubmit} className="space-y-10">
         {/* Profile */}
         <section>
-          <h2 className="text-lg font-semibold text-ink-heading mb-4">Profile</h2>
+          <h2 className="text-lg font-semibold text-ink-heading mb-4">{t('profile')}</h2>
           <div className="space-y-4">
-            <Field label="Preferred name" htmlFor="displayName">
+            <Field label={t('preferredName')} htmlFor="displayName">
               <input
                 id="displayName"
                 type="text"
                 value={form.displayName}
                 onChange={e => update('displayName', e.target.value)}
                 className={inputClass}
-                placeholder="What should we call you?"
+                placeholder={t('preferredNamePlaceholder')}
               />
             </Field>
           </div>
@@ -190,9 +186,9 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
 
         {/* Schedule */}
         <section>
-          <h2 className="text-lg font-semibold text-ink-heading mb-4">Schedule</h2>
+          <h2 className="text-lg font-semibold text-ink-heading mb-4">{t('schedule')}</h2>
           <div className="space-y-4">
-            <Field label="Timezone" htmlFor="timezone">
+            <Field label={t('timezone')} htmlFor="timezone">
               <div className="relative">
                 <input
                   id="timezone"
@@ -202,7 +198,7 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
                   onFocus={() => { setTzSearch(''); setTzOpen(true) }}
                   onBlur={() => setTimeout(() => setTzOpen(false), 200)}
                   className={inputClass}
-                  placeholder="Search by city, country, or timezone name..."
+                  placeholder={t('timezonePlaceholder')}
                 />
                 {tzOpen && (
                   <ul className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-surface-raised border border-edge rounded-lg shadow-modal">
@@ -218,7 +214,7 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
                       </li>
                     ))}
                     {filteredTimezones.length === 0 && (
-                      <li className="px-3 py-2 text-sm text-ink-muted">No matches</li>
+                      <li className="px-3 py-2 text-sm text-ink-muted">{t('noMatches')}</li>
                     )}
                   </ul>
                 )}
@@ -226,45 +222,49 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
             </Field>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Day starts at" htmlFor="defaultStartTime">
+              <Field label={t('dayStartsAt')} htmlFor="defaultStartTime">
                 <select
                   id="defaultStartTime"
                   value={form.defaultStartTime}
                   onChange={e => update('defaultStartTime', e.target.value)}
                   className={selectClass}
                 >
-                  {TIME_OPTIONS.map(opt => (
+                  {timeOptions.map(opt => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </Field>
 
-              <Field label="Day ends at" htmlFor="defaultEndTime">
+              <Field label={t('dayEndsAt')} htmlFor="defaultEndTime">
                 <select
                   id="defaultEndTime"
                   value={form.defaultEndTime}
                   onChange={e => update('defaultEndTime', e.target.value)}
                   className={selectClass}
                 >
-                  {TIME_OPTIONS.map(opt => (
+                  {timeOptions.map(opt => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
               </Field>
             </div>
 
-            <Field label="Default session length" htmlFor="defaultSessionMinutes">
+            <Field label={t('defaultSessionLength')} htmlFor="defaultSessionMinutes">
               <select
                 id="defaultSessionMinutes"
                 value={form.defaultSessionMinutes}
                 onChange={e => update('defaultSessionMinutes', Number(e.target.value))}
                 className={selectClass}
               >
-                {SESSION_DURATIONS.map(m => (
-                  <option key={m} value={m}>
-                    {m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ''}` : `${m}m`}
-                  </option>
-                ))}
+                {SESSION_DURATIONS.map(m => {
+                  const hours = Math.floor(m / 60)
+                  const mins = m % 60
+                  let label
+                  if (hours && mins) label = t('durationHoursMinutes', { hours, minutes: mins })
+                  else if (hours) label = t('durationHours', { hours })
+                  else label = t('durationMinutes', { minutes: mins })
+                  return <option key={m} value={m}>{label}</option>
+                })}
               </select>
             </Field>
           </div>
@@ -272,29 +272,29 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
 
         {/* Rituals */}
         <section>
-          <h2 className="text-lg font-semibold text-ink-heading mb-4">Rituals</h2>
+          <h2 className="text-lg font-semibold text-ink-heading mb-4">{t('ritualsSection')}</h2>
           <div className="space-y-4">
-            <Field label="Week starts on" htmlFor="weekStartDay">
+            <Field label={t('weekStartsOn')} htmlFor="weekStartDay">
               <select
                 id="weekStartDay"
                 value={form.weekStartDay}
                 onChange={e => update('weekStartDay', e.target.value)}
                 className={selectClass}
               >
-                {WEEK_START_OPTIONS.map(opt => (
+                {weekStartOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
             </Field>
 
-            <Field label="End-of-week ceremony day" htmlFor="ceremonyDay">
+            <Field label={t('endOfWeekCeremonyDay')} htmlFor="ceremonyDay">
               <select
                 id="ceremonyDay"
                 value={form.ceremonyDay}
                 onChange={e => update('ceremonyDay', e.target.value)}
                 className={selectClass}
               >
-                {DAYS_OF_WEEK.map(opt => (
+                {daysOfWeek.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
@@ -307,7 +307,7 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
           <p className="text-sm text-error font-medium" role="alert">{error}</p>
         )}
         {success && (
-          <p className="text-sm text-emerald-600 font-medium" role="status">Preferences saved!</p>
+          <p className="text-sm text-emerald-600 font-medium" role="status">{t('preferencesSaved')}</p>
         )}
 
         <button
@@ -318,7 +318,7 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
             focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-2
             transition-colors duration-150"
         >
-          {mutation.isPending ? 'Saving...' : 'Save'}
+          {mutation.isPending ? t('common:saving') : t('common:save')}
         </button>
       </form>
     </div>

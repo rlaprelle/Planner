@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { getActiveTasks, deferTask, cancelTask, updateTask } from '@/api/tasks'
 
 function TaskTriageInner({ initialTasks, onPhaseComplete }) {
+  const { t } = useTranslation('ritual')
   const queryClient = useQueryClient()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [tasks, setTasks] = useState(initialTasks)
@@ -98,9 +100,9 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-ink-heading">Review your tasks</h2>
+        <h2 className="text-xl font-semibold text-ink-heading">{t('reviewYourTasks')}</h2>
         <span className="text-sm text-ink-muted">
-          {currentIndex + 1} of {tasks.length}
+          {t('triageProgress', { current: currentIndex + 1, total: tasks.length })}
         </span>
       </div>
 
@@ -125,7 +127,7 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
 
         {dueDate && (
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xs font-medium text-ink-muted">Due:</span>
+            <span className="text-xs font-medium text-ink-muted">{t('due')}</span>
             <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded">
               {dueDate}
             </span>
@@ -135,21 +137,21 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
         {currentTask.deferralCount > 0 && (
           <p className="text-xs text-ink-muted mb-3">
             {currentTask.deferralCount >= 3
-              ? `Deferred ${currentTask.deferralCount} times — is this still on your radar?`
-              : `Deferred ${currentTask.deferralCount} time${currentTask.deferralCount > 1 ? 's' : ''}`}
+              ? t('deferralWarning', { count: currentTask.deferralCount })
+              : t('deferralCount', { count: currentTask.deferralCount })}
           </p>
         )}
 
         {currentTask.pointsEstimate && (
           <span className="inline-block text-xs bg-primary-50 text-primary-600 px-2 py-0.5 rounded font-medium">
-            {currentTask.pointsEstimate} pt{currentTask.pointsEstimate > 1 ? 's' : ''}
+            {t('points', { count: currentTask.pointsEstimate })}
           </span>
         )}
       </div>
 
       {editingDeadline && (
         <div className="bg-surface-raised border border-edge rounded-lg p-4 mb-4">
-          <p className="text-sm font-medium text-ink-body mb-2">Change deadline</p>
+          <p className="text-sm font-medium text-ink-body mb-2">{t('changeDeadline')}</p>
           <div className="flex gap-2">
             <input
               type="date"
@@ -162,13 +164,13 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
               disabled={deadlineMutation.isPending}
               className="px-3 py-1.5 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-50 transition-colors"
             >
-              Save
+              {t('common:save')}
             </button>
             <button
               onClick={() => { setEditingDeadline(false); setNewDeadline('') }}
               className="px-3 py-1.5 text-sm rounded-md text-ink-muted hover:text-ink-body transition-colors"
             >
-              Cancel
+              {t('common:cancel')}
             </button>
           </div>
         </div>
@@ -181,21 +183,21 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
             disabled={isPending || !canDefer('TOMORROW')}
             className="py-3 text-sm rounded-lg border border-edge hover:bg-surface-soft disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium text-ink-body"
           >
-            Tomorrow
+            {t('tomorrow')}
           </button>
           <button
             onClick={() => deferMutation.mutate({ taskId: currentTask.id, target: 'NEXT_WEEK' })}
             disabled={isPending || !canDefer('NEXT_WEEK')}
             className="py-3 text-sm rounded-lg border border-edge hover:bg-surface-soft disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium text-ink-body"
           >
-            Next week
+            {t('nextWeek')}
           </button>
           <button
             onClick={() => deferMutation.mutate({ taskId: currentTask.id, target: 'NEXT_MONTH' })}
             disabled={isPending || !canDefer('NEXT_MONTH')}
             className="py-3 text-sm rounded-lg border border-edge hover:bg-surface-soft disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium text-ink-body"
           >
-            Next month
+            {t('nextMonth')}
           </button>
         </div>
 
@@ -205,14 +207,14 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
             disabled={isPending}
             className="flex-1 py-2.5 text-sm rounded-lg bg-primary-50 text-primary-600 hover:bg-primary-100 disabled:opacity-50 transition-colors font-medium"
           >
-            Keep for tomorrow
+            {t('keepForTomorrow')}
           </button>
           <button
             onClick={() => cancelMutation.mutate(currentTask.id)}
             disabled={isPending}
             className="py-2.5 px-4 text-sm rounded-lg text-red-500 hover:bg-red-50 disabled:opacity-50 transition-colors"
           >
-            Cancel task
+            {t('cancelTask')}
           </button>
         </div>
 
@@ -221,7 +223,7 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
             onClick={() => { setEditingDeadline(true); setNewDeadline(dueDate) }}
             className="text-xs text-ink-muted hover:text-ink-secondary transition-colors underline"
           >
-            Change deadline
+            {t('changeDeadline')}
           </button>
         )}
       </div>
@@ -232,19 +234,20 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
             onClick={handleDeferAll}
             className="text-xs text-ink-muted hover:text-ink-secondary transition-colors"
           >
-            Defer all {tasks.length - currentIndex} remaining to tomorrow
+            {t('deferAllRemaining', { count: tasks.length - currentIndex })}
           </button>
         </div>
       )}
 
       {(deferMutation.isError || cancelMutation.isError) && (
-        <p className="mt-4 text-sm text-error">Something went wrong. Try again.</p>
+        <p className="mt-4 text-sm text-error">{t('common:tryAgainError')}</p>
       )}
     </div>
   )
 }
 
 export function TaskTriagePhase({ onPhaseComplete }) {
+  const { t } = useTranslation('ritual')
   const { data, isLoading } = useQuery({
     queryKey: ['tasks', 'active'],
     queryFn: getActiveTasks,
@@ -257,7 +260,7 @@ export function TaskTriagePhase({ onPhaseComplete }) {
   }, [data, onPhaseComplete])
 
   if (isLoading || !data) {
-    return <div className="p-8 text-ink-muted text-sm">Loading tasks…</div>
+    return <div className="p-8 text-ink-muted text-sm">{t('loadingTasks')}</div>
   }
 
   if (data.length === 0) return null

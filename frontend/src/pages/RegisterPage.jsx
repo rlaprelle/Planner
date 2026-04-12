@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import * as Label from '@radix-ui/react-label'
 import { register } from '@/api/auth'
 import { useAuth } from '@/auth/useAuth'
@@ -8,6 +9,7 @@ import { EchelLogo } from '@/components/EchelLogo'
 export function RegisterPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation('auth')
 
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
@@ -24,11 +26,11 @@ export function RegisterPage() {
       await register(email, password, displayName, browserTimezone)
     } catch (err) {
       if (err.status === 409) {
-        setError('An account with that email already exists.')
+        setError(t('emailExists'))
       } else if (err.status === 400) {
-        setError(err.message || 'Please check your details and try again.')
+        setError(err.message || t('checkDetails'))
       } else {
-        setError('Something went wrong. Please try again.')
+        setError(t('common:genericError'))
       }
       setIsSubmitting(false)
       return
@@ -56,16 +58,16 @@ export function RegisterPage() {
       <div className="w-full max-w-sm bg-surface-raised rounded-2xl shadow-modal p-8">
         <div className="flex items-center justify-center gap-2.5 mb-1">
           <EchelLogo size={36} />
-          <h1 className="text-2xl font-bold text-ink-heading">Echel Planner</h1>
+          <h1 className="text-2xl font-bold text-ink-heading">{t('appName')}</h1>
         </div>
         <p className="text-sm text-ink-muted text-center italic mb-6">
-          Planning that works with your brain, not against it.
+          {t('tagline')}
         </p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="flex flex-col gap-1.5">
             <Label.Root htmlFor="displayName" className="text-sm font-medium text-ink-body">
-              Display name
+              {t('displayName')}
             </Label.Root>
             <input
               id="displayName"
@@ -75,13 +77,13 @@ export function RegisterPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               className={inputClass(false)}
-              placeholder="Your name"
+              placeholder={t('yourName')}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <Label.Root htmlFor="email" className="text-sm font-medium text-ink-body">
-              Email
+              {t('email')}
             </Label.Root>
             <input
               id="email"
@@ -91,13 +93,13 @@ export function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass(error?.includes('email'))}
-              placeholder="you@example.com"
+              placeholder={t('emailPlaceholder')}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <Label.Root htmlFor="password" className="text-sm font-medium text-ink-body">
-              Password
+              {t('password')}
             </Label.Root>
             <input
               id="password"
@@ -107,7 +109,7 @@ export function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={inputClass(false)}
-              placeholder="••••••••"
+              placeholder={t('passwordPlaceholder')}
             />
           </div>
 
@@ -125,14 +127,14 @@ export function RegisterPage() {
               focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-2
               transition-colors duration-150"
           >
-            {isSubmitting ? 'Creating account…' : 'Create account'}
+            {isSubmitting ? t('creatingAccount') : t('createAccount')}
           </button>
         </form>
 
         <p className="mt-6 text-sm text-center text-ink-secondary">
-          Already have an account?{' '}
+          {t('alreadyHaveAccount')}{' '}
           <Link to="/login" className="text-primary-500 hover:text-primary-700 font-medium">
-            Log in
+            {t('logIn')}
           </Link>
         </p>
       </div>

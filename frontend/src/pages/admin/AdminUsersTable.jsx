@@ -1,24 +1,26 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getUsers, createUser, updateUser, deleteUser, getUserDependents } from '@/api/admin'
 import { useAdminCrud } from './hooks/useAdminCrud'
 import { AdminCrudPage } from './components/AdminCrudPage'
 
-const COLUMNS = [
-  { key: 'email', label: 'Email' },
-  { key: 'displayName', label: 'Display Name' },
-  { key: 'timezone', label: 'Timezone' },
-  { key: 'createdAt', label: 'Created' },
-]
-
-const FORM_FIELDS = [
-  { name: 'email', label: 'Email', type: 'email', required: true },
-  { name: 'password', label: 'Password', type: 'password', required: false, placeholder: 'Leave blank to keep current' },
-  { name: 'displayName', label: 'Display Name', required: true },
-  { name: 'timezone', label: 'Timezone', defaultValue: 'UTC' },
-]
-
 export default function AdminUsersTable() {
+  const { t } = useTranslation('admin')
   const [dependents, setDependents] = useState(null)
+
+  const columns = [
+    { key: 'email', label: t('email') },
+    { key: 'displayName', label: t('displayName') },
+    { key: 'timezone', label: t('timezone') },
+    { key: 'createdAt', label: t('created') },
+  ]
+
+  const formFields = [
+    { name: 'email', label: t('email'), type: 'email', required: true },
+    { name: 'password', label: t('password'), type: 'password', required: false, placeholder: t('passwordPlaceholder') },
+    { name: 'displayName', label: t('displayName'), required: true },
+    { name: 'timezone', label: t('timezone'), defaultValue: 'UTC' },
+  ]
 
   const crud = useAdminCrud({
     queryKey: ['admin', 'users'],
@@ -32,16 +34,16 @@ export default function AdminUsersTable() {
   }
 
   // Password is required only when creating a new user
-  const formFields = crud.editItem
-    ? FORM_FIELDS
-    : FORM_FIELDS.map(f => f.name === 'password' ? { ...f, required: true } : f)
+  const activeFormFields = crud.editItem
+    ? formFields
+    : formFields.map(f => f.name === 'password' ? { ...f, required: true } : f)
 
   return (
     <AdminCrudPage
-      title="Users"
-      entityName="User"
-      columns={COLUMNS}
-      fields={formFields}
+      title={t('users')}
+      entityName={t('user')}
+      columns={columns}
+      fields={activeFormFields}
       crud={{ ...crud, openDelete: handleDelete }}
       dependentCounts={dependents}
     />

@@ -1,0 +1,75 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-11-i18n-phase1.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: i18n Infrastructure",
+      "status": "pending",
+      "description": "**Goal:** Install dependencies, create i18n config, wrap app in provider, create common namespace JSON.\n\n**Files:**\n- Modify: frontend/package.json\n- Create: frontend/src/i18n.js\n- Modify: frontend/src/main.jsx\n- Create: frontend/src/locales/en/*.json (8 files)\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/package.json\", \"frontend/src/i18n.js\", \"frontend/src/main.jsx\", \"frontend/src/locales/en/common.json\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"react-i18next installed\", \"i18n.js initializes i18next\", \"main.jsx imports i18n\", \"app starts normally\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: Auth Namespace",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize LoginPage and RegisterPage strings into auth.json.\n\n**Files:**\n- Create: frontend/src/locales/en/auth.json\n- Modify: frontend/src/pages/LoginPage.jsx\n- Modify: frontend/src/pages/RegisterPage.jsx\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/auth.json\", \"frontend/src/pages/LoginPage.jsx\", \"frontend/src/pages/RegisterPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings in auth files\", \"Pages render identically\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Common Namespace — AppLayout",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize navigation and layout strings in AppLayout.\n\n**Files:**\n- Modify: frontend/src/locales/en/common.json\n- Modify: frontend/src/layouts/AppLayout.jsx\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/common.json\", \"frontend/src/layouts/AppLayout.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings in AppLayout\", \"Nav renders identically\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Dashboard Namespace",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize DashboardPage strings including complex interpolation and plurals.\n\n**Files:**\n- Create: frontend/src/locales/en/dashboard.json\n- Modify: frontend/src/pages/DashboardPage.jsx\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/dashboard.json\", \"frontend/src/pages/DashboardPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings\", \"Plurals use _one/_other convention\", \"Greeting interpolation works\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Ritual Namespace",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize all strings in 9 ritual-related files.\n\n**Files:**\n- Create: frontend/src/locales/en/ritual.json\n- Modify: 9 files (EndDayPage, EndRitualPage, StartWeekPage, StartMonthPage, CompletionPhase, DailyReflectionPhase, InboxPhase, TaskSchedulePhase, TaskTriagePhase)\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/ritual.json\", \"frontend/src/components/ritual/CompletionPhase.jsx\", \"frontend/src/components/ritual/DailyReflectionPhase.jsx\", \"frontend/src/components/ritual/InboxPhase.jsx\", \"frontend/src/components/ritual/TaskSchedulePhase.jsx\", \"frontend/src/components/ritual/TaskTriagePhase.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings in ritual files\", \"Energy/mood labels extracted\", \"Day abbreviations extracted\", \"Date formatting uses Intl\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Tasks Namespace",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize all strings in task/project files and active session files.\n\n**Files:**\n- Create: frontend/src/locales/en/tasks.json\n- Modify: 13 files (ProjectsPage, ProjectDetailPage, TodayPage, AddTaskModal, TaskDetailModal, TaskDetailPanel, TaskList, TaskRow, EventList, ActiveSessionPage, SubtaskChecklist, TimerCircle)\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/tasks.json\", \"frontend/src/pages/ProjectsPage.jsx\", \"frontend/src/pages/ActiveSessionPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings\", \"Date formatting locale-aware\", \"EventList time formatting locale-aware\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Deferred Namespace",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize all strings in InboxPage, QuickCapture, and deferred components.\n\n**Files:**\n- Create: frontend/src/locales/en/deferred.json\n- Modify: 5 files (InboxPage, QuickCapture, ConvertForm, ConvertToEventForm, DeferredItemActions)\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/deferred.json\", \"frontend/src/pages/InboxPage.jsx\", \"frontend/src/components/QuickCapture.jsx\", \"frontend/src/components/deferred/DeferredItemActions.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings\", \"Components render identically\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Time Blocking Namespace",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize all strings in StartDayPage and sub-components.\n\n**Files:**\n- Create: frontend/src/locales/en/timeBlocking.json\n- Modify: 6 files (StartDayPage, EventBlock, TaskBrowserRow, TaskCard, TimeBlock, TimeBlockGrid)\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/timeBlocking.json\", \"frontend/src/pages/StartDayPage.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings\", \"Hardcoded en-US replaced with i18n.language\", \"formatDropdownHour is locale-aware\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Admin Namespace",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Externalize all strings in admin pages and shared admin components.\n\n**Files:**\n- Create: frontend/src/locales/en/admin.json\n- Modify: 12 files (AdminPage, 7 table pages, AdminCrudPage, AdminFormModal, AdminTable, DeleteConfirmDialog)\n\n**Verify:** `cd frontend && npm run build`\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/admin.json\", \"frontend/src/pages/admin/AdminPage.jsx\", \"frontend/src/pages/admin/components/DeleteConfirmDialog.jsx\"], \"verifyCommand\": \"cd frontend && npm run build\", \"acceptanceCriteria\": [\"No hardcoded strings\", \"Entity interpolation works\", \"Plurals in DeleteConfirmDialog use i18next\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Verification & Cleanup",
+      "status": "pending",
+      "blockedBy": [1, 2, 3, 4, 5, 6, 7, 8],
+      "description": "**Goal:** Verify the entire app renders correctly with all strings externalized.\n\n**Verify:** `cd e2e && npx playwright test`\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"cd e2e && npx playwright test\", \"acceptanceCriteria\": [\"npm run build succeeds\", \"npm run lint passes\", \"E2E tests pass\", \"Grep finds no remaining hardcoded strings\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-11T00:00:00Z"
+}

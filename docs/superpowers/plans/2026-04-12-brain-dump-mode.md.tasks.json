@@ -1,0 +1,26 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-12-brain-dump-mode.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Add i18n Keys",
+      "status": "pending",
+      "description": "**Goal:** Add the three new translation keys needed by the updated QuickCapture footer.\n\n**Files:**\n- Modify: `frontend/src/locales/en/deferred.json`\n\n**Acceptance Criteria:**\n- [ ] `keepCapturing`, `enterToCapture`, and `ctrlEnterToKeepCapturing` keys exist with correct English values\n- [ ] All existing keys unchanged\n\n**Verify:** `node -e \"const j=require('./frontend/src/locales/en/deferred.json'); console.log(j.keepCapturing, j.enterToCapture, j.ctrlEnterToKeepCapturing)\"` → prints correct values\n\n```json:metadata\n{\"files\": [\"frontend/src/locales/en/deferred.json\"], \"verifyCommand\": \"cd frontend && node -e \\\"const j=require('./src/locales/en/deferred.json'); console.log(j.keepCapturing, j.enterToCapture, j.ctrlEnterToKeepCapturing)\\\"\", \"acceptanceCriteria\": [\"keepCapturing, enterToCapture, ctrlEnterToKeepCapturing keys exist\", \"All existing keys unchanged\"]}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Add Brain-Dump Submit Path and Footer Layout",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Modify QuickCapture to support two submit paths (capture-and-close vs. capture-and-continue) with the new stacked footer layout and Ctrl+Enter hotkey.\n\n**Files:**\n- Modify: `frontend/src/components/QuickCapture.jsx`\n- Modify: `frontend/tailwind.config.js` (if fade-out animation needed)\n\n**Acceptance Criteria:**\n- [ ] Enter and Capture button submit and close the modal (existing behavior preserved)\n- [ ] Ctrl+Enter and Keep capturing button submit, play chime, flash Captured for 500ms, clear textarea, refocus\n- [ ] Footer has two rows: row 1 = Cancel + hint + Capture, row 2 = hint + Keep capturing\n- [ ] Multiple rapid Ctrl+Enter captures work without state corruption\n\n**Verify:** Manual smoke test — Ctrl+Space, type, Ctrl+Enter keeps modal open; type, Enter closes modal\n\n```json:metadata\n{\"files\": [\"frontend/src/components/QuickCapture.jsx\", \"frontend/tailwind.config.js\"], \"verifyCommand\": \"cd frontend && npm run lint\", \"acceptanceCriteria\": [\"Enter/Capture close modal\", \"Ctrl+Enter/Keep capturing stay open with flash\", \"Stacked footer layout\", \"No state corruption on rapid captures\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: E2E Tests for Brain-Dump Mode",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Add Playwright E2E tests covering both submit paths and the brain-dump flow.\n\n**Files:**\n- Create: `e2e/tests/quick-capture.spec.ts`\n\n**Acceptance Criteria:**\n- [ ] 5 tests: Enter closes, Capture closes, Ctrl+Enter stays open, Keep capturing stays open, multiple rapid captures\n- [ ] All tests mock /api/v1/deferred via page.route()\n- [ ] Tests import from ../fixtures/auth\n\n**Verify:** `cd e2e && BASE_URL=http://localhost:<port> npx playwright test tests/quick-capture.spec.ts` → all pass\n\n```json:metadata\n{\"files\": [\"e2e/tests/quick-capture.spec.ts\"], \"verifyCommand\": \"cd e2e && npx playwright test tests/quick-capture.spec.ts\", \"acceptanceCriteria\": [\"5 tests pass\", \"All API mocked\", \"Import from auth fixture\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-12T00:00:00Z"
+}

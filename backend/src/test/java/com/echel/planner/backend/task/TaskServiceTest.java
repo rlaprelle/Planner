@@ -1,6 +1,8 @@
 package com.echel.planner.backend.task;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.ValidationException;
 import com.echel.planner.backend.project.Project;
 import com.echel.planner.backend.project.ProjectRepository;
 import com.echel.planner.backend.task.dto.TaskCreateRequest;
@@ -118,7 +120,7 @@ class TaskServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> taskService.create(user, projectId, request))
-                .isInstanceOf(TaskService.TaskValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining(projectId.toString());
     }
 
@@ -141,7 +143,7 @@ class TaskServiceTest {
                 .thenReturn(Optional.of(parentTask));
 
         assertThatThrownBy(() -> taskService.create(user, projectId, request))
-                .isInstanceOf(TaskService.TaskValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining(projectId.toString());
     }
 
@@ -300,7 +302,7 @@ class TaskServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> taskService.get(user, taskId))
-                .isInstanceOf(TaskService.TaskNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(taskId.toString());
     }
 

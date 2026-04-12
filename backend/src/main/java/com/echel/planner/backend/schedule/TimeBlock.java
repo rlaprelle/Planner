@@ -96,4 +96,12 @@ public class TimeBlock {
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
     public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
     public void setSortOrder(int sortOrder) { this.sortOrder = sortOrder; }
+
+    /** Computes elapsed minutes between actualStart and actualEnd. Both must be set. */
+    public int calculateElapsedMinutes() {
+        if (actualEnd == null) {
+            throw new IllegalStateException("Cannot calculate elapsed minutes: actualEnd is not set");
+        }
+        return (int) java.time.Duration.between(actualStart, actualEnd).toMinutes();
+    }
 }

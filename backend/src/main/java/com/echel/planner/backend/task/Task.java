@@ -259,4 +259,10 @@ public class Task {
     }
 
     public void setUser(AppUser user) { this.user = user; }
+
+    /** Adds the given minutes to the running actual-minutes total. */
+    public void incrementActualMinutes(int minutes) {
+        int current = this.actualMinutes != null ? this.actualMinutes : 0;
+        this.actualMinutes = current + minutes;
+    }
 }

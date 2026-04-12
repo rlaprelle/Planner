@@ -1,5 +1,6 @@
 package com.echel.planner.backend.auth;
 
+import com.echel.planner.backend.common.ValidationException;
 import com.echel.planner.backend.auth.dto.PreferencesResponse;
 import com.echel.planner.backend.auth.dto.UpdatePreferencesRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +58,7 @@ class UserPreferencesServiceTest {
     void updatePreferences_invalidTimezone_throws() {
         var request = new UpdatePreferencesRequest(null, "Not/A/Zone", null, null, null, null, null);
         assertThatThrownBy(() -> service.updatePreferences(testUser, request))
-                .isInstanceOf(UserPreferencesService.PreferencesValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("timezone");
     }
 
@@ -65,7 +66,7 @@ class UserPreferencesServiceTest {
     void updatePreferences_startTimeAfterEndTime_throws() {
         var request = new UpdatePreferencesRequest(null, null, LocalTime.of(18, 0), LocalTime.of(9, 0), null, null, null);
         assertThatThrownBy(() -> service.updatePreferences(testUser, request))
-                .isInstanceOf(UserPreferencesService.PreferencesValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("before");
     }
 
@@ -73,7 +74,7 @@ class UserPreferencesServiceTest {
     void updatePreferences_sessionMinutesNotMultipleOf15_throws() {
         var request = new UpdatePreferencesRequest(null, null, null, null, 25, null, null);
         assertThatThrownBy(() -> service.updatePreferences(testUser, request))
-                .isInstanceOf(UserPreferencesService.PreferencesValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("multiple of 15");
     }
 
@@ -81,7 +82,7 @@ class UserPreferencesServiceTest {
     void updatePreferences_blankDisplayName_throws() {
         var request = new UpdatePreferencesRequest("   ", null, null, null, null, null, null);
         assertThatThrownBy(() -> service.updatePreferences(testUser, request))
-                .isInstanceOf(UserPreferencesService.PreferencesValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("display name");
     }
 
@@ -89,7 +90,7 @@ class UserPreferencesServiceTest {
     void updatePreferences_timeNotAlignedTo15Minutes_throws() {
         var request = new UpdatePreferencesRequest(null, null, LocalTime.of(8, 7), null, null, null, null);
         assertThatThrownBy(() -> service.updatePreferences(testUser, request))
-                .isInstanceOf(UserPreferencesService.PreferencesValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("15-minute");
     }
 

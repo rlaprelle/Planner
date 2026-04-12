@@ -3,6 +3,7 @@ package com.echel.planner.backend.admin;
 import com.echel.planner.backend.admin.dto.AdminUserRequest;
 import com.echel.planner.backend.admin.dto.AdminUserResponse;
 import com.echel.planner.backend.admin.dto.DependentCountResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItemRepository;
@@ -110,7 +111,7 @@ class AdminUserServiceTest {
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> adminUserService.get(id))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(id.toString());
     }
 

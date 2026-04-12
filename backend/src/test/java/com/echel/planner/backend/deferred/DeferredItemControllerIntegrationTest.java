@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(DeferredItemController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, DeferredItemExceptionHandler.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, com.echel.planner.backend.common.GlobalExceptionHandler.class})
 class DeferredItemControllerIntegrationTest {
 
     @Autowired

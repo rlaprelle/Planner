@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminTimeBlockRequest;
 import com.echel.planner.backend.admin.dto.AdminTimeBlockResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.schedule.TimeBlock;
@@ -80,7 +81,7 @@ class AdminTimeBlockServiceTest {
         when(timeBlockRepository.findById(blockId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(blockId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(blockId.toString());
     }
 
@@ -143,7 +144,7 @@ class AdminTimeBlockServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(userId.toString());
     }
 
@@ -156,7 +157,7 @@ class AdminTimeBlockServiceTest {
         when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(taskId.toString());
     }
 
@@ -208,7 +209,7 @@ class AdminTimeBlockServiceTest {
                 userId, BLOCK_DATE, null, START_TIME, END_TIME, 0, null);
 
         assertThatThrownBy(() -> service.update(blockId, request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(blockId.toString());
     }
 
@@ -229,7 +230,7 @@ class AdminTimeBlockServiceTest {
         when(timeBlockRepository.findById(blockId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(blockId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(blockId.toString());
     }
 }

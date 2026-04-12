@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminDeferredItemRequest;
 import com.echel.planner.backend.admin.dto.AdminDeferredItemResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItem;
@@ -48,7 +49,7 @@ public class AdminDeferredItemService {
 
     public AdminDeferredItemResponse create(AdminDeferredItemRequest request) {
         AppUser user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
         DeferredItem item = new DeferredItem(user, request.rawText());
         applyFields(item, request);
         return AdminDeferredItemResponse.from(deferredItemRepository.save(item));
@@ -85,6 +86,6 @@ public class AdminDeferredItemService {
 
     private DeferredItem findItem(UUID id) {
         return deferredItemRepository.findById(id)
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Deferred item not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Deferred item not found: " + id));
     }
 }

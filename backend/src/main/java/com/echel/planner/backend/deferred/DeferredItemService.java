@@ -16,6 +16,7 @@ import com.echel.planner.backend.task.TaskRepository;
 import com.echel.planner.backend.task.TaskService;
 import com.echel.planner.backend.task.dto.TaskCreateRequest;
 import com.echel.planner.backend.task.dto.TaskResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,10 +93,11 @@ public class DeferredItemService {
 
     public DeferredItemResponse defer(AppUser user, UUID itemId, DeferRequest request) {
         DeferredItem item = findOwnedItem(user, itemId);
+        LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
         LocalDate until = switch (request.deferFor()) {
-            case ONE_DAY -> LocalDate.now(ZoneId.of(user.getTimezone())).plusDays(1);
-            case ONE_WEEK -> LocalDate.now(ZoneId.of(user.getTimezone())).plusWeeks(1);
-            case ONE_MONTH -> LocalDate.now(ZoneId.of(user.getTimezone())).plusMonths(1);
+            case ONE_DAY -> today.plusDays(1);
+            case ONE_WEEK -> today.plusWeeks(1);
+            case ONE_MONTH -> today.plusMonths(1);
         };
         item.setDeferredUntilDate(until);
         item.setDeferralCount(item.getDeferralCount() + 1);
@@ -111,10 +113,7 @@ public class DeferredItemService {
 
     private DeferredItem findOwnedItem(AppUser user, UUID itemId) {
         return repository.findByIdAndUserId(user, itemId)
-                .orElseThrow(() -> new DeferredItemNotFoundException("Deferred item not found: " + itemId));
+                .orElseThrow(() -> new EntityNotFoundException("Deferred item not found: " + itemId));
     }
 
-    public static class DeferredItemNotFoundException extends RuntimeException {
-        public DeferredItemNotFoundException(String message) { super(message); }
-    }
 }

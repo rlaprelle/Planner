@@ -1,6 +1,8 @@
 package com.echel.planner.backend.event;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.ValidationException;
 import com.echel.planner.backend.event.dto.EventCreateRequest;
 import com.echel.planner.backend.event.dto.EventResponse;
 import com.echel.planner.backend.event.dto.EventUpdateRequest;
@@ -126,7 +128,7 @@ class EventServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> eventService.create(user, projectId, request))
-                .isInstanceOf(EventService.EventValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining(projectId.toString());
     }
 
@@ -140,7 +142,7 @@ class EventServiceTest {
                 .thenReturn(Optional.of(project));
 
         assertThatThrownBy(() -> eventService.create(user, projectId, request))
-                .isInstanceOf(EventService.EventValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("End time must be after start time");
     }
 
@@ -154,7 +156,7 @@ class EventServiceTest {
                 .thenReturn(Optional.of(project));
 
         assertThatThrownBy(() -> eventService.create(user, projectId, request))
-                .isInstanceOf(EventService.EventValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("End time must be after start time");
     }
 
@@ -182,7 +184,7 @@ class EventServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> eventService.get(user, eventId))
-                .isInstanceOf(EventService.EventNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(eventId.toString());
     }
 
@@ -210,7 +212,7 @@ class EventServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> eventService.listByProject(user, projectId))
-                .isInstanceOf(EventService.EventValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining(projectId.toString());
     }
 
@@ -287,7 +289,7 @@ class EventServiceTest {
                 null, "Title", null, null, null, null, null);
 
         assertThatThrownBy(() -> eventService.update(user, eventId, request))
-                .isInstanceOf(EventService.EventNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(eventId.toString());
     }
 
@@ -306,7 +308,7 @@ class EventServiceTest {
                 badProjectId, null, null, null, null, null, null);
 
         assertThatThrownBy(() -> eventService.update(user, eventId, request))
-                .isInstanceOf(EventService.EventValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining(badProjectId.toString());
     }
 
@@ -324,7 +326,7 @@ class EventServiceTest {
                 null, null, null, null, null, LocalTime.of(10, 0), null);
 
         assertThatThrownBy(() -> eventService.update(user, eventId, request))
-                .isInstanceOf(EventService.EventValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("End time must be after start time");
     }
 
@@ -371,7 +373,7 @@ class EventServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> eventService.archive(user, eventId))
-                .isInstanceOf(EventService.EventNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(eventId.toString());
     }
 

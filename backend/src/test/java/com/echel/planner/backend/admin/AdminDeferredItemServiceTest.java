@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminDeferredItemRequest;
 import com.echel.planner.backend.admin.dto.AdminDeferredItemResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItem;
@@ -79,7 +80,7 @@ class AdminDeferredItemServiceTest {
         when(deferredItemRepository.findById(itemId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(itemId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(itemId.toString());
     }
 
@@ -110,7 +111,7 @@ class AdminDeferredItemServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(userId.toString());
     }
 
@@ -178,7 +179,7 @@ class AdminDeferredItemServiceTest {
                 userId, "text", null, null, null, null, null);
 
         assertThatThrownBy(() -> service.update(itemId, request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(itemId.toString());
     }
 
@@ -199,7 +200,7 @@ class AdminDeferredItemServiceTest {
         when(deferredItemRepository.findById(itemId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(itemId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(itemId.toString());
     }
 }

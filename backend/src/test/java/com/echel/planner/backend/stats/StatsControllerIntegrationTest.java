@@ -97,7 +97,7 @@ class StatsControllerIntegrationTest {
         DashboardResponse response = new DashboardResponse(
                 0, 0, 0, List.of(), 0,
                 List.of(new DashboardResponse.CelebrationTask(
-                        UUID.randomUUID(), "Big task", "Work", "High complexity task")));
+                        UUID.randomUUID(), "Big task", "Work", CelebrationReason.HIGH_COMPLEXITY, "High complexity task")));
 
         when(statsService.getDashboard(any(AppUser.class))).thenReturn(response);
 

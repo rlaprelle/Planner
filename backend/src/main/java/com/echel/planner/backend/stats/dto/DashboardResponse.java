@@ -1,5 +1,7 @@
 package com.echel.planner.backend.stats.dto;
 
+import com.echel.planner.backend.stats.CelebrationReason;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +27,7 @@ public record DashboardResponse(
             UUID taskId,
             String taskTitle,
             String projectName,
+            CelebrationReason celebrationReason,
             String reason
     ) {}
 }

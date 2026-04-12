@@ -1,6 +1,8 @@
 package com.echel.planner.backend.event;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.ValidationException;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.auth.JwtAuthFilter;
 import com.echel.planner.backend.auth.JwtService;
@@ -183,7 +185,7 @@ class EventControllerIntegrationTest {
     void getEvent_notFound_returns404() throws Exception {
         UUID unknownId = UUID.randomUUID();
         when(eventService.get(any(AppUser.class), eq(unknownId)))
-                .thenThrow(new EventService.EventNotFoundException("Event not found: " + unknownId));
+                .thenThrow(new EntityNotFoundException("Event not found: " + unknownId));
 
         mockMvc.perform(get("/api/v1/events/{id}", unknownId)
                         .header("Authorization", "Bearer " + accessToken))
@@ -236,7 +238,7 @@ class EventControllerIntegrationTest {
     }
 
     @Test
-    void updateEvent_validationError_returns400() throws Exception {
+    void updateEvent_validationError_returns422() throws Exception {
         EventUpdateRequest req = new EventUpdateRequest(
                 null, null, null, null,
                 null,
@@ -245,14 +247,14 @@ class EventControllerIntegrationTest {
         );
 
         when(eventService.update(any(AppUser.class), eq(eventId), any(EventUpdateRequest.class)))
-                .thenThrow(new EventService.EventValidationException(
+                .thenThrow(new ValidationException(
                         "End time must be after start time: 10:00 - 09:00"));
 
         mockMvc.perform(put("/api/v1/events/{id}", eventId)
                         .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.detail").value("End time must be after start time: 10:00 - 09:00"));
     }
 

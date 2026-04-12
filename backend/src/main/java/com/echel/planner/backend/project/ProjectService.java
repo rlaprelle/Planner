@@ -4,6 +4,7 @@ import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.project.dto.ProjectCreateRequest;
 import com.echel.planner.backend.project.dto.ProjectResponse;
 import com.echel.planner.backend.project.dto.ProjectUpdateRequest;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,12 +69,7 @@ public class ProjectService {
 
     private Project findOwnedProject(AppUser user, UUID id) {
         return projectRepository.findByIdAndUserId(id, user.getId())
-                .orElseThrow(() -> new ProjectNotFoundException("Project not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found: " + id));
     }
 
-    public static class ProjectNotFoundException extends RuntimeException {
-        public ProjectNotFoundException(String message) {
-            super(message);
-        }
-    }
 }

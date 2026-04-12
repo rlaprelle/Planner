@@ -2,6 +2,7 @@ package com.echel.planner.backend.auth;
 
 import com.echel.planner.backend.auth.dto.PreferencesResponse;
 import com.echel.planner.backend.auth.dto.UpdatePreferencesRequest;
+import com.echel.planner.backend.common.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +27,11 @@ public class UserPreferencesService {
     public PreferencesResponse updatePreferences(AppUser user, UpdatePreferencesRequest request) {
         if (request.displayName() != null) {
             if (request.displayName().isBlank()) {
-                throw new PreferencesValidationException("Preferred display name must not be blank");
+                throw new ValidationException("Preferred display name must not be blank");
             }
             String trimmed = request.displayName().trim();
             if (trimmed.length() > 100) {
-                throw new PreferencesValidationException("Display name must be 100 characters or fewer");
+                throw new ValidationException("Display name must be 100 characters or fewer");
             }
             user.setDisplayName(trimmed);
         }
@@ -39,7 +40,7 @@ public class UserPreferencesService {
             try {
                 ZoneId.of(request.timezone());
             } catch (Exception e) {
-                throw new PreferencesValidationException("Invalid timezone: " + request.timezone());
+                throw new ValidationException("Invalid timezone: " + request.timezone());
             }
             user.setTimezone(request.timezone());
         }
@@ -60,13 +61,13 @@ public class UserPreferencesService {
         }
 
         if (!effectiveStart.isBefore(effectiveEnd)) {
-            throw new PreferencesValidationException("Start time must be before end time");
+            throw new ValidationException("Start time must be before end time");
         }
 
         if (request.defaultSessionMinutes() != null) {
             int minutes = request.defaultSessionMinutes();
             if (minutes < 15 || minutes > 240 || minutes % 15 != 0) {
-                throw new PreferencesValidationException(
+                throw new ValidationException(
                         "Session duration must be a multiple of 15 minutes (15-240)");
             }
             user.setDefaultSessionMinutes(minutes);
@@ -86,12 +87,9 @@ public class UserPreferencesService {
 
     private void validateTimeAlignment(LocalTime time) {
         if (time.getMinute() % 15 != 0 || time.getSecond() != 0) {
-            throw new PreferencesValidationException(
+            throw new ValidationException(
                     "Times must be aligned to 15-minute increments");
         }
     }
 
-    static class PreferencesValidationException extends RuntimeException {
-        PreferencesValidationException(String message) { super(message); }
-    }
 }

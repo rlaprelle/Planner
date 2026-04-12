@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminReflectionRequest;
 import com.echel.planner.backend.admin.dto.AdminReflectionResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.reflection.DailyReflection;
@@ -75,7 +76,7 @@ class AdminReflectionServiceTest {
         when(reflectionRepository.findById(reflectionId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(reflectionId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(reflectionId.toString());
     }
 
@@ -115,7 +116,7 @@ class AdminReflectionServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(userId.toString());
     }
 
@@ -204,7 +205,7 @@ class AdminReflectionServiceTest {
                 userId, LocalDate.of(2026, 3, 12), (short) 3, (short) 3, null, null);
 
         assertThatThrownBy(() -> service.update(reflectionId, request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(reflectionId.toString());
     }
 
@@ -227,7 +228,7 @@ class AdminReflectionServiceTest {
         when(reflectionRepository.findById(reflectionId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(reflectionId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(reflectionId.toString());
     }
 }

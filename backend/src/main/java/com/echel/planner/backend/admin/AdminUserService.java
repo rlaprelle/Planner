@@ -3,6 +3,7 @@ package com.echel.planner.backend.admin;
 import com.echel.planner.backend.admin.dto.AdminUserRequest;
 import com.echel.planner.backend.admin.dto.AdminUserResponse;
 import com.echel.planner.backend.admin.dto.DependentCountResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItemRepository;
@@ -104,6 +105,6 @@ public class AdminUserService {
 
     private AppUser findUser(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + id));
     }
 }

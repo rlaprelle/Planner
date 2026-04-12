@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminReflectionRequest;
 import com.echel.planner.backend.admin.dto.AdminReflectionResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.reflection.DailyReflection;
@@ -39,7 +40,7 @@ public class AdminReflectionService {
 
     public AdminReflectionResponse create(AdminReflectionRequest request) {
         AppUser user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
         DailyReflection reflection = new DailyReflection(user, request.reflectionDate());
         reflection.setEnergyRating(request.energyRating());
         reflection.setMoodRating(request.moodRating());
@@ -68,6 +69,6 @@ public class AdminReflectionService {
 
     private DailyReflection findReflection(UUID id) {
         return reflectionRepository.findById(id)
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Reflection not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Reflection not found: " + id));
     }
 }

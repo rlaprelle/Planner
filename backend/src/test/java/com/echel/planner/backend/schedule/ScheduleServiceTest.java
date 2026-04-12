@@ -3,9 +3,9 @@ package com.echel.planner.backend.schedule;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.event.EventService;
 import com.echel.planner.backend.project.Project;
-import com.echel.planner.backend.schedule.ScheduleService.BlockAlreadyStartedException;
-import com.echel.planner.backend.schedule.ScheduleService.BlockNotFoundException;
-import com.echel.planner.backend.schedule.ScheduleService.ScheduleValidationException;
+import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.StateConflictException;
+import com.echel.planner.backend.common.ValidationException;
 import com.echel.planner.backend.schedule.dto.SavePlanRequest;
 import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import com.echel.planner.backend.task.Task;
@@ -96,7 +96,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("startTime must be a 15-minute increment");
     }
 
@@ -110,7 +110,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("endTime must be a 15-minute increment");
     }
 
@@ -124,7 +124,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("endTime must be after startTime");
     }
 
@@ -138,7 +138,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("within 08:00");
     }
 
@@ -152,7 +152,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("within 08:00");
     }
 
@@ -171,7 +171,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry1, entry2), null, null);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("overlap");
     }
 
@@ -239,7 +239,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry), 7, 20);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("within 07:00");
     }
 
@@ -253,7 +253,7 @@ class ScheduleServiceTest {
         var request = new SavePlanRequest(LocalDate.now(), List.of(entry), 17, 8);
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("startHour must be less than endHour");
     }
 
@@ -302,7 +302,7 @@ class ScheduleServiceTest {
         when(timeBlockRepository.findByIdAndUserId(blockId, userId)).thenReturn(Optional.of(block));
 
         assertThatThrownBy(() -> scheduleService.startBlock(user, blockId))
-                .isInstanceOf(BlockAlreadyStartedException.class)
+                .isInstanceOf(StateConflictException.class)
                 .hasMessageContaining("already started");
     }
 
@@ -311,7 +311,7 @@ class ScheduleServiceTest {
         when(timeBlockRepository.findByIdAndUserId(blockId, userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> scheduleService.startBlock(user, blockId))
-                .isInstanceOf(BlockNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("not found");
     }
 
@@ -348,7 +348,7 @@ class ScheduleServiceTest {
         when(timeBlockRepository.findByIdAndUserId(blockId, userId)).thenReturn(Optional.of(block));
 
         assertThatThrownBy(() -> scheduleService.completeBlock(user, blockId))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("not been started");
     }
 

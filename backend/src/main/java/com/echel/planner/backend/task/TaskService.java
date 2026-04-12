@@ -9,6 +9,8 @@ import com.echel.planner.backend.task.dto.TaskRescheduleRequest;
 import com.echel.planner.backend.task.dto.TaskResponse;
 import com.echel.planner.backend.task.dto.TaskStatusRequest;
 import com.echel.planner.backend.task.dto.TaskUpdateRequest;
+import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,9 +47,9 @@ public class TaskService {
 
         if (request.parentTaskId() != null) {
             Task parent = taskRepository.findByIdAndUserId(request.parentTaskId(), user.getId())
-                    .orElseThrow(() -> new TaskNotFoundException("Parent task not found: " + request.parentTaskId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Parent task not found: " + request.parentTaskId()));
             if (!parent.getProject().getId().equals(projectId)) {
-                throw new TaskValidationException("Parent task does not belong to project: " + projectId);
+                throw new ValidationException("Parent task does not belong to project: " + projectId);
             }
             task.setParentTask(parent);
         }
@@ -172,11 +174,11 @@ public class TaskService {
                 visibleFrom = today.withDayOfMonth(1).plusMonths(1);
                 scope = SchedulingScope.MONTH;
             }
-            default -> throw new TaskValidationException("Unknown deferral target: " + request.target());
+            default -> throw new ValidationException("Unknown deferral target: " + request.target());
         }
 
         if (task.getDueDate() != null && visibleFrom.isAfter(task.getDueDate())) {
-            throw new TaskValidationException(
+            throw new ValidationException(
                     "Cannot defer past deadline " + task.getDueDate() + ". Change the deadline first.");
         }
 
@@ -226,13 +228,13 @@ public class TaskService {
         LocalDate endOfWeek = today.plusDays(7);
 
         Comparator<Task> comparator = Comparator
-                .comparingInt((Task t) -> deadlineGroupOrder(t.getDueDate(), today, endOfWeek))
+                .comparingInt((Task t) -> DeadlineGroup.fromDueDate(t.getDueDate(), today, endOfWeek).ordinal())
                 .thenComparingInt(t -> -t.getPriority());
 
         return tasks.stream()
                 .sorted(comparator)
                 .map(task -> {
-                    DeadlineGroup group = computeDeadlineGroup(task.getDueDate(), today, endOfWeek);
+                    DeadlineGroup group = DeadlineGroup.fromDueDate(task.getDueDate(), today, endOfWeek);
                     List<TaskResponse> children = buildChildResponses(task.getId(), user);
                     return TaskResponse.from(task, group, children);
                 })
@@ -241,40 +243,17 @@ public class TaskService {
 
     private DeadlineGroup computeDeadlineGroup(LocalDate dueDate) {
         LocalDate today = LocalDate.now();
-        return computeDeadlineGroup(dueDate, today, today.plusDays(7));
-    }
-
-    private DeadlineGroup computeDeadlineGroup(LocalDate dueDate, LocalDate today, LocalDate endOfWeek) {
-        if (dueDate == null || dueDate.isAfter(endOfWeek)) return DeadlineGroup.NO_DEADLINE;
-        if (!dueDate.isAfter(today)) return DeadlineGroup.TODAY;  // today AND overdue
-        return DeadlineGroup.THIS_WEEK;  // after today and within 7 days
-    }
-
-    private int deadlineGroupOrder(LocalDate dueDate, LocalDate today, LocalDate endOfWeek) {
-        // Use ordinal directly — DeadlineGroup is declared TODAY(0), THIS_WEEK(1), NO_DEADLINE(2)
-        // Avoids the synthetic $1 class the compiler generates for enum switch expressions
-        return computeDeadlineGroup(dueDate, today, endOfWeek).ordinal();
+        return DeadlineGroup.fromDueDate(dueDate, today, today.plusDays(7));
     }
 
     private Task findOwnedTask(AppUser user, UUID id) {
         return taskRepository.findByIdAndUserId(id, user.getId())
-                .orElseThrow(() -> new TaskNotFoundException("Task not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Task not found: " + id));
     }
 
     private Project findOwnedProject(AppUser user, UUID projectId) {
         return projectRepository.findByIdAndUserId(projectId, user.getId())
-                .orElseThrow(() -> new TaskValidationException("Project not found or not accessible: " + projectId));
+                .orElseThrow(() -> new ValidationException("Project not found or not accessible: " + projectId));
     }
 
-    public static class TaskNotFoundException extends RuntimeException {
-        public TaskNotFoundException(String message) {
-            super(message);
-        }
-    }
-
-    public static class TaskValidationException extends RuntimeException {
-        public TaskValidationException(String message) {
-            super(message);
-        }
-    }
 }

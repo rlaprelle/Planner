@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminTimeBlockRequest;
 import com.echel.planner.backend.admin.dto.AdminTimeBlockResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.schedule.TimeBlock;
@@ -44,11 +45,11 @@ public class AdminTimeBlockService {
 
     public AdminTimeBlockResponse create(AdminTimeBlockRequest request) {
         AppUser user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
         Task task = null;
         if (request.taskId() != null) {
             task = taskRepository.findById(request.taskId())
-                    .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Task not found: " + request.taskId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Task not found: " + request.taskId()));
         }
         TimeBlock block = new TimeBlock(
                 user,
@@ -71,7 +72,7 @@ public class AdminTimeBlockService {
         block.setEndTime(request.endTime());
         if (request.taskId() != null) {
             Task task = taskRepository.findById(request.taskId())
-                    .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Task not found: " + request.taskId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Task not found: " + request.taskId()));
             block.setTask(task);
         } else {
             block.setTask(null);
@@ -92,6 +93,6 @@ public class AdminTimeBlockService {
 
     private TimeBlock findBlock(UUID id) {
         return timeBlockRepository.findById(id)
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Time block not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Time block not found: " + id));
     }
 }

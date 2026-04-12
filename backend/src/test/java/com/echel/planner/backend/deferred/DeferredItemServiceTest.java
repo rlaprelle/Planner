@@ -1,7 +1,7 @@
 package com.echel.planner.backend.deferred;
 
 import com.echel.planner.backend.auth.AppUser;
-import com.echel.planner.backend.deferred.DeferredItemService.DeferredItemNotFoundException;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.deferred.dto.DeferRequest;
 import com.echel.planner.backend.deferred.dto.DeferRequest.DeferDuration;
 import com.echel.planner.backend.deferred.dto.DeferredItemCreateRequest;
@@ -162,7 +162,7 @@ class DeferredItemServiceTest {
         when(repository.findByIdAndUserId(user, itemId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.dismiss(user, itemId))
-                .isInstanceOf(DeferredItemNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(itemId.toString());
     }
 }

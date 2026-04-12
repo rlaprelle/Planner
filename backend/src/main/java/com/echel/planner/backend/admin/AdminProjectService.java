@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminProjectRequest;
 import com.echel.planner.backend.admin.dto.AdminProjectResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItemRepository;
@@ -48,7 +49,7 @@ public class AdminProjectService {
 
     public AdminProjectResponse create(AdminProjectRequest request) {
         AppUser user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
         Project project = new Project(user, request.name());
         project.setDescription(request.description());
         project.setColor(request.color());
@@ -66,7 +67,7 @@ public class AdminProjectService {
         Project project = findProject(id);
         if (request.userId() != null) {
             AppUser user = userRepository.findById(request.userId())
-                    .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
             project.setUser(user);
         }
         project.setName(request.name());
@@ -94,6 +95,6 @@ public class AdminProjectService {
 
     private Project findProject(UUID id) {
         return projectRepository.findById(id)
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Project not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found: " + id));
     }
 }

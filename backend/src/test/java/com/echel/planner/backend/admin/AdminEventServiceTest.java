@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminEventRequest;
 import com.echel.planner.backend.admin.dto.AdminEventResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.event.Event;
@@ -87,7 +88,7 @@ class AdminEventServiceTest {
         when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(eventId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(eventId.toString());
     }
 
@@ -150,7 +151,7 @@ class AdminEventServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(userId.toString());
     }
 
@@ -163,7 +164,7 @@ class AdminEventServiceTest {
         when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(projectId.toString());
     }
 
@@ -205,7 +206,7 @@ class AdminEventServiceTest {
                 BLOCK_DATE, START_TIME, END_TIME);
 
         assertThatThrownBy(() -> service.update(eventId, request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(eventId.toString());
     }
 
@@ -220,7 +221,7 @@ class AdminEventServiceTest {
                 BLOCK_DATE, START_TIME, END_TIME);
 
         assertThatThrownBy(() -> service.update(eventId, request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(projectId.toString());
     }
 
@@ -241,7 +242,7 @@ class AdminEventServiceTest {
         when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(eventId))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(eventId.toString());
     }
 }

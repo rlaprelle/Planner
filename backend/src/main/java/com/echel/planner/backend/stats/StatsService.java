@@ -8,6 +8,8 @@ import com.echel.planner.backend.reflection.DailyReflection;
 import com.echel.planner.backend.stats.dto.DashboardResponse;
 import com.echel.planner.backend.stats.dto.DashboardResponse.CelebrationTask;
 import com.echel.planner.backend.stats.dto.WeeklySummaryResponse;
+import com.echel.planner.backend.stats.CelebrationReason;
+import com.echel.planner.backend.task.DeadlineGroup;
 import com.echel.planner.backend.task.Task;
 import com.echel.planner.backend.task.TaskRepository;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,13 @@ import java.util.function.ToIntFunction;
 @Service
 @Transactional(readOnly = true)
 public class StatsService {
+
+    private static final int FOCUS_CELEBRATION_MINUTES = 120;
+    private static final int HIGH_COMPLEXITY_POINTS = 5;
+    private static final int LONG_RUNNING_DAYS = 7;
+    private static final int MAX_CELEBRATIONS = 3;
+    private static final double TREND_THRESHOLD = 0.5;
+    private static final int WEEKLY_LOOKBACK_DAYS = 6;
 
     private final DailyReflectionRepository reflectionRepository;
     private final TimeBlockRepository timeBlockRepository;
@@ -68,7 +77,7 @@ public class StatsService {
                         t.getProject().getName(),
                         t.getProject().getColor(),
                         t.getDueDate(),
-                        computeDeadlineGroup(t.getDueDate(), today, endOfWeek)))
+                        DeadlineGroup.fromDueDate(t.getDueDate(), today, endOfWeek).name()))
                 .toList();
 
         long deferredCount = deferredItemRepository.countPendingForUser(user.getId(), today);
@@ -91,7 +100,7 @@ public class StatsService {
     public WeeklySummaryResponse getWeeklySummary(AppUser user) {
         ZoneId zone = ZoneId.of(user.getTimezone());
         LocalDate today = LocalDate.now(zone);
-        LocalDate weekStart = today.minusDays(6);
+        LocalDate weekStart = today.minusDays(WEEKLY_LOOKBACK_DAYS);
 
         Instant rangeStart = weekStart.atStartOfDay(zone).toInstant();
         Instant rangeEnd = today.plusDays(1).atStartOfDay(zone).toInstant();
@@ -147,11 +156,6 @@ public class StatsService {
         return streak;
     }
 
-    private String computeDeadlineGroup(LocalDate dueDate, LocalDate today, LocalDate endOfWeek) {
-        if (dueDate == null || dueDate.isAfter(endOfWeek)) return "NO_DEADLINE";
-        if (!dueDate.isAfter(today)) return "TODAY";
-        return "THIS_WEEK";
-    }
 
     /**
      * Identifies today's completed tasks worth celebrating:
@@ -164,45 +168,52 @@ public class StatsService {
 
         List<CelebrationTask> celebrations = new ArrayList<>();
         for (Task t : completed) {
-            String reason = pickCelebrationReason(t);
+            CelebrationReason reason = pickCelebrationReason(t);
             if (reason != null) {
                 celebrations.add(new CelebrationTask(
                         t.getId(),
                         t.getTitle(),
                         t.getProject().getName(),
-                        reason));
+                        reason,
+                        formatCelebrationReason(reason, t)));
             }
         }
 
-        celebrations.sort(Comparator
-                .comparingInt((CelebrationTask c) -> {
-                    if (c.reason().contains("focused work")) return 0;
-                    if (c.reason().contains("complexity")) return 1;
-                    return 2;
-                }));
+        celebrations.sort(Comparator.comparingInt(c -> c.celebrationReason().ordinal()));
 
-        return celebrations.size() > 3 ? celebrations.subList(0, 3) : celebrations;
+        return celebrations.size() > MAX_CELEBRATIONS
+                ? celebrations.subList(0, MAX_CELEBRATIONS) : celebrations;
     }
 
-    private String pickCelebrationReason(Task task) {
-        if (task.getActualMinutes() != null && task.getActualMinutes() >= 120) {
-            int hours = task.getActualMinutes() / 60;
-            int mins = task.getActualMinutes() % 60;
-            if (mins == 0) {
-                return hours + (hours == 1 ? " hour" : " hours") + " of focused work";
-            }
-            return hours + "h " + mins + "m of focused work";
+    private CelebrationReason pickCelebrationReason(Task task) {
+        if (task.getActualMinutes() != null && task.getActualMinutes() >= FOCUS_CELEBRATION_MINUTES) {
+            return CelebrationReason.FOCUSED_WORK;
         }
-        if (task.getPointsEstimate() != null && task.getPointsEstimate() >= 5) {
-            return "High complexity task";
+        if (task.getPointsEstimate() != null && task.getPointsEstimate() >= HIGH_COMPLEXITY_POINTS) {
+            return CelebrationReason.HIGH_COMPLEXITY;
         }
         if (task.getCreatedAt() != null && task.getCompletedAt() != null) {
             long days = ChronoUnit.DAYS.between(task.getCreatedAt(), task.getCompletedAt());
-            if (days >= 7) {
-                return "On your list for " + days + " days";
+            if (days >= LONG_RUNNING_DAYS) {
+                return CelebrationReason.LONG_RUNNING;
             }
         }
         return null;
+    }
+
+    private String formatCelebrationReason(CelebrationReason reason, Task task) {
+        return switch (reason) {
+            case FOCUSED_WORK -> {
+                int hours = task.getActualMinutes() / 60;
+                int mins = task.getActualMinutes() % 60;
+                yield mins == 0
+                        ? hours + (hours == 1 ? " hour" : " hours") + " of focused work"
+                        : hours + "h " + mins + "m of focused work";
+            }
+            case HIGH_COMPLEXITY -> "High complexity task";
+            case LONG_RUNNING -> "On your list for "
+                    + ChronoUnit.DAYS.between(task.getCreatedAt(), task.getCompletedAt()) + " days";
+        };
     }
 
     /**
@@ -226,8 +237,8 @@ public class StatsService {
                 .orElse(0);
 
         double diff = later - earlier;
-        if (diff > 0.5) return "improving";
-        if (diff < -0.5) return "declining";
+        if (diff > TREND_THRESHOLD) return "improving";
+        if (diff < -TREND_THRESHOLD) return "declining";
         return "steady";
     }
 }

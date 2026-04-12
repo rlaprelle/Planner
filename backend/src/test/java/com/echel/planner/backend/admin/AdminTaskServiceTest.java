@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminTaskRequest;
 import com.echel.planner.backend.admin.dto.AdminTaskResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItemRepository;
@@ -162,7 +163,7 @@ class AdminTaskServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> adminTaskService.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(userId.toString());
 
         verify(projectRepository, never()).findById(any());
@@ -184,7 +185,7 @@ class AdminTaskServiceTest {
         when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> adminTaskService.create(request))
-                .isInstanceOf(AdminExceptionHandler.AdminNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(projectId.toString());
 
         verify(taskRepository, never()).save(any());

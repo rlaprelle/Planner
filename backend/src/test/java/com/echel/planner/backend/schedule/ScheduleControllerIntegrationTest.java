@@ -2,6 +2,7 @@ package com.echel.planner.backend.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.common.ValidationException;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.auth.JwtAuthFilter;
 import com.echel.planner.backend.auth.JwtService;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ScheduleController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, ScheduleExceptionHandler.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, com.echel.planner.backend.common.GlobalExceptionHandler.class})
 class ScheduleControllerIntegrationTest {
 
     @Autowired MockMvc mockMvc;
@@ -111,7 +112,7 @@ class ScheduleControllerIntegrationTest {
                 null, null);
 
         when(scheduleService.savePlan(any(AppUser.class), any(SavePlanRequest.class)))
-                .thenThrow(new ScheduleService.ScheduleValidationException("Blocks must not overlap"));
+                .thenThrow(new ValidationException("Blocks must not overlap"));
 
         mockMvc.perform(post("/api/v1/schedule/today/plan")
                         .header("Authorization", "Bearer " + token)

@@ -1,6 +1,7 @@
 package com.echel.planner.backend.deferred;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.deferred.dto.ConvertToEventRequest;
 import com.echel.planner.backend.deferred.dto.DeferredItemResponse;
 import com.echel.planner.backend.event.Event;
@@ -137,7 +138,7 @@ class DeferredItemConvertToEventTest {
                 LocalDate.of(2026, 4, 5), LocalTime.of(10, 0), LocalTime.of(11, 0));
 
         assertThatThrownBy(() -> service.convertToEvent(user, itemId, request))
-                .isInstanceOf(DeferredItemService.DeferredItemNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(itemId.toString());
     }
 

@@ -12,6 +12,7 @@ import com.echel.planner.backend.task.EnergyLevel;
 import com.echel.planner.backend.task.Task;
 import com.echel.planner.backend.task.TaskRepository;
 import com.echel.planner.backend.task.TaskStatus;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,9 +55,9 @@ public class AdminTaskService {
 
     public AdminTaskResponse create(AdminTaskRequest request) {
         AppUser user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
         Project project = projectRepository.findById(request.projectId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Project not found: " + request.projectId()));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found: " + request.projectId()));
         Task task = new Task(user, project, request.title());
         applyFields(task, request);
         return AdminTaskResponse.from(taskRepository.save(task));
@@ -66,12 +67,12 @@ public class AdminTaskService {
         Task task = findTask(id);
         if (request.userId() != null) {
             AppUser user = userRepository.findById(request.userId())
-                    .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                    .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
             task.setUser(user);
         }
         if (request.projectId() != null) {
             Project project = projectRepository.findById(request.projectId())
-                    .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Project not found: " + request.projectId()));
+                    .orElseThrow(() -> new EntityNotFoundException("Project not found: " + request.projectId()));
             task.setProject(project);
         }
         task.setTitle(request.title());
@@ -120,6 +121,6 @@ public class AdminTaskService {
 
     private Task findTask(UUID id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Task not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Task not found: " + id));
     }
 }

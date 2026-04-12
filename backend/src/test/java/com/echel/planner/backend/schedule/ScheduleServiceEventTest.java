@@ -4,7 +4,7 @@ import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.event.Event;
 import com.echel.planner.backend.event.EventService;
 import com.echel.planner.backend.project.Project;
-import com.echel.planner.backend.schedule.ScheduleService.ScheduleValidationException;
+import com.echel.planner.backend.common.ValidationException;
 import com.echel.planner.backend.schedule.dto.SavePlanRequest;
 import com.echel.planner.backend.schedule.dto.TimeBlockResponse;
 import com.echel.planner.backend.task.Task;
@@ -154,7 +154,7 @@ class ScheduleServiceEventTest {
                 .thenReturn(List.of(event));
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("overlaps with event")
                 .hasMessageContaining("Standup Meeting");
     }
@@ -170,7 +170,7 @@ class ScheduleServiceEventTest {
                 .thenReturn(List.of(event));
 
         assertThatThrownBy(() -> scheduleService.savePlan(user, request))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("overlaps with event");
     }
 
@@ -205,7 +205,7 @@ class ScheduleServiceEventTest {
                 .thenReturn(Optional.of(block));
 
         assertThatThrownBy(() -> scheduleService.startBlock(user, blockId))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Event blocks do not support session tracking");
     }
 
@@ -217,7 +217,7 @@ class ScheduleServiceEventTest {
                 .thenReturn(Optional.of(block));
 
         assertThatThrownBy(() -> scheduleService.completeBlock(user, blockId))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Event blocks do not support session tracking");
     }
 
@@ -229,7 +229,7 @@ class ScheduleServiceEventTest {
                 .thenReturn(Optional.of(block));
 
         assertThatThrownBy(() -> scheduleService.doneForNow(user, blockId))
-                .isInstanceOf(ScheduleValidationException.class)
+                .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Event blocks do not support session tracking");
     }
 

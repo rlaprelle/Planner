@@ -6,6 +6,8 @@ import com.echel.planner.backend.project.ProjectRepository;
 import com.echel.planner.backend.event.dto.EventCreateRequest;
 import com.echel.planner.backend.event.dto.EventResponse;
 import com.echel.planner.backend.event.dto.EventUpdateRequest;
+import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.ValidationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,31 +111,20 @@ public class EventService {
 
     private Event findOwnedEvent(AppUser user, UUID eventId) {
         return eventRepository.findByIdAndUserId(eventId, user.getId())
-                .orElseThrow(() -> new EventNotFoundException("Event not found: " + eventId));
+                .orElseThrow(() -> new EntityNotFoundException("Event not found: " + eventId));
     }
 
     private Project findOwnedProject(AppUser user, UUID projectId) {
         return projectRepository.findByIdAndUserId(projectId, user.getId())
-                .orElseThrow(() -> new EventValidationException(
+                .orElseThrow(() -> new ValidationException(
                         "Project not found or not accessible: " + projectId));
     }
 
     private void validateTimeOrder(LocalTime startTime, LocalTime endTime) {
         if (!endTime.isAfter(startTime)) {
-            throw new EventValidationException(
+            throw new ValidationException(
                     "End time must be after start time: " + startTime + " - " + endTime);
         }
     }
 
-    public static class EventNotFoundException extends RuntimeException {
-        public EventNotFoundException(String message) {
-            super(message);
-        }
-    }
-
-    public static class EventValidationException extends RuntimeException {
-        public EventValidationException(String message) {
-            super(message);
-        }
-    }
 }

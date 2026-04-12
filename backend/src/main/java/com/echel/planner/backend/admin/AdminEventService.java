@@ -2,6 +2,7 @@ package com.echel.planner.backend.admin;
 
 import com.echel.planner.backend.admin.dto.AdminEventRequest;
 import com.echel.planner.backend.admin.dto.AdminEventResponse;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.event.Event;
@@ -45,9 +46,9 @@ public class AdminEventService {
 
     public AdminEventResponse create(AdminEventRequest request) {
         AppUser user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("User not found: " + request.userId()));
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + request.userId()));
         Project project = projectRepository.findById(request.projectId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Project not found: " + request.projectId()));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found: " + request.projectId()));
 
         Event event = new Event(
                 user,
@@ -65,7 +66,7 @@ public class AdminEventService {
     public AdminEventResponse update(UUID id, AdminEventRequest request) {
         Event event = findEvent(id);
         Project project = projectRepository.findById(request.projectId())
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Project not found: " + request.projectId()));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found: " + request.projectId()));
 
         event.setProject(project);
         event.setTitle(request.title());
@@ -84,7 +85,7 @@ public class AdminEventService {
 
     private Event findEvent(UUID id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new AdminExceptionHandler.AdminNotFoundException("Event not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Event not found: " + id));
     }
 
     private EnergyLevel parseEnergyLevel(String energyLevel) {

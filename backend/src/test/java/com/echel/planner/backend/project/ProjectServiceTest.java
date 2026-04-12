@@ -1,6 +1,7 @@
 package com.echel.planner.backend.project;
 
 import com.echel.planner.backend.auth.AppUser;
+import com.echel.planner.backend.common.EntityNotFoundException;
 import com.echel.planner.backend.project.dto.ProjectCreateRequest;
 import com.echel.planner.backend.project.dto.ProjectResponse;
 import com.echel.planner.backend.project.dto.ProjectUpdateRequest;
@@ -191,7 +192,7 @@ class ProjectServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> projectService.get(owner, projectId))
-                .isInstanceOf(ProjectService.ProjectNotFoundException.class)
+                .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(projectId.toString());
     }
 
@@ -258,7 +259,7 @@ class ProjectServiceTest {
                 "Name", null, null, null, null);
 
         assertThatThrownBy(() -> projectService.update(owner, projectId, request))
-                .isInstanceOf(ProjectService.ProjectNotFoundException.class);
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
     // -------------------------------------------------------------------------
@@ -294,6 +295,6 @@ class ProjectServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> projectService.archive(owner, projectId))
-                .isInstanceOf(ProjectService.ProjectNotFoundException.class);
+                .isInstanceOf(EntityNotFoundException.class);
     }
 }

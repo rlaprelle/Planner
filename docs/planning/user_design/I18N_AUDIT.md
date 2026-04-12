@@ -1,6 +1,6 @@
 # i18n String Audit
 
-**Purpose**: File-by-file catalog of every hardcoded user-facing string in the frontend, with namespace assignments and special handling flags. This is the reference artifact for Phase 1 of the [Internationalization plan](INTERNATIONALIZATION.md).
+**Purpose**: File-by-file catalog of every hardcoded user-facing string in the frontend, with namespace assignments and special handling flags. This is the reference artifact for Phase 1 of the [Internationalization plan](../../INTERNATIONALIZATION.md).
 
 **Audited**: 2026-04-11  
 **Files audited**: 57  

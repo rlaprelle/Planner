@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import * as Label from '@radix-ui/react-label'
 import { useAuth } from '@/auth/useAuth'
 import { EchelLogo } from '@/components/EchelLogo'
@@ -7,6 +8,7 @@ import { EchelLogo } from '@/components/EchelLogo'
 export function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation('auth')
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,9 +24,9 @@ export function LoginPage() {
       navigate('/', { replace: true })
     } catch (err) {
       if (err.status === 401) {
-        setError('Invalid email or password.')
+        setError(t('invalidCredentials'))
       } else {
-        setError('Something went wrong. Please try again.')
+        setError(t('common:genericError'))
       }
     } finally {
       setIsSubmitting(false)
@@ -36,16 +38,16 @@ export function LoginPage() {
       <div className="w-full max-w-sm bg-surface-raised rounded-2xl shadow-modal p-8">
         <div className="flex items-center justify-center gap-2.5 mb-1">
           <EchelLogo size={36} />
-          <h1 className="text-2xl font-bold text-ink-heading">Echel Planner</h1>
+          <h1 className="text-2xl font-bold text-ink-heading">{t('appName')}</h1>
         </div>
         <p className="text-sm text-ink-muted text-center italic mb-6">
-          Planning that works with your brain, not against it.
+          {t('tagline')}
         </p>
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="flex flex-col gap-1.5">
             <Label.Root htmlFor="email" className="text-sm font-medium text-ink-body">
-              Email
+              {t('email')}
             </Label.Root>
             <input
               id="email"
@@ -57,13 +59,13 @@ export function LoginPage() {
               className={`w-full rounded-lg border px-3 py-2 text-ink-heading text-sm shadow-soft
                 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-edge-focus
                 ${error ? 'border-error' : 'border-edge'}`}
-              placeholder="you@example.com"
+              placeholder={t('emailPlaceholder')}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <Label.Root htmlFor="password" className="text-sm font-medium text-ink-body">
-              Password
+              {t('password')}
             </Label.Root>
             <input
               id="password"
@@ -75,7 +77,7 @@ export function LoginPage() {
               className={`w-full rounded-lg border px-3 py-2 text-ink-heading text-sm shadow-soft
                 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:border-edge-focus
                 ${error ? 'border-error' : 'border-edge'}`}
-              placeholder="••••••••"
+              placeholder={t('passwordPlaceholder')}
             />
           </div>
 
@@ -93,14 +95,14 @@ export function LoginPage() {
               focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-2
               transition-colors duration-150"
           >
-            {isSubmitting ? 'Logging in…' : 'Log in'}
+            {isSubmitting ? t('loggingIn') : t('logIn')}
           </button>
         </form>
 
         <p className="mt-6 text-sm text-center text-ink-secondary">
-          Don't have an account?{' '}
+          {t('noAccount')}{' '}
           <Link to="/register" className="text-primary-500 hover:text-primary-700 font-medium">
-            Create one
+            {t('createOne')}
           </Link>
         </p>
       </div>

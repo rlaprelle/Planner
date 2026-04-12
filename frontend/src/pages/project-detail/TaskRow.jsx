@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { updateTaskStatus } from '@/api/tasks'
 import {
   PRIORITY_DOT_COLORS,
@@ -7,30 +8,24 @@ import {
 } from './constants'
 import { ChevronRightIcon, ChevronDownIcon } from './icons'
 
-function formatDate(dateStr) {
-  if (!dateStr) return null
-  const [year, month, day] = dateStr.split('-')
-  return `${month}/${day}/${year.slice(2)}`
-}
-
-function PriorityDot({ priority }) {
+function PriorityDot({ priority, label }) {
   const color = PRIORITY_DOT_COLORS[priority] || 'bg-gray-300'
   return (
     <span
       className={`inline-block w-2 h-2 rounded-full flex-shrink-0 ${color}`}
-      title={`Priority ${priority}`}
+      title={label}
     />
   )
 }
 
-function StatusCheckbox({ status, onChange, isPending }) {
+function StatusCheckbox({ status, onChange, isPending, doneLabel, openLabel }) {
   const isDone = status === 'COMPLETED'
   return (
     <button
       type="button"
       onClick={onChange}
       disabled={isPending}
-      title={isDone ? 'Mark as Open' : 'Mark as Completed'}
+      title={isDone ? openLabel : doneLabel}
       className={[
         'flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
         isDone
@@ -38,7 +33,7 @@ function StatusCheckbox({ status, onChange, isPending }) {
           : 'border-primary-300 hover:border-primary-400',
         isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
       ].join(' ')}
-      aria-label={isDone ? 'Mark as Open' : 'Mark as Completed'}
+      aria-label={isDone ? openLabel : doneLabel}
     >
       {isDone && (
         <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -50,6 +45,7 @@ function StatusCheckbox({ status, onChange, isPending }) {
 }
 
 export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }) {
+  const { t, i18n } = useTranslation('tasks')
   const [childrenExpanded, setChildrenExpanded] = useState(false)
   const queryClient = useQueryClient()
 
@@ -71,6 +67,11 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
   const isSelected = selectedTaskId === task.id
   const deadlineBadgeColor = DEADLINE_BADGE_COLORS[task.deadlineGroup] || ''
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return null
+    return new Intl.DateTimeFormat(i18n.language, { month: 'numeric', day: 'numeric', year: '2-digit' }).format(new Date(dateStr + 'T00:00:00'))
+  }
+
   return (
     <div>
       <div
@@ -88,7 +89,7 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
             'flex-shrink-0 w-4 h-4 flex items-center justify-center text-ink-muted hover:text-ink-secondary focus:outline-none rounded transition-colors',
             hasChildren ? 'visible' : 'invisible',
           ].join(' ')}
-          aria-label={childrenExpanded ? 'Collapse subtasks' : 'Expand subtasks'}
+          aria-label={childrenExpanded ? t('collapseSubtasks') : t('expandSubtasks')}
           tabIndex={hasChildren ? 0 : -1}
         >
           {childrenExpanded ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
@@ -99,10 +100,12 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
           status={task.status}
           onChange={handleStatusToggle}
           isPending={statusMutation.isPending}
+          doneLabel={t('common:markAsCompleted')}
+          openLabel={t('common:markAsOpen')}
         />
 
         {/* Priority dot */}
-        <PriorityDot priority={task.priority} />
+        <PriorityDot priority={task.priority} label={t('priorityLabel', { priority: task.priority })} />
 
         {/* Title — click opens detail panel */}
         <button
@@ -133,7 +136,7 @@ export function TaskRow({ task, projectId, onSelect, selectedTaskId, depth = 0 }
           type="button"
           onClick={() => onSelect(task)}
           className="flex-shrink-0 p-0.5 text-ink-faint hover:text-ink-secondary focus:outline-none rounded opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-          aria-label={`Open details for ${task.title}`}
+          aria-label={t('openDetails', { title: task.title })}
         >
           <ChevronRightIcon size={14} />
         </button>

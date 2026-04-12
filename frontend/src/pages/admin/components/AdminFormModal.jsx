@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as Dialog from '@radix-ui/react-dialog'
 
 function buildDefaults(fields, initialValues) {
@@ -25,6 +26,7 @@ function cleanFormValues(fields, values) {
 }
 
 function FormContent({ fields, initialValues, onSubmit, isPending }) {
+  const { t } = useTranslation('admin')
   const [values, setValues] = useState(() => buildDefaults(fields, initialValues))
 
   const handleChange = (name, value) => {
@@ -50,7 +52,7 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
               required={f.required}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">&mdash; Select &mdash;</option>
+              <option value="">{t('selectDefault')}</option>
               {f.options?.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -85,7 +87,7 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
       <div className="flex justify-end gap-2 pt-2">
         <Dialog.Close asChild>
           <button type="button" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
-            Cancel
+            {t('common:cancel')}
           </button>
         </Dialog.Close>
         <button
@@ -93,7 +95,7 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
           disabled={isPending}
           className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
-          {isPending ? 'Saving...' : 'Save'}
+          {isPending ? t('common:saving') : t('common:save')}
         </button>
       </div>
     </form>

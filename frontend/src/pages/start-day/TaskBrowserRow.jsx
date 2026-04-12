@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { TaskCard } from './TaskCard'
 
 /**
@@ -10,20 +11,23 @@ import { TaskCard } from './TaskCard'
  *   onToggle(taskId) - toggle selection
  *   emptyMessage    - string shown when a project has no tasks matching this row's filter
  */
-export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onToggle, emptyMessage = 'Nothing here', section = 'default' }) {
+export function TaskBrowserRow({ tasks, selectedTaskIds, scheduledTaskIds, onToggle, emptyMessage, section = 'default' }) {
+  const { t } = useTranslation('timeBlocking')
+  const resolvedEmptyMessage = emptyMessage ?? t('nothingHere')
+
   // Group tasks by project, maintaining insertion order
   const projectMap = new Map()
   for (const task of tasks) {
     const key = task.projectId
     if (!projectMap.has(key)) {
-      projectMap.set(key, { name: task.projectName ?? 'Unknown', color: task.projectColor, tasks: [] })
+      projectMap.set(key, { name: task.projectName ?? t('unknown'), color: task.projectColor, tasks: [] })
     }
     projectMap.get(key).tasks.push(task)
   }
 
   if (projectMap.size === 0) {
     return (
-      <p className="text-xs text-ink-muted italic px-1">{emptyMessage}</p>
+      <p className="text-xs text-ink-muted italic px-1">{resolvedEmptyMessage}</p>
     )
   }
 

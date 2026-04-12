@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 /**
  * A non-draggable, non-resizable event block on the calendar grid.
  *
@@ -5,6 +7,7 @@
  * or removed by the user. Task blocks pushed into an event slot are rejected.
  */
 export function EventBlock({ block, minutesToPercent, durationToPercent }) {
+  const { t } = useTranslation('timeBlocking')
   const left = minutesToPercent(block.startMinutes)
   const width = durationToPercent(block.endMinutes - block.startMinutes)
 
@@ -40,7 +43,7 @@ export function EventBlock({ block, minutesToPercent, durationToPercent }) {
           />
         </svg>
         <span className="text-xs font-medium truncate">
-          {block.event?.title ?? 'Event'}
+          {block.event?.title ?? t('eventFallback')}
         </span>
         <span className="text-xs shrink-0 text-amber-500">
           {startLabel}–{endLabel}

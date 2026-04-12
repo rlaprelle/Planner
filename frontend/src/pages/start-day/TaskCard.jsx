@@ -1,8 +1,9 @@
 import { useDraggable } from '@dnd-kit/core'
+import { useTranslation } from 'react-i18next'
 
-const DEADLINE_BADGE = {
-  TODAY: { label: 'TODAY', className: 'bg-deadline-today-bg text-deadline-today-text' },
-  THIS_WEEK: { label: 'THIS WK', className: 'bg-deadline-week-bg text-deadline-week-text' },
+const DEADLINE_BADGE_CLASS = {
+  TODAY: 'bg-deadline-today-bg text-deadline-today-text',
+  THIS_WEEK: 'bg-deadline-week-bg text-deadline-week-text',
 }
 
 /**
@@ -15,13 +16,21 @@ const DEADLINE_BADGE = {
  *   onToggle(taskId) - called when checkbox changes
  */
 export function TaskCard({ task, isSelected, isScheduled, onToggle, section = 'default' }) {
+  const { t } = useTranslation('timeBlocking')
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `task-card-${section}-${task.id}`,
     data: { type: 'task-card', task },
     disabled: isScheduled,
   })
 
-  const badge = DEADLINE_BADGE[task.deadlineGroup]
+  const DEADLINE_BADGE_LABEL = {
+    TODAY: t('deadlineToday'),
+    THIS_WEEK: t('deadlineThisWeek'),
+  }
+
+  const badgeClassName = DEADLINE_BADGE_CLASS[task.deadlineGroup]
+  const badgeLabel = DEADLINE_BADGE_LABEL[task.deadlineGroup]
+  const badge = badgeClassName ? { label: badgeLabel, className: badgeClassName } : undefined
 
   return (
     <div
@@ -47,7 +56,7 @@ export function TaskCard({ task, isSelected, isScheduled, onToggle, section = 'd
         </span>
       )}
       {task.pointsEstimate != null && (
-        <span className="shrink-0 text-ink-muted">{task.pointsEstimate}pt</span>
+        <span className="shrink-0 text-ink-muted">{task.pointsEstimate}{t('pointsSuffix')}</span>
       )}
     </div>
   )

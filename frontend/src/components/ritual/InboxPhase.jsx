@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { getDeferredItems } from '@/api/deferred'
 import { DeferredItemActions } from '@/components/deferred/DeferredItemActions'
 
 function InboxInner({ totalItems, onPhaseComplete }) {
+  const { t } = useTranslation('ritual')
   const queryClient = useQueryClient()
   const [processedCount, setProcessedCount] = useState(0)
   const [showCelebration, setShowCelebration] = useState(false)
@@ -30,8 +32,8 @@ function InboxInner({ totalItems, onPhaseComplete }) {
     return (
       <div className="text-center py-12">
         <div className="text-5xl mb-4">🎉</div>
-        <h2 className="text-2xl font-semibold text-ink-heading">Inbox Zero!</h2>
-        <p className="mt-2 text-ink-secondary">All caught up.</p>
+        <h2 className="text-2xl font-semibold text-ink-heading">{t('inboxZero')}</h2>
+        <p className="mt-2 text-ink-secondary">{t('allCaughtUp')}</p>
       </div>
     )
   }
@@ -40,9 +42,9 @@ function InboxInner({ totalItems, onPhaseComplete }) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-ink-heading mb-2">Process your inbox</h2>
+      <h2 className="text-xl font-semibold text-ink-heading mb-2">{t('processYourInbox')}</h2>
       <p className="text-sm text-ink-muted mb-6">
-        {processedCount + 1} of {totalItems}
+        {t('inboxProgress', { current: processedCount + 1, total: totalItems })}
       </p>
 
       <div className="w-full bg-surface-soft rounded-full h-1.5 mb-6">
@@ -62,6 +64,7 @@ function InboxInner({ totalItems, onPhaseComplete }) {
 }
 
 export function InboxPhase({ onPhaseComplete }) {
+  const { t } = useTranslation('ritual')
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['deferred'],
     queryFn: getDeferredItems,
@@ -74,7 +77,7 @@ export function InboxPhase({ onPhaseComplete }) {
   }, [isLoading, items.length, onPhaseComplete])
 
   if (isLoading) {
-    return <div className="p-8 text-ink-muted text-sm">Loading…</div>
+    return <div className="p-8 text-ink-muted text-sm">{t('common:loading')}</div>
   }
 
   if (items.length === 0) return null

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/auth/useAuth'
 import { getDeferredItems } from '@/api/deferred'
 import { QuickCapture } from '@/components/QuickCapture'
@@ -10,7 +11,7 @@ import { EchelLogo } from '@/components/EchelLogo'
 
 const NAV_ITEMS = [
   {
-    label: 'Dashboard',
+    labelKey: 'dashboard',
     to: '/',
     end: true,
     icon: (
@@ -25,7 +26,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    label: 'Projects',
+    labelKey: 'projects',
     to: '/projects',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -36,7 +37,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    label: 'Inbox',
+    labelKey: 'inbox',
     to: '/inbox',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -48,7 +49,7 @@ const NAV_ITEMS = [
     ),
   },
   {
-    label: 'Today',
+    labelKey: 'today',
     to: '/today',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -70,27 +71,27 @@ const NAV_ITEMS = [
 
 const RITUAL_GROUPS = [
   {
-    label: 'Daily',
+    labelKey: 'daily',
     defaultOpen: true,
     items: [
-      { label: 'Start Day', to: '/start-day' },
-      { label: 'End Day', to: '/end-day' },
+      { labelKey: 'startDay', to: '/start-day' },
+      { labelKey: 'endDay', to: '/end-day' },
     ],
   },
   {
-    label: 'Weekly',
+    labelKey: 'weekly',
     defaultOpen: false,
     items: [
-      { label: 'Start Week', to: '/start-week' },
-      { label: 'End Week', to: '/end-week' },
+      { labelKey: 'startWeek', to: '/start-week' },
+      { labelKey: 'endWeek', to: '/end-week' },
     ],
   },
   {
-    label: 'Monthly',
+    labelKey: 'monthly',
     defaultOpen: false,
     items: [
-      { label: 'Start Month', to: '/start-month' },
-      { label: 'End Month', to: '/end-month' },
+      { labelKey: 'startMonth', to: '/start-month' },
+      { labelKey: 'endMonth', to: '/end-month' },
     ],
   },
 ]
@@ -124,6 +125,7 @@ function HeaderTimer({ session, onClick }) {
 }
 
 function NavItem({ item, badge = 0 }) {
+  const { t } = useTranslation('common')
   return (
     <NavLink
       to={item.to}
@@ -138,10 +140,10 @@ function NavItem({ item, badge = 0 }) {
       }
     >
       {item.icon}
-      {item.label}
+      {t(item.labelKey)}
       {badge > 0 && (
         <span className="ml-auto bg-primary-100 text-primary-700 text-xs font-semibold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
-          {badge > 99 ? '99+' : badge}
+          {badge > 99 ? t('badgeOverflow') : badge}
         </span>
       )}
     </NavLink>
@@ -149,6 +151,7 @@ function NavItem({ item, badge = 0 }) {
 }
 
 function RitualGroup({ group }) {
+  const { t } = useTranslation('common')
   const [open, setOpen] = useState(group.defaultOpen)
 
   return (
@@ -166,7 +169,7 @@ function RitualGroup({ group }) {
         >
           <polyline points="9 18 15 12 9 6" />
         </svg>
-        {group.label}
+        {t(group.labelKey)}
       </button>
       {open && (
         <div className="space-y-0.5 ml-7">
@@ -183,7 +186,7 @@ function RitualGroup({ group }) {
                 ].join(' ')
               }
             >
-              {item.label}
+              {t(item.labelKey)}
             </NavLink>
           ))}
         </div>
@@ -193,6 +196,7 @@ function RitualGroup({ group }) {
 }
 
 export function AppLayout() {
+  const { t } = useTranslation('common')
   const { user, logout } = useAuth()
   const displayName = user?.displayName || user?.email || 'User'
   const { session } = useActiveSession()
@@ -210,12 +214,12 @@ export function AppLayout() {
       {/* Sidebar */}
       <nav
         className="w-60 flex-shrink-0 flex flex-col bg-surface-raised border-r border-edge"
-        aria-label="Main navigation"
+        aria-label={t('mainNavigation')}
       >
         {/* Logo / Brand */}
         <div className="px-5 py-5 border-b border-edge-subtle flex items-center gap-2.5">
           <EchelLogo size={24} />
-          <span className="text-lg font-semibold text-ink-heading tracking-tight">Echel Planner</span>
+          <span className="text-lg font-semibold text-ink-heading tracking-tight">{t('appName')}</span>
         </div>
 
         {/* Active session timer */}
@@ -237,12 +241,12 @@ export function AppLayout() {
           ))}
 
           <div className="pt-3 pb-1">
-            <p className="px-3 text-xs font-semibold text-ink-muted uppercase tracking-wider">Rituals</p>
+            <p className="px-3 text-xs font-semibold text-ink-muted uppercase tracking-wider">{t('rituals')}</p>
           </div>
 
           <div className="space-y-1">
             {RITUAL_GROUPS.map((group) => (
-              <RitualGroup key={group.label} group={group} />
+              <RitualGroup key={group.labelKey} group={group} />
             ))}
           </div>
         </div>
@@ -267,7 +271,7 @@ export function AppLayout() {
               <circle cx="12" cy="12" r="3" />
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
             </svg>
-            Settings
+            {t('settings')}
           </NavLink>
           <p className="text-xs text-ink-muted truncate" title={displayName}>
             {displayName}
@@ -276,7 +280,7 @@ export function AppLayout() {
             onClick={logout}
             className="w-full text-left px-3 py-2 rounded-md text-sm text-ink-secondary hover:bg-surface-soft hover:text-ink-heading transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1"
           >
-            Log out
+            {t('logOut')}
           </button>
         </div>
       </nav>

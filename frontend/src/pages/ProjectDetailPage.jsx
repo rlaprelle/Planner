@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { getProject } from '@/api/projects'
 import { getProjectTasks } from '@/api/tasks'
 import { getProjectEvents } from '@/api/events'
@@ -11,6 +12,7 @@ import { AddTaskModal } from './project-detail/AddTaskModal'
 import { PlusIcon, Spinner } from './project-detail/icons'
 
 export default function ProjectDetailPage() {
+  const { t } = useTranslation('tasks')
   const { projectId } = useParams()
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [addTaskOpen, setAddTaskOpen] = useState(false)
@@ -40,7 +42,7 @@ export default function ProjectDetailPage() {
     enabled: Boolean(projectId),
   })
 
-  const projectName = project?.name ?? '…'
+  const projectName = project?.name ?? '\u2026'
   const isLoading = projectLoading || tasksLoading
 
   // Find the selected task in the (possibly refreshed) task tree
@@ -67,10 +69,10 @@ export default function ProjectDetailPage() {
               to="/projects"
               className="text-xs text-primary-500 hover:underline focus:outline-none focus:underline"
             >
-              ← Projects
+              {t('backToProjects')}
             </Link>
             <h1 className="text-xl font-semibold text-ink-heading mt-0.5">
-              {projectLoading ? '…' : (project?.name ?? 'Project')}
+              {projectLoading ? '\u2026' : (project?.name ?? t('project'))}
             </h1>
           </div>
           <button
@@ -79,7 +81,7 @@ export default function ProjectDetailPage() {
             className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors flex-shrink-0"
           >
             <PlusIcon size={15} />
-            Add task
+            {t('addTask')}
           </button>
         </div>
 
@@ -89,7 +91,7 @@ export default function ProjectDetailPage() {
 
           {!isLoading && tasksError && (
             <div className="py-10 text-center text-sm text-error">
-              Failed to load tasks. Please try again.
+              {t('loadTasksFailed')}
             </div>
           )}
 

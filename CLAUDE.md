@@ -13,7 +13,7 @@ ADHD-friendly daily work management tool. *Planning that works with your brain, 
 # Or individually:
 docker compose up -d                       # PostgreSQL on :5432
 cd backend && mvn spring-boot:run          # Backend on :8080
-cd frontend && npm install && npm run dev  # Frontend on :5173
+node dev.js start                          # Frontend (port auto-assigned per worktree)
 ```
 
 - Backend health: http://localhost:8080/actuator/health
@@ -41,16 +41,18 @@ All have working defaults for local dev:
 
 ```
 backend/src/main/java/com/echel/planner/backend/
+  admin/      — Admin CRUD for all entities, schedule, time blocks
   auth/       — JWT login, register, refresh
-  task/       — Task CRUD, deferral, status, energy level
-  project/    — Project CRUD
+  common/     — Global exception handling (EntityNotFound, StateConflict, Validation)
   deferred/   — Deferred items (inbox)
+  event/      — Calendar events CRUD
+  project/    — Project CRUD
   reflection/ — Daily/weekly/monthly reflection
   schedule/   — Time blocks, schedule management
   stats/      — Points/completion stats
-  admin/      — Admin CRUD for all entities, schedule, time blocks
+  task/       — Task CRUD, deferral, status, energy level
 frontend/src/
-  pages/                — Route-level components
+  pages/                — Route-level components; routes defined in App.jsx (react-router-dom)
   pages/project-detail/ — Task list, detail panel/modal, row components
   pages/admin/          — Admin panel (users, projects, tasks, deferred, reflections, time blocks)
   pages/active-session/ — Timer, subtask checklist, chime
@@ -58,9 +60,10 @@ frontend/src/
   auth/                 — AuthContext, ProtectedRoute, useAuth
   contexts/             — ActiveSessionContext
   layouts/              — App shell (AppLayout)
-  components/           — Shared UI (QuickCapture, deferred/)
+  components/           — Shared UI (QuickCapture, EchelLogo, FlyAwayCard, deferred/)
   components/ritual/    — Ritual phase components (TaskTriagePhase, InboxPhase, DailyReflectionPhase, TaskSchedulePhase, CompletionPhase)
-  api/                  — TanStack Query + authFetch wrappers (admin, auth, dashboard, deferred, projects, reflection, schedule, tasks)
+  components/ui/        — Reusable primitives (Card, CardLabel, ProgressBar)
+  api/                  — TanStack Query + authFetch wrappers (client, admin, auth, dashboard, deferred, events, preferences, projects, reflection, schedule, tasks)
 ```
 
 ## Tech Stack
@@ -130,21 +133,15 @@ All user-facing strings must use `react-i18next`. Import `useTranslation` with t
 
 ## Design Principles
 
+### UX Philosophy
+
 - Be supportive, not judgemental. Never question the user's decisions. Ask "Is this still important?" not "Why haven't you done this?"
 - The goal is to encourage the user to make informed decisions about how to spend their time, not to steer them toward a particular decision.
 - Deciding NOT to do something is a victory. Keep task lists small and focused.
-- Prefer archive over delete.
+- Prefer soft deletes over hard deletes. Nothing should be permanently destroyed.
 - The workflow is a suggestion, not a restriction.
 
-## Frontend Workflow
-
-- **Dev server management:** Use `node dev.js start` **from the project root** (not `frontend/`) to start a frontend dev server. It assigns a deterministic port per worktree (5200–5299 range; 5173 for the main checkout), detects if one is already running, and writes a `.dev-port` file. Use `node dev.js status` to see all running servers, and `node dev.js stop` to shut down. The `.dev-port` file is validated against live state on every operation, so stale files from crashes are cleaned up automatically. Always use this script instead of `npm run dev` directly — it prevents port collisions between worktrees.
-- For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
-- After merging dev into a feature branch, review the merge:
-  - Do a visual spot-check for UI regressions not caught by tests
-  - Review auto-resolved files (run `git diff --name-only` on the merge commit) for silent reversions of your branch's work, especially when your branch made broad changes across many files
-
-## Frontend Design Principles
+### Visual Design
 
 1. **Calm over clever** — The interface should feel quiet and grounding. Avoid visual noise: competing colors, dense layouts, animated distractions. When in doubt, remove rather than add.
 2. **Soft shapes, soft colors** — Rounded corners (12-16px for containers, 8-12px for inline elements like badges and inputs). Muted tones from a soft lavender palette — dusty purples, warm grays, gentle off-whites. Avoid harsh borders, high-contrast outlines, and saturated colors except for intentional emphasis.
@@ -159,10 +156,18 @@ All user-facing strings must use `react-i18next`. Import `useTranslation` with t
 - **CSS `transform` doesn't compose** — Keyframe animations that set `transform` will overwrite Tailwind transform utilities (`-translate-x-1/2`, `scale-50`, etc.) on the same element. Use nested elements to separate transforms that need to coexist.
 - **Smooth arcs via split-axis animation** — Mid-journey keyframes stutter because CSS interpolates linearly between stops, creating visible direction changes. Instead, nest two elements and animate each axis independently with different timing functions (e.g., linear X + ease-out Y produces a natural arc).
 
+## Frontend Workflow
+
+- **Dev server management:** Use `node dev.js start` **from the project root** (not `frontend/`) to start a frontend dev server. It assigns a deterministic port per worktree (5200–5299 range; 5173 for the main checkout), detects if one is already running, and writes a `.dev-port` file. Use `node dev.js status` to see all running servers, and `node dev.js stop` to shut down. The `.dev-port` file is validated against live state on every operation, so stale files from crashes are cleaned up automatically. Always use this script instead of `npm run dev` directly — it prevents port collisions between worktrees.
+- For mechanical tasks (CSS class replacements, renames): batch and dispatch without per-task reviews. Reserve full reviews for tasks involving judgment.
+- After merging dev into a feature branch, review the merge:
+  - Do a visual spot-check for UI regressions not caught by tests
+  - Review auto-resolved files (run `git diff --name-only` on the merge commit) for silent reversions of your branch's work, especially when your branch made broad changes across many files
+
 ## E2E Testing
 
 - **Always import from `../fixtures/auth`**, not from `@playwright/test`, for tests on protected pages. The auth fixture pre-mocks `/auth/refresh` and `/deferred` so the app boots into an authenticated state. Without it, pages redirect to login.
-- **Use `dev.js` to start a Vite server before running E2E tests**, then pass its port via `BASE_URL`. Do NOT kill other Vite servers — multiple development sessions may be running concurrently. The workflow: `node dev.js start` (from project root) ��� note the port → `cd e2e && BASE_URL=http://localhost:<port> npx playwright test`. When `BASE_URL` is set, Playwright skips its own `webServer` launch and uses your server directly.
+- **Use `dev.js` to start a Vite server before running E2E tests**, then pass its port via `BASE_URL`. Do NOT kill other Vite servers — multiple development sessions may be running concurrently. The workflow: `node dev.js start` (from project root) → note the port → `cd e2e && BASE_URL=http://localhost:<port> npx playwright test`. When `BASE_URL` is set, Playwright skips its own `webServer` launch and uses your server directly.
 - `e2e/playwright.config.ts` conditionally skips `webServer` when `BASE_URL` is set. The main checkout (no `BASE_URL`) auto-starts Vite on 5173 as the default. Do not modify the config for other reasons in feature branches.
 - When adding new page features, check whether existing E2E tests need a mock for new API endpoints the page now calls (e.g., adding `mockEventsForDate` when the page starts fetching events).
 

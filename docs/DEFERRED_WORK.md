@@ -203,6 +203,16 @@ These gaps were identified in the audit but do not yet have a firm design. They 
 
 ---
 
+## Documentation
+
+### README Screenshots / Demo
+- **Description**: Add screenshots or an animated GIF to the README showing the core workflows — Morning Planning, Quick Capture, Active Work Session, and End Day triage. Visual documentation makes the product immediately tangible to someone browsing the repo.
+- **Rationale**: The written description covers intent well, but a visual would communicate the look and feel far more effectively. Deferred because a placeholder ("Screenshots coming soon") would undermine the polish of the README.
+- **Effort**: Low (capture screenshots, add to README)
+- **Priority**: Medium
+
+---
+
 ## Technical Debt & Security
 
 ### Admin Endpoint Authentication

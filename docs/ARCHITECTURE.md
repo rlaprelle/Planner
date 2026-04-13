@@ -102,6 +102,37 @@ For full project vision, design principles, and user flows, see the [user design
 
 ---
 
+## Project Structure
+
+```
+backend/src/main/java/com/echel/planner/backend/
+  admin/        — Admin CRUD for all entities
+  auth/         — JWT login, register, refresh
+  common/       — Global exception handling
+  deferred/     — Deferred items (inbox)
+  event/        — Calendar events
+  project/      — Project CRUD
+  reflection/   — Daily/weekly/monthly reflection
+  schedule/     — Time blocks, schedule management
+  stats/        — Points/completion stats
+  task/         — Task CRUD, deferral, status, energy level
+
+frontend/src/
+  pages/              — Route-level components (react-router-dom)
+  auth/               — AuthContext, ProtectedRoute
+  contexts/           — ActiveSessionContext
+  layouts/            — App shell (AppLayout)
+  components/         — Shared UI (QuickCapture, EchelLogo, etc.)
+  components/ritual/  — Ritual phase components
+  components/ui/      — Reusable primitives (Card, ProgressBar, etc.)
+  api/                — TanStack Query + authFetch wrappers
+
+e2e/                  — Playwright E2E tests (all API mocked)
+docs/                 — Architecture, design docs, specs
+```
+
+---
+
 ## Known Risks & Mitigations
 
 | Risk | Mitigation |

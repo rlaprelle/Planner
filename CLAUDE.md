@@ -113,13 +113,20 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 - If a worktree applies a new migration (e.g. V9 adds columns), then an older branch's backend may fail with Hibernate schema validation errors. The start scripts detect this and suggest `docker compose -p planner down -v` to reset.
 - The DB has CHECK constraints enforcing valid status values (`OPEN`, `COMPLETED`, `CANCELLED`). Old code that tries to insert `TODO` or `DONE` will get a constraint violation.
 
-## Key Documents
+## Documentation Files
 
-- `docs/ARCHITECTURE.md` — Data model, API endpoints, tech stack
-- `docs/IMPLEMENTATION_PLAN.md` — Design decisions and rationale behind key choices
-- `docs/DEFERRED_WORK.md` — Roadmap of deferred features and future work
-- `docs/INTERNATIONALIZATION.md` — i18n approach, namespace assignments, phased implementation plan
-- `docs/planning/user_design/` — User design docs (use cases, workflows, wireframes)
+Each documentation file has a defined purpose, audience, and scope. When adding content, place it in the file that matches.
+
+| File | Purpose | Audience | Out of scope |
+|------|---------|----------|-------------|
+| `README.md` | Product description: what the tool is, who it's for, core concepts, design principles, how to run it | Anyone discovering the project | Dev workflow, testing details, architecture internals |
+| `CONTRIBUTING.md` | Development setup, testing, environment config, worktree caveats | Engineers setting up a dev environment | Product description, design rationale, architecture |
+| `docs/ARCHITECTURE.md` | Data model, API endpoints, tech stack, project structure | Engineers and coding agents working in the codebase | Product-level framing, design principles, dev setup instructions |
+| `docs/IMPLEMENTATION_PLAN.md` | Design decisions and rationale behind key implementation choices | Engineers and coding agents understanding why things were built a certain way | Current feature status, deferred work |
+| `docs/DEFERRED_WORK.md` | Backlog of deferred features, future enhancements, tech debt | Engineers, coding agents, and anyone planning future work | Completed features, current implementation details |
+| `docs/INTERNATIONALIZATION.md` | i18n approach, namespace assignments, phased implementation plan | Engineers and coding agents implementing translations | General architecture, non-i18n conventions |
+| `docs/planning/user_design/` | Original design vision — use cases, workflows, wireframes | Historical reference | Do not update to match current implementation — these capture original design intent |
+| `docs/research/` | ADHD neuroscience research informing the design | Anyone understanding the evidence base for design decisions | Implementation details, feature specs |
 
 ## Conventions
 

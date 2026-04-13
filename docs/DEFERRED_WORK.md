@@ -1,6 +1,7 @@
 # Deferred Work & Future Features
 
-**Purpose**: Backlog of features intentionally deferred from MVP. Prevents scope creep while documenting the roadmap.
+> **Audience:** Engineers, coding agents, and anyone planning future work.
+> **Out of scope:** Completed features or current implementation details — see [ARCHITECTURE.md](ARCHITECTURE.md) and [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
 ---
 

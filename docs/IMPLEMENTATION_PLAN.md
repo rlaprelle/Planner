@@ -1,5 +1,8 @@
 # Planner - Implementation Plan
 
+> **Audience:** Engineers and coding agents understanding why things were built a certain way.
+> **Out of scope:** Current feature status or deferred work — see [DEFERRED_WORK.md](DEFERRED_WORK.md).
+
 **Status**: Design phase complete. Ready for implementation.
 
 ---

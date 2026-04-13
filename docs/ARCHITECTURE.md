@@ -1,8 +1,7 @@
 # Planner - Architecture
 
-**The Planner is a daily mindfulness and work management tool designed for ADHD brains.**
-
-For full project vision, design principles, and user flows, see the [user design documents](planning/user_design/).
+> **Audience:** Engineers and coding agents working in the codebase.
+> **Out of scope:** Product-level description and design principles — see [README.md](../README.md). Dev setup — see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---
 

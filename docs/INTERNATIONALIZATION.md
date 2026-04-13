@@ -1,6 +1,7 @@
 # Internationalization (i18n)
 
-**Purpose**: Add multi-language support to the Planner frontend so the app can serve users in their preferred language. This document outlines the approach, scope, and phased implementation plan.
+> **Audience:** Engineers and coding agents implementing translations.
+> **Out of scope:** General architecture or non-i18n conventions.
 
 ---
 

@@ -1,8 +1,7 @@
 # Planner - Architecture
 
-**The Planner is a daily mindfulness and work management tool designed for ADHD brains.**
-
-For full project vision, design principles, and user flows, see the [user design documents](planning/user_design/).
+> **Audience:** Engineers and coding agents working in the codebase.
+> **Out of scope:** Product-level description and design principles — see [README.md](../README.md). Dev setup — see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---
 
@@ -99,6 +98,37 @@ For full project vision, design principles, and user flows, see the [user design
 ### Stats
 - `GET /api/v1/stats/streak` - Consecutive days with both planning (TimeBlocks) and reflection (finalized DailyReflection)
 - `GET /api/v1/stats/weekly-summary` - Tasks completed, effort, mood trends
+
+---
+
+## Project Structure
+
+```
+backend/src/main/java/com/echel/planner/backend/
+  admin/        — Admin CRUD for all entities
+  auth/         — JWT login, register, refresh
+  common/       — Global exception handling
+  deferred/     — Deferred items (inbox)
+  event/        — Calendar events
+  project/      — Project CRUD
+  reflection/   — Daily/weekly/monthly reflection
+  schedule/     — Time blocks, schedule management
+  stats/        — Points/completion stats
+  task/         — Task CRUD, deferral, status, energy level
+
+frontend/src/
+  pages/              — Route-level components (react-router-dom)
+  auth/               — AuthContext, ProtectedRoute
+  contexts/           — ActiveSessionContext
+  layouts/            — App shell (AppLayout)
+  components/         — Shared UI (QuickCapture, EchelLogo, etc.)
+  components/ritual/  — Ritual phase components
+  components/ui/      — Reusable primitives (Card, ProgressBar, etc.)
+  api/                — TanStack Query + authFetch wrappers
+
+e2e/                  — Playwright E2E tests (all API mocked)
+docs/                 — Architecture, design docs, specs
+```
 
 ---
 

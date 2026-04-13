@@ -1,6 +1,7 @@
 # Deferred Work & Future Features
 
-**Purpose**: Backlog of features intentionally deferred from MVP. Prevents scope creep while documenting the roadmap.
+> **Audience:** Engineers, coding agents, and anyone planning future work.
+> **Out of scope:** Completed features or current implementation details — see [ARCHITECTURE.md](ARCHITECTURE.md) and [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
 ---
 
@@ -200,6 +201,16 @@ These gaps were identified in the audit but do not yet have a firm design. They 
 - **Possible solutions (need further design)**:
   - Recommend particular tasks based on mood (e.g., surface low-energy tasks on low-energy days)
   - Motivational messaging based on mood
+
+---
+
+## Documentation
+
+### README Screenshots / Demo
+- **Description**: Add screenshots or an animated GIF to the README showing the core workflows — Morning Planning, Quick Capture, Active Work Session, and End Day triage. Visual documentation makes the product immediately tangible to someone browsing the repo.
+- **Rationale**: The written description covers intent well, but a visual would communicate the look and feel far more effectively. Deferred because a placeholder ("Screenshots coming soon") would undermine the polish of the README.
+- **Effort**: Low (capture screenshots, add to README)
+- **Priority**: Medium
 
 ---
 

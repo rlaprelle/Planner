@@ -114,7 +114,7 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 - `docs/ARCHITECTURE.md` — Data model, API endpoints, tech stack
 - `docs/IMPLEMENTATION_PLAN.md` — Design decisions and rationale behind key choices
-- `docs/planning/user_design/DEFERRED_WORK.md` — Roadmap of deferred features and future work
+- `docs/DEFERRED_WORK.md` — Roadmap of deferred features and future work
 - `docs/INTERNATIONALIZATION.md` — i18n approach, namespace assignments, phased implementation plan
 - `docs/planning/user_design/` — User design docs (use cases, workflows, wireframes)
 
@@ -153,6 +153,11 @@ All user-facing strings must use `react-i18next`. Import `useTranslation` with t
 5. **Warm, not clinical** — The palette and tone should feel personal and inviting, not sterile or corporate. Slight warmth in backgrounds (tinted off-whites, not pure white), soft shadows over hard borders. The app should feel like opening a journal, not a spreadsheet.
 6. **Guide gently** — Use subtle visual hierarchy (tinted backgrounds, font weight, muted color shifts) to guide the eye toward what matters now, without demanding attention. Nothing should shout.
 7. **Evoke physical artifacts** — UI elements should feel like tangible objects: notebooks, index cards, sticky notes. Rounded corners, soft shadows, and subtle depth cues create a tactile quality that makes the digital feel personal and approachable.
+
+## CSS & Animation
+
+- **CSS `transform` doesn't compose** — Keyframe animations that set `transform` will overwrite Tailwind transform utilities (`-translate-x-1/2`, `scale-50`, etc.) on the same element. Use nested elements to separate transforms that need to coexist.
+- **Smooth arcs via split-axis animation** — Mid-journey keyframes stutter because CSS interpolates linearly between stops, creating visible direction changes. Instead, nest two elements and animate each axis independently with different timing functions (e.g., linear X + ease-out Y produces a natural arc).
 
 ## E2E Testing
 

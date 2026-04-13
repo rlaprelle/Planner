@@ -32,5 +32,8 @@
   "oneWeek": "1 week",
   "oneMonth": "1 month",
   "sure": "Sure?",
-  "yesDismiss": "Yes, dismiss"
+  "yesDismiss": "Yes, dismiss",
+  "keepCapturing": "Keep capturing",
+  "enterToCapture": "Enter to capture and close",
+  "ctrlEnterToKeepCapturing": "Ctrl+Enter to keep capturing"
 }

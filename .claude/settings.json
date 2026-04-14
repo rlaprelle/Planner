@@ -1,0 +1,40 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'BLOCK: Do not edit existing Flyway migrations. Create a new V*__ migration file instead.' && exit 1",
+            "if": "Edit(db/migration/V*) || Write(db/migration/V*)"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '=== Pre-merge gate: running all tests ===' && cd C:/Users/robla/git/Planner/backend && mvn test -q 2>&1 | tail -5 && cd C:/Users/robla/git/Planner/e2e && npx playwright test 2>&1 | tail -5 && echo 'All tests passed.' || { echo 'BLOCK: Tests failed. Fix failing tests before merging.' && exit 1; }",
+            "if": "Bash(git merge *)",
+            "timeout": 300,
+            "statusMessage": "Running backend + E2E tests before merge..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd C:/Users/robla/git/Planner/frontend && npx eslint --fix \"$CLAUDE_FILE_PATH\" 2>/dev/null || true",
+            "if": "Edit(frontend/**/*.{js,jsx,ts,tsx}) || Write(frontend/**/*.{js,jsx,ts,tsx})"
+          }
+        ]
+      }
+    ]
+  }
+}

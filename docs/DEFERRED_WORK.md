@@ -1,7 +1,8 @@
 # Deferred Work & Future Features
 
+> **Purpose:** Scratch pad for ideas, tech debt, and deferred features captured during development.
 > **Audience:** Engineers, coding agents, and anyone planning future work.
-> **Out of scope:** Completed features or current implementation details — see [ARCHITECTURE.md](ARCHITECTURE.md) and [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+> **Out of scope:** Completed features, sequenced planned work — see [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
 
 ---
 
@@ -13,29 +14,10 @@
 - **Effort**: Medium (settings view + notification system enhancements)
 - **Priority**: High
 
-### Quick Capture Brain-Dump Mode
-- **Description**: After saving a capture, keep the modal open and ready for another entry instead of auto-dismissing — useful when the user is in a "brain dump" flow with multiple thoughts to offload at once. MVP auto-dismisses after ~1 second (frictionless single-thought capture).
-- **Rationale**: Valuable for ADHD users who have bursts of ideas to offload at once.
-- **Effort**: Very Low (change dismiss behavior + add a "capture another" affordance or just don't auto-close)
-- **Priority**: Medium
-
 ### Notes Capture During Active Work
 - **Description**: Capture notes/context when ending a work session (at completion or "Done for now" moment). Prompt: "Notes for next time?" or "Any blockers to record?" Optional notes field in Active Work view or modal. MVP has no notes capture during work; users can add notes later via Task Details.
 - **Rationale**: Useful for tracking blockers and preserving context between sessions.
 - **Effort**: Low (add modal/form, store in task.notes)
-- **Priority**: Medium
-
-### Configurable Work Day Hours
-- **Description**: Allow users to set their own work day start and end times for the Morning Planning calendar. MVP defaults to 8 AM – 5 PM. Time blocks cannot be placed outside these hours. Settings would live in the Settings/Preferences view.
-- **Rationale**: ADHD users have highly variable schedules — night owls, part-time workers, and caregivers may have very different productive windows. A fixed 8–5 window may not fit their reality.
-- **Effort**: Low (settings field + pass bounds to calendar component)
-- **Priority**: Medium
-- **Affects**: Morning Planning calendar bounds, `GET /api/v1/schedule/today` (return configured hours), Settings view
-
-### Settings/Preferences View
-- **Description**: Dedicated settings screen for user preferences: timer type (countdown vs countup), work hours (start/end times), max_daily_tasks (daily task limit), reminder toggles and intervals, visual/audio confirmation preferences, streak criteria. MVP uses reasonable defaults.
-- **Rationale**: Allows users to tailor the tool to their personal workflow once they've established habits with the defaults.
-- **Effort**: Medium
 - **Priority**: Medium
 
 ### Weekly/Monthly/Yearly Review Ceremonies
@@ -170,10 +152,10 @@
 - **Effort**: Medium (backend verification flow for email, re-auth for password, frontend forms with validation)
 - **Priority**: Medium
 
-### Language / Internationalization (i18n)
-- **Description**: Support for multiple languages in the UI. All user-facing strings externalized to resource bundles. Language selector in user settings. MVP is English-only.
-- **Rationale**: Broadens accessibility for non-English speakers. Requires systematic string extraction across the frontend, so easier to do before the UI surface area grows further.
-- **Effort**: High (string extraction across all components, translation pipeline, locale-aware date/number formatting)
+### Language / Internationalization (i18n) — Remaining Work
+- **Description**: i18n infrastructure is in place (react-i18next configured, English strings extracted across 9 namespaces, 51+ files using `useTranslation()`). What remains: adding a second language, building a translation pipeline, adding a language selector to the settings page, and adding a `preferred_locale` column to the backend. See `docs/INTERNATIONALIZATION.md` for the phased plan.
+- **Rationale**: Broadens accessibility for non-English speakers. Infrastructure investment is already done; the remaining work is translation and UI.
+- **Effort**: Medium (translation files, language selector in settings, backend locale field)
 - **Priority**: Low
 
 ### Open Design Gaps

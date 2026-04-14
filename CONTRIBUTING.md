@@ -1,6 +1,7 @@
 # Contributing to Echel Planner
 
-> **Audience:** Engineers setting up a development environment.
+> **Purpose:** Development environment setup, dependencies, testing commands, environment config.
+> **Audience:** Humans setting up a development environment.
 > **Out of scope:** Product description and design rationale — see [README.md](README.md). Architecture and data model — see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Development Setup

@@ -115,16 +115,18 @@ Both backend queries (`findActiveForUser`, `findSuggestedForUser`) and any clien
 
 ## Documentation Files
 
-Each documentation file has a defined purpose, audience, and scope. When adding content, place it in the file that matches.
+Each documentation file has a defined purpose, audience, and scope. README and CONTRIBUTING are written for humans; this file (CLAUDE.md) is written for coding agents. Overlap between them is intentional — same facts, different format for different readers. When adding content, place it in the file that matches.
 
 | File | Purpose | Audience | Out of scope |
 |------|---------|----------|-------------|
-| `README.md` | Product description: what the tool is, who it's for, core concepts, design principles, how to run it | Anyone discovering the project | Dev workflow, testing details, architecture internals |
-| `CONTRIBUTING.md` | Development setup, testing, environment config, worktree caveats | Engineers setting up a dev environment | Product description, design rationale, architecture |
-| `docs/ARCHITECTURE.md` | Data model, API endpoints, tech stack, project structure | Engineers and coding agents working in the codebase | Product-level framing, design principles, dev setup instructions |
-| `docs/IMPLEMENTATION_PLAN.md` | Design decisions and rationale behind key implementation choices | Engineers and coding agents understanding why things were built a certain way | Current feature status, deferred work |
-| `docs/DEFERRED_WORK.md` | Backlog of deferred features, future enhancements, tech debt | Engineers, coding agents, and anyone planning future work | Completed features, current implementation details |
-| `docs/INTERNATIONALIZATION.md` | i18n approach, namespace assignments, phased implementation plan | Engineers and coding agents implementing translations | General architecture, non-i18n conventions |
+| `README.md` | Product description: what the tool is, who it's for, core concepts, design principles, how to run it | Humans discovering the project | Dev workflow, testing details, architecture internals |
+| `CONTRIBUTING.md` | Development setup, testing, environment config, worktree caveats | Humans setting up a dev environment | Product description, design rationale, architecture |
+| `CLAUDE.md` | Quick start, project structure, conventions, constraints, quirks | Coding agents | Narrative walkthrough, product marketing |
+| `docs/ARCHITECTURE.md` | Data model, API endpoints, tech stack, project structure | Both humans and agents | Product-level framing, design principles, dev setup instructions |
+| `docs/DESIGN_PRINCIPLES.md` | UX philosophy, visual design language, animation conventions | Both humans and agents doing UX work | Architecture, data model, dev setup |
+| `docs/IMPLEMENTATION_PLAN.md` | Next planned phases of development work | Both humans and agents | Completed features, unsequenced backlog ideas |
+| `docs/DEFERRED_WORK.md` | Scratch pad for ideas, tech debt, and deferred features captured during development | Both humans and agents | Completed features, sequenced planned work |
+| `docs/INTERNATIONALIZATION.md` | i18n approach, namespace assignments, phased implementation plan | Both humans and agents | General architecture, non-i18n conventions |
 | `docs/planning/user_design/` | Original design vision — use cases, workflows, wireframes | Historical reference | Do not update to match current implementation — these capture original design intent |
 | `docs/research/` | ADHD neuroscience research informing the design | Anyone understanding the evidence base for design decisions | Implementation details, feature specs |
 
@@ -138,30 +140,9 @@ Each documentation file has a defined purpose, audience, and scope. When adding 
 
 All user-facing strings must use `react-i18next`. Import `useTranslation` with the appropriate namespace, add strings to the corresponding JSON file in `frontend/src/locales/en/`, and use `t()` calls — never hardcode English text in JSX. See `docs/INTERNATIONALIZATION.md` for namespace assignments and conventions.
 
-## Design Principles
+## Design
 
-### UX Philosophy
-
-- Be supportive, not judgemental. Never question the user's decisions. Ask "Is this still important?" not "Why haven't you done this?"
-- The goal is to encourage the user to make informed decisions about how to spend their time, not to steer them toward a particular decision.
-- Deciding NOT to do something is a victory. Keep task lists small and focused.
-- Prefer soft deletes over hard deletes. Nothing should be permanently destroyed.
-- The workflow is a suggestion, not a restriction.
-
-### Visual Design
-
-1. **Calm over clever** — The interface should feel quiet and grounding. Avoid visual noise: competing colors, dense layouts, animated distractions. When in doubt, remove rather than add.
-2. **Soft shapes, soft colors** — Rounded corners (12-16px for containers, 8-12px for inline elements like badges and inputs). Muted tones from a soft lavender palette — dusty purples, warm grays, gentle off-whites. Avoid harsh borders, high-contrast outlines, and saturated colors except for intentional emphasis.
-3. **One thing at a time** — Favor progressive disclosure over showing everything at once. Surface the current step or task prominently; let secondary information recede or be available on demand. Reduce decision fatigue by narrowing what's visible.
-4. **Generous breathing room** — Relaxed whitespace and padding throughout. Elements should not feel crowded. Give each item space to be read without competing with its neighbors. Comfortable touch targets, spacious row heights.
-5. **Warm, not clinical** — The palette and tone should feel personal and inviting, not sterile or corporate. Slight warmth in backgrounds (tinted off-whites, not pure white), soft shadows over hard borders. The app should feel like opening a journal, not a spreadsheet.
-6. **Guide gently** — Use subtle visual hierarchy (tinted backgrounds, font weight, muted color shifts) to guide the eye toward what matters now, without demanding attention. Nothing should shout.
-7. **Evoke physical artifacts** — UI elements should feel like tangible objects: notebooks, index cards, sticky notes. Rounded corners, soft shadows, and subtle depth cues create a tactile quality that makes the digital feel personal and approachable.
-
-## CSS & Animation
-
-- **CSS `transform` doesn't compose** — Keyframe animations that set `transform` will overwrite Tailwind transform utilities (`-translate-x-1/2`, `scale-50`, etc.) on the same element. Use nested elements to separate transforms that need to coexist.
-- **Smooth arcs via split-axis animation** — Mid-journey keyframes stutter because CSS interpolates linearly between stops, creating visible direction changes. Instead, nest two elements and animate each axis independently with different timing functions (e.g., linear X + ease-out Y produces a natural arc).
+**Calm, warm, one-thing-at-a-time.** Soft lavender palette, rounded corners, generous whitespace, progressive disclosure. Supportive tone — never judgemental. Read `docs/DESIGN_PRINCIPLES.md` before any UX work (new features, UI changes, microcopy, workflows).
 
 ## Frontend Workflow
 

@@ -1,6 +1,7 @@
 # Planner - Architecture
 
-> **Audience:** Engineers and coding agents working in the codebase.
+> **Purpose:** Data model, API endpoints, tech stack details, project structure.
+> **Audience:** Both humans and agents working in the codebase.
 > **Out of scope:** Product-level description and design principles — see [README.md](../README.md). Dev setup — see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ---
@@ -15,7 +16,6 @@
 | Migrations | Flyway |
 | Containerization | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
-| API Doc | OpenAPI/Swagger (springdoc-openapi) |
 
 ---
 
@@ -38,9 +38,11 @@
 - id, project_id (required, non-nullable), user_id, title, description
 - parent_task_id (nullable; null for top-level tasks, references parent for child tasks)
 - **Rule**: Child tasks must have the same project_id as their parent. Enforced in service layer; cascades on parent project change.
-- status (TODO/IN_PROGRESS/BLOCKED/DONE/SKIPPED)
+- status (OPEN/COMPLETED/CANCELLED — enforced by DB CHECK constraint, V10 migration)
 - priority (1-5), points_estimate (1-5 complexity), actual_minutes (time spent)
 - energy_level (LOW/MEDIUM/HIGH), due_date
+- visible_from (DATE, nullable — task hidden until this date; used for deferral)
+- scheduling_scope (DAY/WEEK/MONTH — granularity of deferral)
 - sort_order (for ordering within parent)
 - blocked_by_task_id (self-reference: "blocked by another task")
 - archived_at, completed_at, created_at, updated_at
@@ -139,5 +141,4 @@ docs/                 — Architecture, design docs, specs
 | Timezone handling | Store UTC; use user.timezone for display; convert plan_date boundaries in queries |
 | Drag-and-drop optimism | TanStack Query onMutate for optimistic reorder, onError for rollback |
 | JWT security | Refresh token in HttpOnly cookie (not localStorage); rotate on each refresh |
-| Scope creep | Build phases 1-4 first; validate core loop before extras |
 

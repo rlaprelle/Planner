@@ -65,6 +65,8 @@ Tasks are estimated in **points** (1-5), not hours. Points are deliberately vagu
 
 ## Design Principles
 
+> Full design language, including visual design specifics and animation conventions: [`docs/DESIGN_PRINCIPLES.md`](docs/DESIGN_PRINCIPLES.md)
+
 ### UX Philosophy
 
 - Be supportive, not judgemental. Never question the user's decisions. Ask "Is this still important?" not "Why haven't you done this?"
@@ -75,13 +77,13 @@ Tasks are estimated in **points** (1-5), not hours. Points are deliberately vagu
 
 ### Visual Design
 
-1. **Calm over clever** — The interface should feel quiet and grounding. Avoid visual noise: competing colors, dense layouts, animated distractions. When in doubt, remove rather than add.
-2. **Soft shapes, soft colors** — Rounded corners (12-16px for containers, 8-12px for inline elements like badges and inputs). Muted tones from a soft lavender palette — dusty purples, warm grays, gentle off-whites. Avoid harsh borders, high-contrast outlines, and saturated colors except for intentional emphasis.
-3. **One thing at a time** — Favor progressive disclosure over showing everything at once. Surface the current step or task prominently; let secondary information recede or be available on demand. Reduce decision fatigue by narrowing what's visible.
-4. **Generous breathing room** — Relaxed whitespace and padding throughout. Elements should not feel crowded. Give each item space to be read without competing with its neighbors. Comfortable touch targets, spacious row heights.
-5. **Warm, not clinical** — The palette and tone should feel personal and inviting, not sterile or corporate. Slight warmth in backgrounds (tinted off-whites, not pure white), soft shadows over hard borders. The app should feel like opening a journal, not a spreadsheet.
-6. **Guide gently** — Use subtle visual hierarchy (tinted backgrounds, font weight, muted color shifts) to guide the eye toward what matters now, without demanding attention. Nothing should shout.
-7. **Evoke physical artifacts** — UI elements should feel like tangible objects: notebooks, index cards, sticky notes. Rounded corners, soft shadows, and subtle depth cues create a tactile quality that makes the digital feel personal and approachable.
+1. **Calm over clever** — Quiet and grounding. No visual noise.
+2. **Soft shapes, soft colors** — Rounded corners, soft lavender palette, muted tones.
+3. **One thing at a time** — Progressive disclosure over showing everything at once.
+4. **Generous breathing room** — Relaxed whitespace and padding throughout.
+5. **Warm, not clinical** — Personal and inviting, not sterile or corporate.
+6. **Guide gently** — Subtle visual hierarchy, nothing shouts.
+7. **Evoke physical artifacts** — Notebooks, index cards, sticky notes. Tactile and approachable.
 
 ## Running Echel Planner
 
@@ -119,9 +121,10 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development setup, testing, 
 
 ### Architecture & Implementation
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Data model, API endpoints, tech stack
-- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — Design decisions and implementation rationale
+- [`docs/DESIGN_PRINCIPLES.md`](docs/DESIGN_PRINCIPLES.md) — UX philosophy, visual design language, animation conventions
+- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — Next planned phases of development work
 - [`docs/INTERNATIONALIZATION.md`](docs/INTERNATIONALIZATION.md) — i18n approach and phased plan
-- [`docs/DEFERRED_WORK.md`](docs/DEFERRED_WORK.md) — Roadmap of deferred features and future work
+- [`docs/DEFERRED_WORK.md`](docs/DEFERRED_WORK.md) — Scratch pad for ideas, tech debt, and deferred features
 
 ### Original Design Documents
 These documents capture the early vision and design rationale for the project. They are not living documents and may differ significantly from the current implementation.

@@ -1,7 +1,8 @@
 *.log
 
 # Local tooling
-.claude/
+.claude/worktrees/
+.claude/settings.local.json
 .claire/
 .superpowers/
 .dev-port

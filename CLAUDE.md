@@ -136,10 +136,6 @@ Each documentation file has a defined purpose, audience, and scope. README and C
 - Database migrations: Flyway (SQL files)
 - ADHD-friendly UX tone: "Done for now" not "Skip", "Time's up. Good work!" not "Timer expired"
 
-## Internationalization
-
-All user-facing strings must use `react-i18next`. Import `useTranslation` with the appropriate namespace, add strings to the corresponding JSON file in `frontend/src/locales/en/`, and use `t()` calls — never hardcode English text in JSX. See `docs/INTERNATIONALIZATION.md` for namespace assignments and conventions.
-
 ## Design
 
 **Calm, warm, one-thing-at-a-time.** Soft lavender palette, rounded corners, generous whitespace, progressive disclosure. Supportive tone — never judgemental. Read `docs/DESIGN_PRINCIPLES.md` before any UX work (new features, UI changes, microcopy, workflows).
@@ -154,14 +150,11 @@ All user-facing strings must use `react-i18next`. Import `useTranslation` with t
 
 ## E2E Testing
 
-- **Always import from `../fixtures/auth`**, not from `@playwright/test`, for tests on protected pages. The auth fixture pre-mocks `/auth/refresh` and `/deferred` so the app boots into an authenticated state. Without it, pages redirect to login.
 - **Use `dev.js` to start a Vite server before running E2E tests**, then pass its port via `BASE_URL`. Do NOT kill other Vite servers — multiple development sessions may be running concurrently. The workflow: `node dev.js start` (from project root) → note the port → `cd e2e && BASE_URL=http://localhost:<port> npx playwright test`. When `BASE_URL` is set, Playwright skips its own `webServer` launch and uses your server directly.
 - `e2e/playwright.config.ts` conditionally skips `webServer` when `BASE_URL` is set. The main checkout (no `BASE_URL`) auto-starts Vite on 5173 as the default. Do not modify the config for other reasons in feature branches.
-- When adding new page features, check whether existing E2E tests need a mock for new API endpoints the page now calls (e.g., adding `mockEventsForDate` when the page starts fetching events).
 
 ## Known Issues / Quirks
 
 - **Worktrees need `npm install`** — `node_modules` aren't shared across git worktrees. Run `cd frontend && npm install` before starting a dev server in any new worktree.
 - **Preview server can't verify auth-gated pages** — The Claude Preview tool has no way to log in, so changes behind authentication can't be spot-checked through it. Use the full dev stack (`./start.sh`) for visual verification of protected routes.
 - **ESLint false "unused" warnings** — The linter reports components defined and used within the same file as unused. This is a known quirk of single-file analysis — not real errors. Ignore these warnings.
-- **`setState` in `useEffect` lint error** — Several form components (e.g., `ProjectFormModal`, `SettingsPage`) sync local state from props via `useEffect` + `setState`. The linter flags this, but it's the established pattern. When feasible, prefer the `key`-prop remount approach to avoid the warning entirely.

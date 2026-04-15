@@ -129,6 +129,7 @@ Each documentation file has a defined purpose, audience, and scope. README and C
 | `CLAUDE.md` | Quick start, project structure, conventions, constraints, quirks | Coding agents | Narrative walkthrough, product marketing |
 | `docs/ARCHITECTURE.md` | Data model, API endpoints, tech stack, project structure | Both humans and agents | Product-level framing, design principles, dev setup instructions |
 | `docs/DESIGN_PRINCIPLES.md` | UX philosophy, visual design language, animation conventions | Both humans and agents doing UX work | Architecture, data model, dev setup |
+| `docs/TESTING_STRATEGY.md` | Current testing approach per layer and known gaps | Both humans and agents | Near-term planned test tooling additions (see IMPLEMENTATION_PLAN.md) |
 | `docs/IMPLEMENTATION_PLAN.md` | Next planned phases of development work | Both humans and agents | Completed features, unsequenced backlog ideas |
 | `docs/DEFERRED_WORK.md` | Scratch pad for ideas, tech debt, and deferred features captured during development | Both humans and agents | Completed features, sequenced planned work |
 | `docs/INTERNATIONALIZATION.md` | i18n approach, namespace assignments, phased implementation plan | Both humans and agents | General architecture, non-i18n conventions |

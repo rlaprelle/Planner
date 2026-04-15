@@ -89,6 +89,9 @@ cd frontend && npm run lint
 
 # E2E tests (all API calls mocked — just needs Vite running)
 cd e2e && npx playwright test
+
+# Storybook (component workshop with MSW-mocked APIs)
+cd frontend && npm run storybook
 ```
 
 ### E2E Test Details
@@ -96,6 +99,24 @@ cd e2e && npx playwright test
 - E2E tests mock all `/api/*` calls via `page.route()` — no backend required, just Vite.
 - Use `node dev.js start` from the project root to start a Vite server, then pass its port: `cd e2e && BASE_URL=http://localhost:<port> npx playwright test`.
 - Do not kill other Vite servers — multiple worktrees may be running concurrently.
+
+### Running Storybook
+
+Storybook renders React components in isolation with mocked API responses. It's the primary tool for iterating on visual polish, animations, and interactive behavior (like drag-and-drop) where E2E assertions can't capture "feels right."
+
+```bash
+cd frontend
+npm run storybook          # Opens http://localhost:6006
+```
+
+Stories are colocated with their components as `ComponentName.stories.jsx` under `frontend/src/`. Shared mock data lives in `frontend/src/testing/fixtures/`.
+
+MSW intercepts API calls at the browser level via a service worker (`frontend/public/mockServiceWorker.js`) — no real backend needed.
+
+Storybook and E2E are complementary, not competing:
+
+- **E2E** (Playwright + `page.route()`): automated, fast, clear pass/fail, best for behavior regressions and multi-page flows.
+- **Storybook** (MSW-mocked, manual visual verification today): best for component-level iteration, animations, drag-and-drop feel, and design review. Can be extended with automated interaction tests and visual regression (Chromatic) later if needed.
 
 ## Worktree Caveats
 

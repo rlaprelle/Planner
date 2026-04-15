@@ -1,7 +1,16 @@
+import { initialize, mswLoader } from 'msw-storybook-addon'
 import '../src/index.css'
+
+// Initialize MSW once per Storybook session. Stories opt in to mocking by
+// declaring `parameters.msw.handlers` — stories that don't declare handlers
+// don't hit the mock layer at all.
+initialize({
+  onUnhandledRequest: 'bypass',
+})
 
 /** @type { import('@storybook/react-vite').Preview } */
 const preview = {
+  loaders: [mswLoader],
   parameters: {
     controls: {
       matchers: {

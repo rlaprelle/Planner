@@ -198,12 +198,6 @@ These gaps were identified in the audit but do not yet have a firm design. They 
 
 ## Technical Debt & Security
 
-### Admin Endpoint Authentication
-- **Description**: Admin endpoints (`/api/v1/admin/**`) are currently `.permitAll()` in `SecurityConfig` — no authentication or role check. Any anonymous request can CRUD all entities. Needs at minimum `.authenticated()`, ideally role-based access (`hasRole("ADMIN")`) with a role field on `AppUser`.
-- **Rationale**: Development convenience that must not ship to production. Even in local dev, stray requests can mutate the database.
-- **Effort**: Low-Medium (add role field to AppUser, update SecurityConfig, seed an admin user)
-- **Priority**: High — must be resolved before any production deployment
-
 ### Configurable Stats Thresholds
 - **Description**: `StatsService` defines celebration/trend thresholds as compile-time constants (`FOCUS_CELEBRATION_MINUTES = 120`, `HIGH_COMPLEXITY_POINTS = 5`, `LONG_RUNNING_DAYS = 7`, `MAX_CELEBRATIONS = 3`, `TREND_THRESHOLD = 0.5`, `WEEKLY_LOOKBACK_DAYS = 6`). These are product-level tuning knobs that should eventually live in the database — either as user preferences (so users can personalize what counts as "high complexity" or "worth celebrating") or as global configuration (so product decisions don't require a redeploy).
 - **Rationale**: Named constants are better than magic literals, but they still require a code change and redeploy to adjust. As usage data comes in, these values will likely need tuning.

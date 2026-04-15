@@ -22,13 +22,15 @@ node dev.js start                          # Frontend (port auto-assigned per wo
 ## Testing
 
 ```bash
-cd backend && mvn test          # Integration tests (require live PostgreSQL)
-cd frontend && npm run lint     # Lint only — no frontend unit tests yet
-cd e2e && npx playwright test   # E2E regression suite (no backend required — all API mocked)
+cd backend && mvn test             # Integration tests (require live PostgreSQL)
+cd frontend && npm run lint        # Lint only — no frontend unit tests yet
+cd frontend && npm run storybook   # Component workshop for visual verification (port 6006)
+cd e2e && npx playwright test      # E2E regression suite (no backend required — all API mocked)
 ```
 
 - Backend tests are integration tests that hit a real database — no mocks
 - E2E tests mock all `/api/*` calls via `page.route()` — just needs Vite running (auto-started by Playwright)
+- Storybook renders components in isolation with MSW-mocked API responses — used for iterating on visual polish, animations, and dnd interactions where automated assertions can't capture "feels right"
 
 ## Environment
 
@@ -64,12 +66,15 @@ frontend/src/
   components/ritual/    — Ritual phase components (TaskTriagePhase, InboxPhase, DailyReflectionPhase, TaskSchedulePhase, CompletionPhase)
   components/ui/        — Reusable primitives (Card, CardLabel, ProgressBar)
   api/                  — TanStack Query + authFetch wrappers (client, admin, auth, dashboard, deferred, events, preferences, projects, reflection, schedule, tasks)
+  testing/fixtures/     — Shared mock data for Storybook and (potentially) E2E tests
+*.stories.jsx           — Colocated with their component; loaded by Storybook
 ```
 
 ## Tech Stack
 
 - **Backend**: Java 21, Spring Boot 3.x, Spring Security (JWT), Spring Data JPA, Flyway
 - **Frontend**: React 18, Vite, Tailwind CSS, Radix UI, dnd-kit, TanStack Query
+- **Frontend component workshop**: Storybook 10 with MSW for mocked API responses
 - **Database**: PostgreSQL 16
 - **Infra**: Docker Compose
 
@@ -124,6 +129,7 @@ Each documentation file has a defined purpose, audience, and scope. README and C
 | `CLAUDE.md` | Quick start, project structure, conventions, constraints, quirks | Coding agents | Narrative walkthrough, product marketing |
 | `docs/ARCHITECTURE.md` | Data model, API endpoints, tech stack, project structure | Both humans and agents | Product-level framing, design principles, dev setup instructions |
 | `docs/DESIGN_PRINCIPLES.md` | UX philosophy, visual design language, animation conventions | Both humans and agents doing UX work | Architecture, data model, dev setup |
+| `docs/TESTING_STRATEGY.md` | Current testing approach per layer and known gaps | Both humans and agents | Near-term planned test tooling additions (see IMPLEMENTATION_PLAN.md) |
 | `docs/IMPLEMENTATION_PLAN.md` | Next planned phases of development work | Both humans and agents | Completed features, unsequenced backlog ideas |
 | `docs/DEFERRED_WORK.md` | Scratch pad for ideas, tech debt, and deferred features captured during development | Both humans and agents | Completed features, sequenced planned work |
 | `docs/INTERNATIONALIZATION.md` | i18n approach, namespace assignments, phased implementation plan | Both humans and agents | General architecture, non-i18n conventions |
@@ -147,6 +153,25 @@ Each documentation file has a defined purpose, audience, and scope. README and C
 - After merging dev into a feature branch, review the merge:
   - Do a visual spot-check for UI regressions not caught by tests
   - Review auto-resolved files (run `git diff --name-only` on the merge commit) for silent reversions of your branch's work, especially when your branch made broad changes across many files
+
+### Writing Storybook stories
+
+Stories live next to the component they cover (`ComponentName.stories.jsx`) and are the primary tool for iterating on visual polish, animations, and interactive behavior. **Write a story when:**
+
+- Adding a new component
+- Adding a non-trivial interaction: animations, transitions, drag-and-drop, keyboard handling, or complex state machines
+- Making visual changes that benefit from repeated replay (e.g., tuning an animation curve)
+
+**Skip when:** pure refactors with no visual change, CSS class renames, or cases already covered by an existing story (reuse/extend that story instead).
+
+Story conventions:
+
+- Pure UI primitives (no providers needed): story renders the component directly with varied props (see `ProgressBar.stories.jsx`).
+- Animation components: story renders against clearly-labeled abstract scaffolding, with a Replay button to re-trigger (see `FlyAwayCard.stories.jsx`). Do NOT make the scaffolding resemble the real app — use dashed borders and labels like "start rect" to avoid confusion.
+- Flow components (anything calling APIs): wrap in the real providers (TanStack Query, i18n, Router) and use MSW to mock the API. The story should drive the real component through real user interactions (see `QuickCapture.stories.jsx`).
+- Shared fixture data lives in `frontend/src/testing/fixtures/`. Inline mock responses are fine for one-off cases; extract to fixtures when the same shape is used across multiple stories or would also be useful for E2E tests.
+
+Verify stories via Playwright MCP when working on them — navigate to `/iframe.html?id=<story-id>`, drive interactions, freeze mid-animation with `document.getAnimations()` + `a.pause()` + `a.currentTime = <ms>` to capture transient states.
 
 ## E2E Testing
 

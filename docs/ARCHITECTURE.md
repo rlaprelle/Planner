@@ -14,6 +14,8 @@
 | Backend | Java 21, Spring Boot 3.x, Spring Security (JWT), Spring Data JPA |
 | Database | PostgreSQL 16 |
 | Migrations | Flyway |
+| Frontend component workshop | Storybook (with MSW for mocked API responses) |
+| E2E testing | Playwright (with `page.route()` for mocked API responses) |
 | Containerization | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
 

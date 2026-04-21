@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from '@/auth/AuthContext'
 import { ProtectedRoute } from '@/auth/ProtectedRoute'
+import { AdminRoute } from '@/auth/AdminRoute'
 import { AppLayout } from '@/layouts/AppLayout'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
@@ -45,16 +46,18 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
 
-              {/* Admin routes — no auth, own layout */}
-              <Route path="/admin" element={<AdminPage />}>
-                <Route index element={<Navigate to="/admin/users" replace />} />
-                <Route path="users" element={<AdminUsersTable />} />
-                <Route path="projects" element={<AdminProjectsTable />} />
-                <Route path="tasks" element={<AdminTasksTable />} />
-                <Route path="deferred" element={<AdminDeferredTable />} />
-                <Route path="reflections" element={<AdminReflectionsTable />} />
-                <Route path="time-blocks" element={<AdminTimeBlocksTable />} />
-                <Route path="events" element={<AdminEventsTable />} />
+              {/* Admin routes — ADMIN role required; own layout */}
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminPage />}>
+                  <Route index element={<Navigate to="/admin/users" replace />} />
+                  <Route path="users" element={<AdminUsersTable />} />
+                  <Route path="projects" element={<AdminProjectsTable />} />
+                  <Route path="tasks" element={<AdminTasksTable />} />
+                  <Route path="deferred" element={<AdminDeferredTable />} />
+                  <Route path="reflections" element={<AdminReflectionsTable />} />
+                  <Route path="time-blocks" element={<AdminTimeBlocksTable />} />
+                  <Route path="events" element={<AdminEventsTable />} />
+                </Route>
               </Route>
 
               {/* Protected routes */}

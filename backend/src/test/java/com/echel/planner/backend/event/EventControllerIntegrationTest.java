@@ -62,7 +62,7 @@ class EventControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         testUser = new AppUser("alice@example.com", "hashed", "Alice", "UTC");
-        accessToken = jwtService.generateAccessToken("alice@example.com");
+        accessToken = jwtService.generateAccessToken("alice@example.com", AppUser.Role.USER);
 
         projectId = UUID.randomUUID();
         eventId = UUID.randomUUID();

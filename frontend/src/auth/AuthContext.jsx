@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { login as apiLogin, logout as apiLogout, refreshToken } from '@/api/auth'
 import { setAuthToken, setTokenRefreshedCallback, setAuthFailureCallback } from '@/api/client'
+import { extractRole } from './jwt'
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null)
@@ -57,8 +58,11 @@ export function AuthProvider({ children }) {
     setAuthToken(null)
   }, [])
 
+  const role = useMemo(() => extractRole(token), [token])
+  const isAdmin = role === 'ADMIN'
+
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ token, user, role, isAdmin, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

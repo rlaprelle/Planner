@@ -2,6 +2,7 @@ package com.echel.planner.backend.auth;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.DayOfWeek;
@@ -46,6 +47,10 @@ public class AppUser implements UserDetails {
     @Column(name = "ceremony_day", nullable = false)
     private short ceremonyDay = 5;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
+
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private Instant createdAt;
 
@@ -65,7 +70,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
@@ -147,4 +152,9 @@ public class AppUser implements UserDetails {
 
     public DayOfWeek getCeremonyDay() { return DayOfWeek.of(ceremonyDay); }
     public void setCeremonyDay(DayOfWeek ceremonyDay) { this.ceremonyDay = (short) ceremonyDay.getValue(); }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public enum Role { USER, ADMIN }
 }

@@ -33,5 +33,6 @@
   "endMonth": "End Month",
   "logOut": "Log out",
   "badgeOverflow": "99+",
-  "settings": "Settings"
+  "settings": "Settings",
+  "admin": "Admin"
 }

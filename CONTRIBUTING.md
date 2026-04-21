@@ -78,6 +78,17 @@ All defaults work for local dev out of the box. Override as needed:
 | `PLANNER_DB_PASSWORD` | `planner` | Database password |
 | `JWT_SECRET` | (built-in dev secret) | JWT signing key — **set this in production** |
 
+### Dev Admin Account
+
+When the backend runs under the `dev` Spring profile (which `start.sh` activates automatically), a local admin account is seeded at startup:
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@echel.dev` |
+| Password | `adminadmin` |
+
+Use these credentials to sign in and access `/admin`. The seeder is idempotent: it creates the user on first boot and promotes an existing matching account to `ADMIN` on subsequent starts. **The `dev` profile must not be active in production** — seeding a well-known admin in prod would be a critical security hole. Production admins should be promoted manually (e.g., by running a one-off SQL update against the `app_user.role` column).
+
 ## Testing
 
 ```bash

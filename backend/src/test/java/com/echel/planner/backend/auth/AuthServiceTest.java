@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,8 +42,8 @@ class AuthServiceTest {
         RegisterRequest request = new RegisterRequest("user@example.com", "password123", "Test User", "America/New_York");
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
         when(passwordEncoder.encode("password123")).thenReturn("encoded-password");
-        when(jwtService.generateAccessToken(anyString())).thenReturn("access-token");
-        when(jwtService.generateRefreshToken(anyString())).thenReturn("refresh-token");
+        when(jwtService.generateAccessToken(anyString(), any(AppUser.Role.class))).thenReturn("access-token");
+        when(jwtService.generateRefreshToken(anyString(), any(AppUser.Role.class))).thenReturn("refresh-token");
 
         authService.register(request);
 
@@ -59,8 +60,8 @@ class AuthServiceTest {
         RegisterRequest request = new RegisterRequest("user@example.com", "password123", "Test User", null);
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("encoded-password");
-        when(jwtService.generateAccessToken(anyString())).thenReturn("access-token");
-        when(jwtService.generateRefreshToken(anyString())).thenReturn("refresh-token");
+        when(jwtService.generateAccessToken(anyString(), any(AppUser.Role.class))).thenReturn("access-token");
+        when(jwtService.generateRefreshToken(anyString(), any(AppUser.Role.class))).thenReturn("refresh-token");
 
         authService.register(request);
 
@@ -85,8 +86,8 @@ class AuthServiceTest {
         RegisterRequest request = new RegisterRequest("user@example.com", "password123", "Test User", "UTC");
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("encoded-password");
-        when(jwtService.generateAccessToken("user@example.com")).thenReturn("the-access-token");
-        when(jwtService.generateRefreshToken("user@example.com")).thenReturn("the-refresh-token");
+        when(jwtService.generateAccessToken("user@example.com", AppUser.Role.USER)).thenReturn("the-access-token");
+        when(jwtService.generateRefreshToken("user@example.com", AppUser.Role.USER)).thenReturn("the-refresh-token");
 
         AuthService.AuthResult result = authService.register(request);
 

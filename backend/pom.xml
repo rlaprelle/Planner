@@ -116,6 +116,34 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.17.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetClasses>
+                        <param>com.echel.planner.backend.*</param>
+                    </targetClasses>
+                    <excludedClasses>
+                        <param>com.echel.planner.backend.**.dto.*</param>
+                        <param>com.echel.planner.backend.BackendApplication</param>
+                    </excludedClasses>
+                    <targetTests>
+                        <param>com.echel.planner.backend.*</param>
+                    </targetTests>
+                    <outputFormats>
+                        <param>HTML</param>
+                    </outputFormats>
+                    <timestampedReports>false</timestampedReports>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

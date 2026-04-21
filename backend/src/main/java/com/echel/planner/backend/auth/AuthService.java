@@ -51,14 +51,17 @@ public class AuthService {
         );
         userRepository.save(user);
 
-        return buildAuthResult(user.getEmail());
+        return buildAuthResult(user);
     }
 
     public AuthResult login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
-        return buildAuthResult(request.email());
+        AppUser user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Authenticated user vanished from repository: " + request.email()));
+        return buildAuthResult(user);
     }
 
     public AuthResult refresh(HttpServletRequest httpRequest) {
@@ -77,12 +80,12 @@ public class AuthService {
             throw new MissingRefreshTokenException("Refresh token is invalid or expired");
         }
 
-        return buildAuthResult(email);
+        return buildAuthResult(user);
     }
 
-    private AuthResult buildAuthResult(String email) {
-        String accessToken = jwtService.generateAccessToken(email);
-        String refreshToken = jwtService.generateRefreshToken(email);
+    private AuthResult buildAuthResult(AppUser user) {
+        String accessToken = jwtService.generateAccessToken(user.getEmail(), user.getRole());
+        String refreshToken = jwtService.generateRefreshToken(user.getEmail(), user.getRole());
         ResponseCookie refreshCookie = buildRefreshCookie(refreshToken);
         return new AuthResult(new AuthResponse(accessToken), refreshCookie);
     }

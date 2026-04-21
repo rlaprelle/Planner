@@ -49,7 +49,7 @@ class TimeBlockControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         user = new AppUser("alice@example.com", "hash", "Alice", "UTC");
-        token = jwtService.generateAccessToken("alice@example.com");
+        token = jwtService.generateAccessToken("alice@example.com", AppUser.Role.USER);
         when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(user));
         blockId = UUID.randomUUID();
     }

@@ -44,7 +44,7 @@ class UserPreferencesControllerIntegrationTest {
         when(userRepository.findByEmail("alice@example.com"))
                 .thenReturn(Optional.of(testUser));
         when(userRepository.save(testUser)).thenReturn(testUser);
-        accessToken = jwtService.generateAccessToken("alice@example.com");
+        accessToken = jwtService.generateAccessToken("alice@example.com", AppUser.Role.USER);
     }
 
     @Test

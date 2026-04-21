@@ -1,6 +1,8 @@
 {
   "admin": "Admin",
   "backToApp": "\u2190 Back to app",
+  "accessDeniedTitle": "Admin access required",
+  "accessDeniedMessage": "This area is for admins only. Ask an administrator if you think this is a mistake.",
   "users": "Users",
   "projects": "Projects",
   "tasks": "Tasks",

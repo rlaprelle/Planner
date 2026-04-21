@@ -103,9 +103,11 @@ function Start-Backend {
     param($mvn)
 
     info "Starting backend (logs -> backend.log)..."
+    # Activate the dev profile so DevAdminSeeder creates the local admin user.
+    # Production deployments must not set this profile.
     $script:BackendProcess = Start-Process `
         -FilePath $mvn `
-        -ArgumentList "spring-boot:run" `
+        -ArgumentList "spring-boot:run","-Dspring-boot.run.profiles=dev" `
         -WorkingDirectory "$ScriptDir\backend" `
         -RedirectStandardOutput $BackendLog `
         -RedirectStandardError  $BackendErrorLog `

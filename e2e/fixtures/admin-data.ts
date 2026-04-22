@@ -1,7 +1,11 @@
 export const ADMIN_USERS = [
-  { id: 'u1', email: 'alice@example.com', displayName: 'Alice', timezone: 'UTC', createdAt: '2026-03-15T10:00:00Z', updatedAt: '2026-03-15T10:00:00Z' },
-  { id: 'u2', email: 'bob@example.com', displayName: 'Bob', timezone: 'America/New_York', createdAt: '2026-03-20T10:00:00Z', updatedAt: '2026-03-20T10:00:00Z' },
+  { id: 'u1', email: 'alice@example.com', displayName: 'Alice', timezone: 'UTC', role: 'ADMIN', createdAt: '2026-03-15T10:00:00Z', updatedAt: '2026-03-15T10:00:00Z' },
+  { id: 'u2', email: 'bob@example.com', displayName: 'Bob', timezone: 'America/New_York', role: 'USER', createdAt: '2026-03-20T10:00:00Z', updatedAt: '2026-03-20T10:00:00Z' },
 ]
+
+// JWT payload {"sub":"u1","role":"ADMIN"} — the frontend decodes but does not verify,
+// so any three-segment base64url string with a valid payload works.
+export const ADMIN_JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1MSIsInJvbGUiOiJBRE1JTiJ9.ZmFrZQ'
 
 export const ADMIN_PROJECTS = [
   { id: 'p1', userId: 'u1', userEmail: 'alice@example.com', name: 'Work', description: null, color: '#6b4c9a', icon: null, isActive: true, sortOrder: 0, archivedAt: null, createdAt: '2026-03-15T10:00:00Z', updatedAt: '2026-03-15T10:00:00Z' },

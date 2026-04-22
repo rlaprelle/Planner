@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { ADMIN_USERS, ADMIN_PROJECTS, ADMIN_TASKS, ADMIN_DEFERRED, ADMIN_REFLECTIONS, ADMIN_TIME_BLOCKS, USER_DEPENDENTS } from '../fixtures/admin-data'
+import { ADMIN_USERS, ADMIN_PROJECTS, ADMIN_TASKS, ADMIN_DEFERRED, ADMIN_REFLECTIONS, ADMIN_TIME_BLOCKS, USER_DEPENDENTS, ADMIN_JWT } from '../fixtures/admin-data'
 
 async function mockAdminApi(page) {
-  // Mock auth refresh to prevent redirect — the admin page is rendered inside the BrowserRouter
-  // which also contains AuthProvider. Even though /admin routes don't require ProtectedRoute,
-  // the AuthProvider still fires a refresh call on mount.
+  // AdminRoute bounces unauthenticated or non-admin users to /login, so return a
+  // valid admin session on refresh. The frontend decodes the JWT's role claim
+  // (without verifying the signature) to decide whether to show admin routes.
   await page.route('**/api/v1/auth/refresh', route =>
-    route.fulfill({ status: 401, json: { message: 'no session' } })
+    route.fulfill({ json: { accessToken: ADMIN_JWT, user: { id: 'u1', email: 'admin@test.local' } } })
   )
 
   await page.route('**/api/v1/admin/users', route => {

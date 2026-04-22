@@ -45,7 +45,9 @@ function FormContent({ fields, initialValues, onSubmit, isPending, saveError }) 
           {saveError.message}
         </div>
       )}
-      {fields.map(f => (
+      {fields.map(f => {
+        const hint = f.dynamicHint ? f.dynamicHint(values[f.name], initialValues?.[f.name]) : null
+        return (
         <div key={f.name}>
           <label className="block text-xs font-medium text-gray-600 mb-1">
             {f.label}{f.required && <span className="text-red-500 ml-0.5">*</span>}
@@ -87,12 +89,10 @@ function FormContent({ fields, initialValues, onSubmit, isPending, saveError }) 
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           )}
-          {f.dynamicHint && (() => {
-            const hint = f.dynamicHint(values[f.name], initialValues?.[f.name])
-            return hint ? <p className="mt-1 text-xs text-gray-500">{hint}</p> : null
-          })()}
+          {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
         </div>
-      ))}
+        )
+      })}
       <div className="flex justify-end gap-2 pt-2">
         <Dialog.Close asChild>
           <button type="button" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">

@@ -4,10 +4,11 @@ import { getUsers, createUser, updateUser, deleteUser, getUserDependents } from 
 import { useAdminCrud } from './hooks/useAdminCrud'
 import { AdminCrudPage } from './components/AdminCrudPage'
 
-function RoleBadge({ value, t }) {
+function RoleBadge({ value }) {
+  const { t } = useTranslation('admin')
   if (value === 'ADMIN') {
     return (
-      <span className="inline-flex items-center rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-800">
+      <span className="inline-flex items-center rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-primary-700">
         {t('roleAdmin')}
       </span>
     )
@@ -22,7 +23,7 @@ export default function AdminUsersTable() {
   const columns = [
     { key: 'email', label: t('email') },
     { key: 'displayName', label: t('displayName') },
-    { key: 'role', label: t('role'), render: (value) => <RoleBadge value={value} t={t} /> },
+    { key: 'role', label: t('role'), render: (value) => <RoleBadge value={value} /> },
     { key: 'timezone', label: t('timezone') },
     { key: 'createdAt', label: t('created') },
   ]

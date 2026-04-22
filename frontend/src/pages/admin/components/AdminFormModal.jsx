@@ -25,7 +25,7 @@ function cleanFormValues(fields, values) {
   return cleaned
 }
 
-function FormContent({ fields, initialValues, onSubmit, isPending }) {
+function FormContent({ fields, initialValues, onSubmit, isPending, saveError }) {
   const { t } = useTranslation('admin')
   const [values, setValues] = useState(() => buildDefaults(fields, initialValues))
 
@@ -84,6 +84,11 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
           )}
         </div>
       ))}
+      {saveError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {saveError.message}
+        </div>
+      )}
       <div className="flex justify-end gap-2 pt-2">
         <Dialog.Close asChild>
           <button type="button" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
@@ -102,7 +107,7 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
   )
 }
 
-export function AdminFormModal({ open, onOpenChange, title, fields, initialValues, onSubmit, isPending }) {
+export function AdminFormModal({ open, onOpenChange, title, fields, initialValues, onSubmit, isPending, saveError }) {
   // Use a key to remount FormContent when the modal opens or initialValues change,
   // so useState initializer re-runs with fresh defaults
   const formKey = open ? `${initialValues?.id ?? 'new'}-${open}` : 'closed'
@@ -120,6 +125,7 @@ export function AdminFormModal({ open, onOpenChange, title, fields, initialValue
               initialValues={initialValues}
               onSubmit={onSubmit}
               isPending={isPending}
+              saveError={saveError}
             />
           )}
         </Dialog.Content>

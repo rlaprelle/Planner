@@ -122,7 +122,7 @@ class AdminUserServiceTest {
     @Test
     void create_savesUserWithEncodedPassword() {
         AdminUserRequest request = new AdminUserRequest(
-                "new@example.com", "plaintext", "New User", "America/New_York");
+                "new@example.com", "plaintext", "New User", "America/New_York", AppUser.Role.USER);
 
         UUID savedId = UUID.randomUUID();
         AppUser saved = buildUser(savedId, "new@example.com");
@@ -145,7 +145,7 @@ class AdminUserServiceTest {
     @Test
     void create_defaultsTimezoneToUtcWhenNull() {
         AdminUserRequest request = new AdminUserRequest(
-                "no-tz@example.com", "pass", "No TZ User", null);
+                "no-tz@example.com", "pass", "No TZ User", null, AppUser.Role.USER);
 
         UUID savedId = UUID.randomUUID();
         AppUser saved = buildUser(savedId, "no-tz@example.com");
@@ -161,6 +161,24 @@ class AdminUserServiceTest {
         assertThat(captor.getValue().getTimezone()).isEqualTo("UTC");
     }
 
+    @Test
+    void create_persistsRoleFromRequest() {
+        AdminUserRequest request = new AdminUserRequest(
+                "admin@example.com", "password1", "Admin User", "UTC", AppUser.Role.ADMIN);
+
+        UUID savedId = UUID.randomUUID();
+        AppUser saved = buildUser(savedId, "admin@example.com");
+
+        when(passwordEncoder.encode(anyString())).thenReturn("hash");
+        when(userRepository.save(any(AppUser.class))).thenReturn(saved);
+
+        adminUserService.create(request);
+
+        ArgumentCaptor<AppUser> captor = ArgumentCaptor.forClass(AppUser.class);
+        verify(userRepository).save(captor.capture());
+        assertThat(captor.getValue().getRole()).isEqualTo(AppUser.Role.ADMIN);
+    }
+
     // -------------------------------------------------------------------------
     // update
     // -------------------------------------------------------------------------
@@ -174,7 +192,7 @@ class AdminUserServiceTest {
         when(passwordEncoder.encode("newpass")).thenReturn("new-encoded-hash");
 
         AdminUserRequest request = new AdminUserRequest(
-                "updated@example.com", "newpass", "Updated Name", "Europe/London");
+                "updated@example.com", "newpass", "Updated Name", "Europe/London", AppUser.Role.USER);
 
         adminUserService.update(id, request);
 
@@ -194,15 +212,31 @@ class AdminUserServiceTest {
 
         // null password
         AdminUserRequest nullPasswordRequest = new AdminUserRequest(
-                "user@example.com", null, "Display", "UTC");
+                "user@example.com", null, "Display", "UTC", AppUser.Role.USER);
         adminUserService.update(id, nullPasswordRequest);
         verify(passwordEncoder, never()).encode(any());
 
         // blank password
         AdminUserRequest blankPasswordRequest = new AdminUserRequest(
-                "user@example.com", "   ", "Display", "UTC");
+                "user@example.com", "   ", "Display", "UTC", AppUser.Role.USER);
         adminUserService.update(id, blankPasswordRequest);
         verify(passwordEncoder, never()).encode(any());
+    }
+
+    @Test
+    void update_setsRoleFromRequest() {
+        UUID id = UUID.randomUUID();
+        AppUser user = buildUser(id, "user@example.com");
+        // user defaults to USER role
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+        AdminUserRequest request = new AdminUserRequest(
+                "user@example.com", null, "Display", "UTC", AppUser.Role.ADMIN);
+
+        adminUserService.update(id, request);
+
+        assertThat(user.getRole()).isEqualTo(AppUser.Role.ADMIN);
     }
 
     // -------------------------------------------------------------------------

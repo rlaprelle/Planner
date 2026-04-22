@@ -65,6 +65,7 @@ public class AdminUserService {
                 request.displayName(),
                 request.timezone() != null ? request.timezone() : "UTC"
         );
+        user.setRole(request.role());
         return AdminUserResponse.from(userRepository.save(user));
     }
 
@@ -78,6 +79,7 @@ public class AdminUserService {
         if (request.password() != null && !request.password().isBlank()) {
             user.setPasswordHash(passwordEncoder.encode(request.password()));
         }
+        user.setRole(request.role());
         return AdminUserResponse.from(user);
     }
 

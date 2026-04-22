@@ -16,8 +16,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Baseline security wiring: stateless JWT auth, {@code ROLE_ADMIN} required for
+ * the admin API, everything else under {@code /api/v1/} requires authentication.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -39,12 +44,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/admin/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/**").authenticated()
                         .anyRequest().denyAll()
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(unauthorizedEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler())
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -80,5 +86,11 @@ public class SecurityConfig {
     public AuthenticationEntryPoint unauthorizedEntryPoint() {
         return (request, response, authException) ->
                 response.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, deniedException) ->
+                response.sendError(jakarta.servlet.http.HttpServletResponse.SC_FORBIDDEN, "Forbidden");
     }
 }

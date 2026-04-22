@@ -197,7 +197,7 @@ function RitualGroup({ group }) {
 
 export function AppLayout() {
   const { t } = useTranslation('common')
-  const { user, logout } = useAuth()
+  const { user, logout, isAdmin } = useAuth()
   const displayName = user?.displayName || user?.email || 'User'
   const { session } = useActiveSession()
   const navigate = useNavigate()
@@ -273,6 +273,26 @@ export function AppLayout() {
             </svg>
             {t('settings')}
           </NavLink>
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                [
+                  'flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors duration-100 focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1',
+                  isActive
+                    ? 'bg-surface-accent text-primary-700 font-medium'
+                    : 'text-ink-secondary hover:bg-surface-soft hover:text-ink-heading',
+                ].join(' ')
+              }
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                aria-hidden="true">
+                <path d="M12 2l9 4v6c0 5.25-3.75 9.75-9 10-5.25-.25-9-4.75-9-10V6l9-4z" />
+              </svg>
+              {t('admin')}
+            </NavLink>
+          )}
           <p className="text-xs text-ink-muted truncate" title={displayName}>
             {displayName}
           </p>

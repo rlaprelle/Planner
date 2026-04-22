@@ -136,7 +136,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void refresh_validCookie_returns200WithNewAccessToken() throws Exception {
-        String refreshToken = jwtService.generateRefreshToken("alice@example.com");
+        String refreshToken = jwtService.generateRefreshToken("alice@example.com", AppUser.Role.USER);
 
         MvcResult result = mockMvc.perform(post("/api/v1/auth/refresh")
                         .cookie(new Cookie(AuthService.REFRESH_COOKIE_NAME, refreshToken)))
@@ -165,7 +165,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void protectedEndpoint_withValidToken_isNotRejectedAs401() throws Exception {
-        String accessToken = jwtService.generateAccessToken("alice@example.com");
+        String accessToken = jwtService.generateAccessToken("alice@example.com", AppUser.Role.USER);
 
         // A non-existent endpoint with a valid token should get 404 (not 401)
         MvcResult result = mockMvc.perform(post("/api/v1/tasks")

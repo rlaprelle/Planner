@@ -1,27 +1,9 @@
+import { authFetch, handleResponse } from './client'
+
 const BASE = '/api/v1/admin'
 
-async function handleResponse(res) {
-  if (!res.ok) {
-    let message = `HTTP ${res.status}`
-    try {
-      const body = await res.json()
-      message = body.detail || body.message || body.error || message
-    } catch {
-      // ignore parse errors
-    }
-    const err = new Error(message)
-    err.status = res.status
-    throw err
-  }
-  if (res.status === 204) return null
-  return res.json()
-}
-
 function adminFetch(path, options = {}) {
-  return fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
-    ...options,
-  })
+  return authFetch(`${BASE}${path}`, options)
 }
 
 // Users

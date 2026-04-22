@@ -58,7 +58,7 @@ class DeferredItemControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         user = new AppUser("alice@example.com", "hash", "Alice", "UTC");
-        accessToken = jwtService.generateAccessToken("alice@example.com");
+        accessToken = jwtService.generateAccessToken("alice@example.com", AppUser.Role.USER);
         when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(user));
     }
 

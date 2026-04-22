@@ -22,11 +22,28 @@ export function useAdminCrud({ queryKey, listFn, createFn, updateFn, deleteFn })
     onSuccess: () => { queryClient.invalidateQueries({ queryKey }); setDeleteItem(null) },
   })
 
-  const openCreate = () => { setEditItem(null); setFormOpen(true) }
-  const openEdit = (row) => { setEditItem(row); setFormOpen(true) }
+  const openCreate = () => {
+    createMutation.reset()
+    updateMutation.reset()
+    setEditItem(null)
+    setFormOpen(true)
+  }
+  const openEdit = (row) => {
+    createMutation.reset()
+    updateMutation.reset()
+    setEditItem(row)
+    setFormOpen(true)
+  }
   const openDelete = (row) => setDeleteItem(row)
 
-  const handleFormClose = (open) => { setFormOpen(open); if (!open) setEditItem(null) }
+  const handleFormClose = (open) => {
+    setFormOpen(open)
+    if (!open) {
+      setEditItem(null)
+      createMutation.reset()
+      updateMutation.reset()
+    }
+  }
   const handleDeleteClose = (open) => { if (!open) setDeleteItem(null) }
 
   const handleSubmit = (formData) => {
@@ -39,6 +56,8 @@ export function useAdminCrud({ queryKey, listFn, createFn, updateFn, deleteFn })
 
   const confirmDelete = () => deleteMutation.mutate(deleteItem.id)
 
+  const saveError = updateMutation.error || createMutation.error || null
+
   return {
     data, isLoading,
     formOpen, editItem, deleteItem,
@@ -47,5 +66,6 @@ export function useAdminCrud({ queryKey, listFn, createFn, updateFn, deleteFn })
     handleSubmit, confirmDelete,
     isSaving: createMutation.isPending || updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    saveError,
   }
 }

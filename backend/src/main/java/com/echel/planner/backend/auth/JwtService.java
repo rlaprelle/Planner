@@ -11,10 +11,18 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Issues and validates JWTs. Tokens carry the user's email as the subject and
+ * their role as a custom {@code role} claim so {@link JwtAuthFilter} can grant
+ * authorities without an extra database hit.
+ */
 @Service
 public class JwtService {
+
+    static final String ROLE_CLAIM = "role";
 
     @Value("${app.jwt.secret}")
     private String secret;
@@ -32,20 +40,35 @@ public class JwtService {
                 "JWT secret must be at least 32 characters (256 bits). " +
                 "Set the JWT_SECRET environment variable.");
         }
-        // Pre-warm the key to catch any JJWT issues at startup
         getSigningKey();
     }
 
-    public String generateAccessToken(String email) {
-        return buildToken(email, accessTokenExpiration);
+    public String generateAccessToken(String email, AppUser.Role role) {
+        return buildToken(email, role, accessTokenExpiration);
     }
 
-    public String generateRefreshToken(String email) {
-        return buildToken(email, refreshTokenExpiration);
+    public String generateRefreshToken(String email, AppUser.Role role) {
+        return buildToken(email, role, refreshTokenExpiration);
     }
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    /**
+     * Returns the role embedded in the token, or {@link AppUser.Role#USER} for
+     * tokens issued before the role claim was introduced.
+     */
+    public AppUser.Role extractRole(String token) {
+        String raw = extractClaim(token, claims -> claims.get(ROLE_CLAIM, String.class));
+        if (raw == null) {
+            return AppUser.Role.USER;
+        }
+        try {
+            return AppUser.Role.valueOf(raw);
+        } catch (IllegalArgumentException ex) {
+            return AppUser.Role.USER;
+        }
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -53,8 +76,9 @@ public class JwtService {
         return email.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-    private String buildToken(String email, long expiration) {
+    private String buildToken(String email, AppUser.Role role, long expiration) {
         return Jwts.builder()
+                .claims(Map.of(ROLE_CLAIM, role.name()))
                 .subject(email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))

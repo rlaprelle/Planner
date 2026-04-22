@@ -102,7 +102,9 @@ start_backend() {
 
   info "Starting backend (logs → backend.log)..."
   cd "$SCRIPT_DIR/backend"
-  "$mvn" spring-boot:run > "$BACKEND_LOG" 2>&1 &
+  # Activate the dev profile so DevAdminSeeder creates the local admin user.
+  # Production deployments must not set this profile.
+  "$mvn" spring-boot:run -Dspring-boot.run.profiles=dev > "$BACKEND_LOG" 2>&1 &
   BACKEND_PID=$!
 
   info "Waiting for backend to be ready..."

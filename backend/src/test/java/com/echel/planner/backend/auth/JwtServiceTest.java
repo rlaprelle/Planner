@@ -32,7 +32,7 @@ class JwtServiceTest {
     void generateAccessToken_extractEmail_roundtrip() {
         String email = "user@example.com";
 
-        String token = jwtService.generateAccessToken(email);
+        String token = jwtService.generateAccessToken(email, AppUser.Role.USER);
         String extracted = jwtService.extractEmail(token);
 
         assertThat(extracted).isEqualTo(email);
@@ -42,7 +42,7 @@ class JwtServiceTest {
     void generateRefreshToken_extractEmail_roundtrip() {
         String email = "refresh@example.com";
 
-        String token = jwtService.generateRefreshToken(email);
+        String token = jwtService.generateRefreshToken(email, AppUser.Role.USER);
         String extracted = jwtService.extractEmail(token);
 
         assertThat(extracted).isEqualTo(email);
@@ -51,7 +51,7 @@ class JwtServiceTest {
     @Test
     void isTokenValid_returnsTrue_forMatchingUser() {
         String email = "valid@example.com";
-        String token = jwtService.generateAccessToken(email);
+        String token = jwtService.generateAccessToken(email, AppUser.Role.USER);
         UserDetails userDetails = buildUserDetails(email);
 
         boolean valid = jwtService.isTokenValid(token, userDetails);
@@ -61,7 +61,7 @@ class JwtServiceTest {
 
     @Test
     void isTokenValid_returnsFalse_forDifferentUser() {
-        String token = jwtService.generateAccessToken("one@example.com");
+        String token = jwtService.generateAccessToken("one@example.com", AppUser.Role.USER);
         UserDetails userDetails = buildUserDetails("other@example.com");
 
         boolean valid = jwtService.isTokenValid(token, userDetails);
@@ -73,13 +73,31 @@ class JwtServiceTest {
     void isTokenValid_throwsForExpiredToken() {
         ReflectionTestUtils.setField(jwtService, "accessTokenExpiration", 0L);
         String email = "expired@example.com";
-        String token = jwtService.generateAccessToken(email);
+        String token = jwtService.generateAccessToken(email, AppUser.Role.USER);
         UserDetails userDetails = buildUserDetails(email);
 
         // extractEmail (called inside isTokenValid) throws ExpiredJwtException
         // before the expiration check can return false
         assertThatThrownBy(() -> jwtService.isTokenValid(token, userDetails))
                 .isInstanceOf(io.jsonwebtoken.ExpiredJwtException.class);
+    }
+
+    @Test
+    void extractRole_returnsRoleFromAccessToken() {
+        String token = jwtService.generateAccessToken("admin@example.com", AppUser.Role.ADMIN);
+
+        AppUser.Role role = jwtService.extractRole(token);
+
+        assertThat(role).isEqualTo(AppUser.Role.ADMIN);
+    }
+
+    @Test
+    void extractRole_returnsRoleFromRefreshToken() {
+        String token = jwtService.generateRefreshToken("user@example.com", AppUser.Role.USER);
+
+        AppUser.Role role = jwtService.extractRole(token);
+
+        assertThat(role).isEqualTo(AppUser.Role.USER);
     }
 
     @Test

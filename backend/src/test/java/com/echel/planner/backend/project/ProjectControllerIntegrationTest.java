@@ -63,7 +63,7 @@ class ProjectControllerIntegrationTest {
         when(appUserRepository.findByEmail("alice@example.com"))
                 .thenReturn(Optional.of(testUser));
 
-        accessToken = jwtService.generateAccessToken("alice@example.com");
+        accessToken = jwtService.generateAccessToken("alice@example.com", AppUser.Role.USER);
     }
 
     // --- POST /api/v1/projects ---

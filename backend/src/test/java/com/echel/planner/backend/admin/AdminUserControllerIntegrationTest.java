@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -98,6 +99,13 @@ class AdminUserControllerIntegrationTest {
 
     @Test
     void update_existingId_returns200WithUpdatedUser() throws Exception {
+        AppUser currentAdmin = new AppUser("admin@example.com", "hash", "Admin", "UTC");
+        currentAdmin.setRole(AppUser.Role.ADMIN);
+        // give it an id via reflection (mirroring AdminUserServiceTest.buildUser)
+        var idField = AppUser.class.getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(currentAdmin, UUID.fromString("00000000-0000-0000-0000-000000000099"));
+
         AdminUserRequest request = new AdminUserRequest(
                 "alice-updated@example.com", null, "Alice Updated", "America/New_York", AppUser.Role.USER);
         AdminUserResponse updated = new AdminUserResponse(
@@ -109,9 +117,11 @@ class AdminUserControllerIntegrationTest {
                 Instant.parse("2024-01-01T00:00:00Z"),
                 Instant.parse("2024-06-01T00:00:00Z")
         );
-        when(adminUserService.update(eq(USER_ID), any(AdminUserRequest.class))).thenReturn(updated);
+        when(adminUserService.update(eq(USER_ID), any(AdminUserRequest.class), any(UUID.class)))
+                .thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/admin/users/{id}", USER_ID)
+                        .with(user(currentAdmin))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())

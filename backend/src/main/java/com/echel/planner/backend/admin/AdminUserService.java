@@ -4,6 +4,7 @@ import com.echel.planner.backend.admin.dto.AdminUserRequest;
 import com.echel.planner.backend.admin.dto.AdminUserResponse;
 import com.echel.planner.backend.admin.dto.DependentCountResponse;
 import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.StateConflictException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItemRepository;
@@ -69,8 +70,26 @@ public class AdminUserService {
         return AdminUserResponse.from(userRepository.save(user));
     }
 
-    public AdminUserResponse update(UUID id, AdminUserRequest request) {
+    /**
+     * Updates the user with the given id. Guards against self-role-edit and last-admin demotion,
+     * but only when the role is actually changing.
+     */
+    public AdminUserResponse update(UUID id, AdminUserRequest request, UUID currentAdminId) {
         AppUser user = findUser(id);
+
+        AppUser.Role oldRole = user.getRole();
+        AppUser.Role newRole = request.role();
+        if (newRole != oldRole) {
+            if (id.equals(currentAdminId)) {
+                throw new StateConflictException("You cannot change your own role.");
+            }
+            if (oldRole == AppUser.Role.ADMIN
+                    && newRole == AppUser.Role.USER
+                    && userRepository.countByRole(AppUser.Role.ADMIN) <= 1) {
+                throw new StateConflictException("Cannot demote the last admin.");
+            }
+        }
+
         user.setEmail(request.email());
         user.setDisplayName(request.displayName());
         if (request.timezone() != null) {
@@ -79,7 +98,7 @@ public class AdminUserService {
         if (request.password() != null && !request.password().isBlank()) {
             user.setPasswordHash(passwordEncoder.encode(request.password()));
         }
-        user.setRole(request.role());
+        user.setRole(newRole);
         return AdminUserResponse.from(user);
     }
 

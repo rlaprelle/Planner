@@ -4,6 +4,7 @@ import com.echel.planner.backend.admin.dto.AdminUserRequest;
 import com.echel.planner.backend.admin.dto.AdminUserResponse;
 import com.echel.planner.backend.admin.dto.DependentCountResponse;
 import com.echel.planner.backend.common.EntityNotFoundException;
+import com.echel.planner.backend.common.StateConflictException;
 import com.echel.planner.backend.auth.AppUser;
 import com.echel.planner.backend.auth.AppUserRepository;
 import com.echel.planner.backend.deferred.DeferredItemRepository;
@@ -186,6 +187,7 @@ class AdminUserServiceTest {
     @Test
     void update_setsFieldsAndEncodesPasswordWhenProvided() {
         UUID id = UUID.randomUUID();
+        UUID currentAdminId = UUID.randomUUID();
         AppUser user = buildUser(id, "old@example.com");
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
@@ -194,7 +196,7 @@ class AdminUserServiceTest {
         AdminUserRequest request = new AdminUserRequest(
                 "updated@example.com", "newpass", "Updated Name", "Europe/London", AppUser.Role.USER);
 
-        adminUserService.update(id, request);
+        adminUserService.update(id, request, currentAdminId);
 
         assertThat(user.getEmail()).isEqualTo("updated@example.com");
         assertThat(user.getDisplayName()).isEqualTo("Updated Name");
@@ -206,6 +208,7 @@ class AdminUserServiceTest {
     @Test
     void update_doesNotEncodePasswordWhenNullOrBlank() {
         UUID id = UUID.randomUUID();
+        UUID currentAdminId = UUID.randomUUID();
         AppUser user = buildUser(id, "user@example.com");
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
@@ -213,19 +216,20 @@ class AdminUserServiceTest {
         // null password
         AdminUserRequest nullPasswordRequest = new AdminUserRequest(
                 "user@example.com", null, "Display", "UTC", AppUser.Role.USER);
-        adminUserService.update(id, nullPasswordRequest);
+        adminUserService.update(id, nullPasswordRequest, currentAdminId);
         verify(passwordEncoder, never()).encode(any());
 
         // blank password
         AdminUserRequest blankPasswordRequest = new AdminUserRequest(
                 "user@example.com", "   ", "Display", "UTC", AppUser.Role.USER);
-        adminUserService.update(id, blankPasswordRequest);
+        adminUserService.update(id, blankPasswordRequest, currentAdminId);
         verify(passwordEncoder, never()).encode(any());
     }
 
     @Test
     void update_setsRoleFromRequest() {
         UUID id = UUID.randomUUID();
+        UUID currentAdminId = UUID.randomUUID();
         AppUser user = buildUser(id, "user@example.com");
         // user defaults to USER role
 
@@ -234,9 +238,95 @@ class AdminUserServiceTest {
         AdminUserRequest request = new AdminUserRequest(
                 "user@example.com", null, "Display", "UTC", AppUser.Role.ADMIN);
 
-        adminUserService.update(id, request);
+        adminUserService.update(id, request, currentAdminId);
 
         assertThat(user.getRole()).isEqualTo(AppUser.Role.ADMIN);
+    }
+
+    @Test
+    void update_changingOwnRoleThrowsStateConflict() {
+        UUID id = UUID.randomUUID();
+        AppUser user = buildUser(id, "self@example.com");
+        user.setRole(AppUser.Role.ADMIN);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+        AdminUserRequest request = new AdminUserRequest(
+                "self@example.com", null, "Self", "UTC", AppUser.Role.USER);
+
+        assertThatThrownBy(() -> adminUserService.update(id, request, id))
+                .isInstanceOf(StateConflictException.class)
+                .hasMessageContaining("your own role");
+    }
+
+    @Test
+    void update_sameRoleAsCurrentDoesNotInvokeGuards() {
+        UUID id = UUID.randomUUID();
+        AppUser user = buildUser(id, "self@example.com");
+        user.setRole(AppUser.Role.ADMIN);
+
+        when(userRepository.findById(id)).thenReturn(Optional.of(user));
+
+        // role unchanged, even though id == currentAdminId
+        AdminUserRequest request = new AdminUserRequest(
+                "self@example.com", null, "Self", "UTC", AppUser.Role.ADMIN);
+
+        adminUserService.update(id, request, id); // should not throw
+        verify(userRepository, never()).countByRole(any());
+    }
+
+    @Test
+    void update_demotingLastAdminThrowsStateConflict() {
+        UUID adminId = UUID.randomUUID();
+        UUID currentAdminId = UUID.randomUUID(); // a different admin doing the demotion
+        AppUser admin = buildUser(adminId, "admin@example.com");
+        admin.setRole(AppUser.Role.ADMIN);
+
+        when(userRepository.findById(adminId)).thenReturn(Optional.of(admin));
+        when(userRepository.countByRole(AppUser.Role.ADMIN)).thenReturn(1L);
+
+        AdminUserRequest request = new AdminUserRequest(
+                "admin@example.com", null, "Admin", "UTC", AppUser.Role.USER);
+
+        assertThatThrownBy(() -> adminUserService.update(adminId, request, currentAdminId))
+                .isInstanceOf(StateConflictException.class)
+                .hasMessageContaining("last admin");
+    }
+
+    @Test
+    void update_demotingAdminWhenAnotherAdminExistsSucceeds() {
+        UUID adminId = UUID.randomUUID();
+        UUID currentAdminId = UUID.randomUUID();
+        AppUser admin = buildUser(adminId, "admin@example.com");
+        admin.setRole(AppUser.Role.ADMIN);
+
+        when(userRepository.findById(adminId)).thenReturn(Optional.of(admin));
+        when(userRepository.countByRole(AppUser.Role.ADMIN)).thenReturn(2L);
+
+        AdminUserRequest request = new AdminUserRequest(
+                "admin@example.com", null, "Admin", "UTC", AppUser.Role.USER);
+
+        adminUserService.update(adminId, request, currentAdminId);
+
+        assertThat(admin.getRole()).isEqualTo(AppUser.Role.USER);
+    }
+
+    @Test
+    void update_promotingUserDoesNotCheckLastAdminGuard() {
+        UUID userId = UUID.randomUUID();
+        UUID currentAdminId = UUID.randomUUID();
+        AppUser user = buildUser(userId, "user@example.com");
+        // user defaults to USER role
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        AdminUserRequest request = new AdminUserRequest(
+                "user@example.com", null, "User", "UTC", AppUser.Role.ADMIN);
+
+        adminUserService.update(userId, request, currentAdminId);
+
+        assertThat(user.getRole()).isEqualTo(AppUser.Role.ADMIN);
+        verify(userRepository, never()).countByRole(any());
     }
 
     // -------------------------------------------------------------------------

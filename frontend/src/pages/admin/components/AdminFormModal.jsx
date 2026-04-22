@@ -40,6 +40,11 @@ function FormContent({ fields, initialValues, onSubmit, isPending, saveError }) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
+      {saveError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {saveError.message}
+        </div>
+      )}
       {fields.map(f => (
         <div key={f.name}>
           <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -84,11 +89,6 @@ function FormContent({ fields, initialValues, onSubmit, isPending, saveError }) 
           )}
         </div>
       ))}
-      {saveError && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {saveError.message}
-        </div>
-      )}
       <div className="flex justify-end gap-2 pt-2">
         <Dialog.Close asChild>
           <button type="button" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">

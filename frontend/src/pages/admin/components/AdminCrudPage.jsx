@@ -15,6 +15,7 @@ export function AdminCrudPage({
     handleFormClose, handleDeleteClose,
     handleSubmit, confirmDelete,
     isSaving, isDeleting,
+    saveError,
   } = crud
 
   if (isLoading) return <div className="text-gray-400 py-8 text-center">{t('common:loading')}</div>
@@ -41,6 +42,7 @@ export function AdminCrudPage({
         initialValues={editItem}
         onSubmit={handleSubmit}
         isPending={isSaving}
+        saveError={saveError}
       />
 
       <DeleteConfirmDialog

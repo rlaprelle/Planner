@@ -25,7 +25,7 @@ function cleanFormValues(fields, values) {
   return cleaned
 }
 
-function FormContent({ fields, initialValues, onSubmit, isPending }) {
+function FormContent({ fields, initialValues, onSubmit, isPending, saveError }) {
   const { t } = useTranslation('admin')
   const [values, setValues] = useState(() => buildDefaults(fields, initialValues))
 
@@ -40,7 +40,14 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      {fields.map(f => (
+      {saveError && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {saveError.message}
+        </div>
+      )}
+      {fields.map(f => {
+        const hint = f.dynamicHint ? f.dynamicHint(values[f.name], initialValues?.[f.name]) : null
+        return (
         <div key={f.name}>
           <label className="block text-xs font-medium text-gray-600 mb-1">
             {f.label}{f.required && <span className="text-red-500 ml-0.5">*</span>}
@@ -82,8 +89,10 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           )}
+          {hint && <p className="mt-1 text-xs text-gray-500">{hint}</p>}
         </div>
-      ))}
+        )
+      })}
       <div className="flex justify-end gap-2 pt-2">
         <Dialog.Close asChild>
           <button type="button" className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">
@@ -102,7 +111,7 @@ function FormContent({ fields, initialValues, onSubmit, isPending }) {
   )
 }
 
-export function AdminFormModal({ open, onOpenChange, title, fields, initialValues, onSubmit, isPending }) {
+export function AdminFormModal({ open, onOpenChange, title, fields, initialValues, onSubmit, isPending, saveError }) {
   // Use a key to remount FormContent when the modal opens or initialValues change,
   // so useState initializer re-runs with fresh defaults
   const formKey = open ? `${initialValues?.id ?? 'new'}-${open}` : 'closed'
@@ -120,6 +129,7 @@ export function AdminFormModal({ open, onOpenChange, title, fields, initialValue
               initialValues={initialValues}
               onSubmit={onSubmit}
               isPending={isPending}
+              saveError={saveError}
             />
           )}
         </Dialog.Content>

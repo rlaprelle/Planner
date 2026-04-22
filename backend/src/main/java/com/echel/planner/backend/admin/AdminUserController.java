@@ -3,9 +3,11 @@ package com.echel.planner.backend.admin;
 import com.echel.planner.backend.admin.dto.AdminUserRequest;
 import com.echel.planner.backend.admin.dto.AdminUserResponse;
 import com.echel.planner.backend.admin.dto.DependentCountResponse;
+import com.echel.planner.backend.auth.AppUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,9 +39,11 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminUserResponse> update(@PathVariable UUID id,
-                                                     @Valid @RequestBody AdminUserRequest request) {
-        return ResponseEntity.ok(adminUserService.update(id, request));
+    public ResponseEntity<AdminUserResponse> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody AdminUserRequest request,
+            @AuthenticationPrincipal AppUser currentAdmin) {
+        return ResponseEntity.ok(adminUserService.update(id, request, currentAdmin.getId()));
     }
 
     @GetMapping("/{id}/dependents")

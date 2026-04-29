@@ -8,7 +8,8 @@ ADHD-friendly daily work management tool. *Planning that works with your brain, 
 
 ```bash
 # Start everything (DB via Docker, backend via Maven, frontend via Vite)
-./start.sh
+./start.sh        # macOS/Linux/Git Bash
+./start.ps1       # PowerShell
 
 # Or individually:
 docker compose up -d                       # PostgreSQL on :5432
@@ -23,7 +24,8 @@ node dev.js start                          # Frontend (port auto-assigned per wo
 
 ```bash
 cd backend && mvn test             # Integration tests (require live PostgreSQL)
-cd frontend && npm run lint        # Lint only — no frontend unit tests yet
+cd frontend && npm test            # Vitest unit tests (jsdom)
+cd frontend && npm run lint        # ESLint
 cd frontend && npm run storybook   # Component workshop for visual verification (port 6006)
 cd e2e && npx playwright test      # E2E regression suite (no backend required — all API mocked)
 ```
@@ -67,6 +69,8 @@ frontend/src/
   components/ui/        — Reusable primitives (Card, CardLabel, ProgressBar)
   api/                  — TanStack Query + authFetch wrappers (client, admin, auth, dashboard, deferred, events, preferences, projects, reflection, schedule, tasks)
   testing/fixtures/     — Shared mock data for Storybook and (potentially) E2E tests
+  locales/              — i18next translation files (per-namespace JSON)
+  i18n.js               — i18next initialization
 *.stories.jsx           — Colocated with their component; loaded by Storybook
 ```
 
@@ -74,6 +78,7 @@ frontend/src/
 
 - **Backend**: Java 21, Spring Boot 3.x, Spring Security (JWT), Spring Data JPA, Flyway
 - **Frontend**: React 18, Vite, Tailwind CSS, Radix UI, dnd-kit, TanStack Query
+- **i18n**: i18next + react-i18next; namespaces and phased rollout in `docs/INTERNATIONALIZATION.md`. New user-facing strings must be added to a translation namespace, not hardcoded.
 - **Frontend component workshop**: Storybook 10 with MSW for mocked API responses
 - **Database**: PostgreSQL 16
 - **Infra**: Docker Compose
@@ -88,6 +93,8 @@ frontend/src/
 - JWT auth: refresh token in HttpOnly cookie, access token in response body
 - Task statuses are `OPEN`, `COMPLETED`, `CANCELLED` — enforced by DB CHECK constraint (V10 migration)
 - Task deferral via `visible_from` (DATE) and `scheduling_scope` (DAY/WEEK/MONTH) fields on the task table
+- Users have a `role` column (`USER` or `ADMIN`, V12 migration). Enforced on the backend via Spring Security (`/api/v1/admin/**` requires `ROLE_ADMIN` in `SecurityConfig`); the frontend `AdminRoute` wrapper is defense-in-depth and redirects non-admins. E2E tests for admin pages must authenticate as an admin user.
+- User preferences (default start/end time, session minutes, week start day, ceremony day, locale, etc.) live on `app_user` (V11 migration), exposed via `/api/preferences` and the Settings page.
 
 ## Ritual System
 
@@ -183,3 +190,4 @@ Verify stories via Playwright MCP when working on them — navigate to `/iframe.
 - **Worktrees need `npm install`** — `node_modules` aren't shared across git worktrees. Run `cd frontend && npm install` before starting a dev server in any new worktree.
 - **Preview server can't verify auth-gated pages** — The Claude Preview tool has no way to log in, so changes behind authentication can't be spot-checked through it. Use the full dev stack (`./start.sh`) for visual verification of protected routes.
 - **ESLint false "unused" warnings** — The linter reports components defined and used within the same file as unused. This is a known quirk of single-file analysis — not real errors. Ignore these warnings.
+- **Admin E2E tests need an ADMIN user** — `/admin/*` is gated by both `AdminRoute` (frontend redirect) and Spring Security (`/api/v1/admin/**` returns 403 for non-admins). Use the `e2e/fixtures/admin-auth.ts` fixture for admin tests — it pre-mocks `/auth/refresh` with an admin JWT and `role: 'ADMIN'`. The regular `e2e/fixtures/auth.ts` fixture will get bounced to `/login` or the access-denied screen.

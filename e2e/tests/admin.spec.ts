@@ -1,14 +1,7 @@
-import { test, expect } from '@playwright/test'
-import { ADMIN_USERS, ADMIN_PROJECTS, ADMIN_TASKS, ADMIN_DEFERRED, ADMIN_REFLECTIONS, ADMIN_TIME_BLOCKS, USER_DEPENDENTS, ADMIN_JWT } from '../fixtures/admin-data'
+import { test, expect } from '../fixtures/admin-auth'
+import { ADMIN_USERS, ADMIN_PROJECTS, ADMIN_TASKS, ADMIN_DEFERRED, ADMIN_REFLECTIONS, ADMIN_TIME_BLOCKS, USER_DEPENDENTS } from '../fixtures/admin-data'
 
 async function mockAdminApi(page) {
-  // AdminRoute bounces unauthenticated or non-admin users to /login, so return a
-  // valid admin session on refresh. The frontend decodes the JWT's role claim
-  // (without verifying the signature) to decide whether to show admin routes.
-  await page.route('**/api/v1/auth/refresh', route =>
-    route.fulfill({ json: { accessToken: ADMIN_JWT, user: { id: 'u1', email: 'admin@test.local' } } })
-  )
-
   await page.route('**/api/v1/admin/users', route => {
     if (route.request().method() === 'GET') return route.fulfill({ json: ADMIN_USERS })
     if (route.request().method() === 'POST') return route.fulfill({ status: 201, json: { ...ADMIN_USERS[0], id: 'u-new' } })
@@ -35,8 +28,6 @@ async function mockAdminApi(page) {
   await page.route('**/api/v1/admin/deferred-items', route => route.fulfill({ json: ADMIN_DEFERRED }))
   await page.route('**/api/v1/admin/reflections', route => route.fulfill({ json: ADMIN_REFLECTIONS }))
   await page.route('**/api/v1/admin/time-blocks', route => route.fulfill({ json: ADMIN_TIME_BLOCKS }))
-  // Also mock the deferred endpoint used by the app's AppLayout sidebar badge
-  await page.route('**/api/v1/deferred', route => route.fulfill({ json: [] }))
 }
 
 test.describe('Admin Page', () => {

@@ -1,0 +1,43 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly
+labels: ["bug"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What's happening, and what did you expect instead?
+      placeholder: |
+        On the Start Day page, deferred tasks appear in the suggested list even though their visible_from is in the future.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Steps to reproduce, or a pointer to where the bug lives in code.
+      placeholder: |
+        1. Defer a task to "Next week"
+        2. Reload `/start-day`
+        3. Observe the deferred task in the suggested list
+    validations:
+      required: false
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files / location
+      description: File paths (with line numbers if known) where the bug originates.
+      placeholder: |
+        - backend/src/main/java/com/echel/planner/backend/task/TaskService.java:226
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Anything else worth knowing — affected users, severity, workarounds, related issues.
+    validations:
+      required: false

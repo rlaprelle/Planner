@@ -1,0 +1,43 @@
+name: Feature request
+description: New capability, improvement, or refactor
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What gap or pain point motivates this? Skip the solution for now.
+      placeholder: |
+        Users can't see how many tasks they've deferred this week, so the deferral pressure
+        ADHD-friendly UX is supposed to create isn't visible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change? Include alternatives considered if relevant.
+      placeholder: |
+        Add a weekly deferral count badge to the Start Week page header.
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files / surface area
+      description: Where in the codebase this work likely lives.
+      placeholder: |
+        - frontend/src/pages/StartWeekPage.jsx
+        - backend stats endpoint
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Design references, related issues, deferred-work entries, etc.
+    validations:
+      required: false

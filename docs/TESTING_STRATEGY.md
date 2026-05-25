@@ -2,7 +2,7 @@
 
 > **Purpose:** Describes what testing is currently in place, per layer, and the known gaps.
 > **Audience:** Humans and coding agents.
-> **Out of scope:** Near-term planned additions — see [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+> **Out of scope:** Near-term planned additions — see [SPRINT_PLAN.md](SPRINT_PLAN.md).
 > **Last reviewed:** 2026-04-20
 
 ## Current approach by layer

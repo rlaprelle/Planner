@@ -1,8 +1,8 @@
-# Deferred Work & Future Features
+# Backlog
 
-> **Purpose:** Scratch pad for ideas, tech debt, and deferred features captured during development.
+> **Purpose:** Future features and enhancements not yet sequenced into a sprint.
 > **Audience:** Engineers, coding agents, and anyone planning future work.
-> **Out of scope:** Completed features, sequenced planned work — see [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+> **Out of scope:** Completed features, sequenced planned work — see [SPRINT_PLAN.md](SPRINT_PLAN.md).
 
 ---
 

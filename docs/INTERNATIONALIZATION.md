@@ -191,7 +191,7 @@ Add a per-user language preference stored in the backend, so users can explicitl
 **Tasks**:
 1. **Backend**: Add a `preferred_locale` column to the `users` table (nullable VARCHAR, e.g., `'en'`, `'es'`). Flyway migration.
 2. **Backend**: Expose `preferred_locale` in the user profile API (`GET /api/v1/auth/me`) and allow updates (`PATCH /api/v1/users/me/preferences` or similar)
-3. **Frontend**: Add a "Language" dropdown to the Settings/Preferences view (see DEFERRED_WORK.md — this depends on that view existing)
+3. **Frontend**: Add a "Language" dropdown to the Settings/Preferences view (see BACKLOG.md — this depends on that view existing)
 4. **Frontend**: On app load, resolve the active language with this priority:
    1. User's `preferred_locale` from the backend (if logged in and set)
    2. Browser's `navigator.language` (via `i18next-browser-languagedetector`)
@@ -209,7 +209,7 @@ Add a per-user language preference stored in the backend, so users can explicitl
 
 | Item | Detail |
 |------|--------|
-| **Settings/Preferences view** | Phase 5 depends on this existing (tracked in DEFERRED_WORK.md). The language selector needs a home. |
+| **Settings/Preferences view** | Phase 5 depends on this existing (tracked in BACKLOG.md). The language selector needs a home. |
 | **Translation quality** | ADHD-friendly tone is hard to translate. Professional translators with context will produce better results than machine translation. Budget for review. |
 | **Bundle size** | Each locale adds ~10-30 KB of JSON. Namespace lazy-loading (Phase 3) keeps initial load small. |
 | **Text overflow** | German and French translations are typically 20-30% longer than English. UI must accommodate without clipping. Phase 3 QA should catch these. |

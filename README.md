@@ -110,6 +110,18 @@ Both scripts start PostgreSQL (via Docker), the Spring Boot backend, and the Vit
 
 Once running, open **http://localhost:5173**.
 
+### Running the Full Stack in Docker
+
+For a deployable shape — backend and database both in containers — use the deploy compose file:
+
+```bash
+docker compose -f compose.deploy.yml up -d --build
+curl http://localhost:8080/actuator/health   # {"status":"UP"}
+docker compose -f compose.deploy.yml down    # add -v to drop the DB volume
+```
+
+Override `BACKEND_PORT`, `POSTGRES_*`, or `JWT_SECRET` via shell env or a `.env` file alongside the compose file. The frontend is not yet bundled into the deploy stack — production static-asset builds are tracked in issue #78.
+
 ### For Contributors
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development setup, testing, project structure, and environment configuration.

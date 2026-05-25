@@ -1,0 +1,60 @@
+# Deployable compose shape: backend + Postgres in containers.
+#
+# This is distinct from docker-compose.yml, which is the local-dev shape
+# (Postgres only; backend and frontend run on the host). Use this file when
+# you want the whole backend deployed in Docker.
+#
+#   docker compose -f compose.deploy.yml up -d --build
+#   curl http://localhost:8080/actuator/health
+#   docker compose -f compose.deploy.yml down
+#
+# Env vars (override via shell or a .env file alongside this compose file):
+#   POSTGRES_DB / POSTGRES_USER / POSTGRES_PASSWORD — DB credentials
+#   BACKEND_PORT — host port for the backend (default 8080)
+#   JWT_SECRET   — override the dev fallback in production
+#
+# Frontend: tracked separately in issue #78 (production static-asset build
+# pipeline). Once that lands, a `frontend` service will be wired in here.
+
+services:
+  db:
+    image: postgres:16
+    container_name: planner-db-deploy
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-planner}
+      POSTGRES_USER: ${POSTGRES_USER:-planner}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-planner}
+    volumes:
+      # Separate volume from the dev compose file so the two shapes don't
+      # fight over schema state (different Flyway runs, etc.).
+      - postgres_data_deploy:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-planner} -d ${POSTGRES_DB:-planner}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: planner-backend-deploy
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PLANNER_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-planner}
+      PLANNER_DB_USER: ${POSTGRES_USER:-planner}
+      PLANNER_DB_PASSWORD: ${POSTGRES_PASSWORD:-planner}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me-in-production}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  postgres_data_deploy:

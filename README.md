@@ -138,3 +138,7 @@ These documents capture the early vision and design rationale for the project. T
 | Frontend | React 18, Vite, Tailwind CSS, Radix UI, dnd-kit, TanStack Query |
 | Database | PostgreSQL 16 |
 | Infrastructure | Docker Compose |
+
+## License
+
+Echel Planner is licensed under the [GNU General Public License v3.0](LICENSE).

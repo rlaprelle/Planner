@@ -26,6 +26,9 @@ class AuthServiceTest {
     private AppUserRepository userRepository;
 
     @Mock
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
@@ -43,7 +46,6 @@ class AuthServiceTest {
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
         when(passwordEncoder.encode("password123")).thenReturn("encoded-password");
         when(jwtService.generateAccessToken(anyString(), any(AppUser.Role.class))).thenReturn("access-token");
-        when(jwtService.generateRefreshToken(anyString(), any(AppUser.Role.class))).thenReturn("refresh-token");
 
         authService.register(request);
 
@@ -61,7 +63,6 @@ class AuthServiceTest {
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("encoded-password");
         when(jwtService.generateAccessToken(anyString(), any(AppUser.Role.class))).thenReturn("access-token");
-        when(jwtService.generateRefreshToken(anyString(), any(AppUser.Role.class))).thenReturn("refresh-token");
 
         authService.register(request);
 
@@ -82,17 +83,17 @@ class AuthServiceTest {
     }
 
     @Test
-    void register_returnsAuthResultWithAccessTokenAndRefreshCookie() {
+    void register_returnsAuthResultWithAccessTokenAndPersistsRefreshTokenRow() {
         RegisterRequest request = new RegisterRequest("user@example.com", "password123", "Test User", "UTC");
         when(userRepository.findByEmail(request.email())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(anyString())).thenReturn("encoded-password");
         when(jwtService.generateAccessToken("user@example.com", AppUser.Role.USER)).thenReturn("the-access-token");
-        when(jwtService.generateRefreshToken("user@example.com", AppUser.Role.USER)).thenReturn("the-refresh-token");
 
         AuthService.AuthResult result = authService.register(request);
 
         assertThat(result.authResponse().accessToken()).isEqualTo("the-access-token");
         assertThat(result.refreshCookie().getName()).isEqualTo(AuthService.REFRESH_COOKIE_NAME);
-        assertThat(result.refreshCookie().getValue()).isEqualTo("the-refresh-token");
+        assertThat(result.refreshCookie().getValue()).isNotBlank();
+        verify(refreshTokenRepository).save(any(RefreshToken.class));
     }
 }

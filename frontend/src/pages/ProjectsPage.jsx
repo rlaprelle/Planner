@@ -67,7 +67,7 @@ function ProjectCard({ project, onEdit, onArchive, onSelectTask, onAddTask }) {
             type="button"
             onClick={() => onArchive(project)}
             title={t('common:archive')}
-            className="p-1.5 text-ink-muted hover:text-red-600 hover:bg-red-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-1 transition-colors"
+            className="p-1.5 text-ink-muted hover:text-red-600 hover:bg-red-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-1 transition-colors"
             aria-label={t('archiveProjectName', { name: project.name })}
           >
             <ArchiveIcon />

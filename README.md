@@ -124,7 +124,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development setup, testing, 
 - [`docs/DESIGN_PRINCIPLES.md`](docs/DESIGN_PRINCIPLES.md) — UX philosophy, visual design language, animation conventions
 - [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md) — Next planned phases of development work
 - [`docs/INTERNATIONALIZATION.md`](docs/INTERNATIONALIZATION.md) — i18n approach and phased plan
-- [`docs/BACKLOG.md`](docs/BACKLOG.md) — Future features and enhancements not yet sequenced into a sprint
+- [GitHub Issues](https://github.com/rlaprelle/Planner/issues) — Backlog of future features, enhancements, tech debt, and design gaps
 
 ### Original Design Documents
 These documents capture the early vision and design rationale for the project. They are not living documents and may differ significantly from the current implementation.

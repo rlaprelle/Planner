@@ -122,9 +122,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development setup, testing, 
 ### Architecture & Implementation
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Data model, API endpoints, tech stack
 - [`docs/DESIGN_PRINCIPLES.md`](docs/DESIGN_PRINCIPLES.md) — UX philosophy, visual design language, animation conventions
-- [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — Next planned phases of development work
+- [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md) — Next planned phases of development work
 - [`docs/INTERNATIONALIZATION.md`](docs/INTERNATIONALIZATION.md) — i18n approach and phased plan
-- [`docs/DEFERRED_WORK.md`](docs/DEFERRED_WORK.md) — Scratch pad for ideas, tech debt, and deferred features
+- [GitHub Issues](https://github.com/rlaprelle/Planner/issues) — Backlog of future features, enhancements, tech debt, and design gaps
 
 ### Original Design Documents
 These documents capture the early vision and design rationale for the project. They are not living documents and may differ significantly from the current implementation.

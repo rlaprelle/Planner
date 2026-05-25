@@ -45,7 +45,7 @@ jobs:
         run: mvn test
 
   frontend-lint:
-    name: Frontend Lint
+    name: Frontend Lint & Build
     runs-on: ubuntu-latest
 
     steps:
@@ -65,6 +65,17 @@ jobs:
       - name: Lint (errors only — warnings are known false positives)
         working-directory: frontend
         run: npx eslint . --quiet
+
+      - name: Build production bundle
+        working-directory: frontend
+        run: npm run build
+
+      - name: Upload frontend dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 7
 
   e2e-tests:
     name: E2E Tests

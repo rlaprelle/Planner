@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminTimeBlockController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, com.echel.planner.backend.auth.AuthRateLimitFilter.class})
 @WithMockUser(roles = "ADMIN")
 class AdminTimeBlockControllerIntegrationTest {
 

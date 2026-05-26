@@ -45,7 +45,7 @@ jobs:
         run: mvn test
 
   frontend-lint:
-    name: Frontend Lint & Test
+    name: Frontend Lint, Test & Build
     runs-on: ubuntu-latest
 
     steps:
@@ -69,6 +69,17 @@ jobs:
       - name: Run Vitest unit tests
         working-directory: frontend
         run: npx vitest run --project unit
+
+      - name: Build production bundle
+        working-directory: frontend
+        run: npm run build
+
+      - name: Upload frontend dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 7
 
   storybook-tests:
     name: Storybook Tests

@@ -137,6 +137,7 @@ Each documentation file has a defined purpose, audience, and scope. README and C
 | `docs/ARCHITECTURE.md` | Data model, API endpoints, tech stack, project structure | Both humans and agents | Product-level framing, design principles, dev setup instructions |
 | `docs/DESIGN_PRINCIPLES.md` | UX philosophy, visual design language, animation conventions | Both humans and agents doing UX work | Architecture, data model, dev setup |
 | `docs/TESTING_STRATEGY.md` | Current testing approach per layer and known gaps | Both humans and agents | Near-term planned test tooling additions (see SPRINT_PLAN.md) |
+| `docs/DEPLOYMENT.md` | Production deploy shapes (App Runner, self-host compose), TLS termination, prod-profile startup guards | Operators and agents working on prod config | Architecture internals, dev setup |
 | `docs/SPRINT_PLAN.md` | Next planned phases of development work | Both humans and agents | Completed features, unsequenced backlog ideas |
 | `docs/RELEASING.md` | Versioning scheme and release procedure (CHANGELOG → version bump → tag → release) | Both humans and agents cutting a release | Day-to-day dev workflow, branching strategy |
 | `CHANGELOG.md` | User-facing record of notable changes per version (Keep a Changelog format) | Both humans and agents | Internal refactors with no observable effect |

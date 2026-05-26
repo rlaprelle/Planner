@@ -68,7 +68,7 @@ jobs:
 
       - name: Run Vitest unit tests
         working-directory: frontend
-        run: npm test -- --run
+        run: npx vitest run --project unit
 
   e2e-tests:
     name: E2E Tests

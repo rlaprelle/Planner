@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
+        <version>3.4.7</version>
         <relativePath/>
     </parent>
 
@@ -53,6 +53,16 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!--
+            Spring Boot 3.3+ bumped Flyway to 10.x, which moved PostgreSQL support
+            out of flyway-core into a separate module. Required for any non-H2/MySQL DB.
+            See: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.3-Release-Notes#flyway-10
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
 
         <dependency>

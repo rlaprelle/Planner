@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(EventController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, com.echel.planner.backend.auth.AuthRateLimitFilter.class})
 class EventControllerIntegrationTest {
 
     @Autowired

@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProjectController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, com.echel.planner.backend.auth.AuthRateLimitFilter.class})
 class ProjectControllerIntegrationTest {
 
     @Autowired

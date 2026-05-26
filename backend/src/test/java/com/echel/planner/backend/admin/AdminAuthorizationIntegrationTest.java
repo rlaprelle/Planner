@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * {@link SecurityConfig}, so one endpoint is enough to lock the behaviour down.
  */
 @WebMvcTest(AdminUserController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, com.echel.planner.backend.auth.AuthRateLimitFilter.class})
 class AdminAuthorizationIntegrationTest {
 
     @Autowired

@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, AuthService.class, AuthExceptionHandler.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, AuthService.class, AuthExceptionHandler.class, AuthRateLimitFilter.class})
 class AuthControllerIntegrationTest {
 
     @Autowired

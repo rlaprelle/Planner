@@ -1,0 +1,9 @@
+target/
+.idea/
+.eclipse/
+.settings/
+*.iml
+*.log
+*.env
+.git/
+.gitignore

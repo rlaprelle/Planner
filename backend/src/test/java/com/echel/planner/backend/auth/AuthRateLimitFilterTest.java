@@ -40,6 +40,9 @@ class AuthRateLimitFilterTest {
     @MockBean
     private AppUserRepository userRepository;
 
+    @MockBean
+    private RefreshTokenRepository refreshTokenRepository;
+
     @BeforeEach
     void setUp() {
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());

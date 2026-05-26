@@ -26,6 +26,9 @@ class SecurityConfigCorsTest {
     @MockBean
     private AppUserRepository userRepository;
 
+    @MockBean
+    private RefreshTokenRepository refreshTokenRepository;
+
     @Test
     void corsBean_exposesDefaultDevOriginsAndCredentialedMethods() {
         CorsConfiguration config = configFor("/api/v1/tasks");

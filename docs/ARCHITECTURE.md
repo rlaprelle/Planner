@@ -27,6 +27,9 @@
 
 **app_user**
 - id (UUID), email, password_hash, display_name, timezone
+- role (USER/ADMIN, default USER — enforced by DB CHECK constraint, V12 migration)
+- Active preferences (V11 migration, exposed in settings UI): default_start_time, default_end_time, default_session_minutes, week_start_day, ceremony_day
+- Dormant preferences (V11 migration, no UI yet): timer_warning_minutes, timer_type (countdown/countup), enable_chime, quick_capture_keep_open, max_daily_tasks, streak_celebration_threshold, locale
 - created_at, updated_at
 
 **project** (concrete project, flat list)

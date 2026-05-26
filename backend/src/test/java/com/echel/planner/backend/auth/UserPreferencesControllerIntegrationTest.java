@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserPreferencesController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class,
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, AuthRateLimitFilter.class,
          UserPreferencesService.class, com.echel.planner.backend.common.GlobalExceptionHandler.class})
 class UserPreferencesControllerIntegrationTest {
 

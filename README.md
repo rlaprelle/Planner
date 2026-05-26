@@ -1,5 +1,7 @@
 # Echel Planner
 
+**Version:** 0.1.0 — see [CHANGELOG.md](CHANGELOG.md) for release history.
+
 *Planning that works with your brain, not against it.*
 
 Echel Planner is a daily work management tool designed for people with ADHD.

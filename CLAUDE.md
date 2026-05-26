@@ -140,6 +140,7 @@ Each documentation file has a defined purpose, audience, and scope. README and C
 | `docs/SPRINT_PLAN.md` | Next planned phases of development work | Both humans and agents | Completed features, unsequenced backlog ideas |
 | [GitHub Issues](https://github.com/rlaprelle/Planner/issues) | Backlog — future features, enhancements, tech debt, design gaps | Both humans and agents | Completed features, sequenced planned work |
 | `docs/INTERNATIONALIZATION.md` | i18n approach, namespace assignments, phased implementation plan | Both humans and agents | General architecture, non-i18n conventions |
+| `docs/operations/BACKUP.md` | Database backup + restore runbook per deploy target, retention policy, restore-test cadence | Both humans and agents doing ops work | Application code backup (in git), file/object storage backup (none today) |
 | `docs/planning/user_design/` | Original design vision — use cases, workflows, wireframes | Historical reference | Do not update to match current implementation — these capture original design intent |
 | `docs/research/` | ADHD neuroscience research informing the design | Anyone understanding the evidence base for design decisions | Implementation details, feature specs |
 

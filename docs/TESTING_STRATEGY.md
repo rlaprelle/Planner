@@ -3,7 +3,7 @@
 > **Purpose:** Describes what testing is currently in place, per layer, and the known gaps.
 > **Audience:** Humans and coding agents.
 > **Out of scope:** Near-term planned additions — see [SPRINT_PLAN.md](SPRINT_PLAN.md).
-> **Last reviewed:** 2026-04-20
+> **Last reviewed:** 2026-05-25
 
 ## Current approach by layer
 
@@ -20,8 +20,8 @@
 
 ### Frontend (React / Vite)
 
-- **Linting only** via `npm run lint` (ESLint).
-- **No unit tests** for components, hooks, or utilities.
+- **Linting** via `npm run lint` (ESLint).
+- **Vitest** (`npm test`) is scaffolded with intentionally thin coverage — a handful of unit tests exercising the API client wrapper and a couple of start-day helpers. The bulk of frontend verification is delegated to E2E and Storybook; Vitest is reserved for pure-logic utilities where fast feedback meaningfully outpaces a Playwright round-trip.
 - **Storybook** (`npm run storybook`, port 6006) is the component workshop — stories colocated with components (`ComponentName.stories.jsx`), with MSW mocking any API calls. Storybook is used for visual iteration, animation tuning, and dnd interactions where automated assertions can't capture "feels right."
 
 ### E2E
@@ -34,7 +34,7 @@
 ## Known gaps
 
 - **No CI gate on coverage or mutation score.** JaCoCo and PIT both produce reports, but no threshold enforces a baseline yet; regressions are only caught by manual report review.
-- **No frontend unit tests.** Pure-logic utilities, hooks, and component-level behavior are only exercised indirectly via Storybook and E2E. Refactoring a hook relies on visual review + E2E pass rather than fast feedback.
+- **Thin frontend unit-test coverage.** Vitest is wired up but only a few utility/helper modules are covered. Component- and hook-level behavior is mostly exercised indirectly via Storybook and E2E, so refactoring a hook still leans on visual review + an E2E pass rather than fast feedback.
 - **No contract testing between frontend and backend.** The Playwright suite mocks `/api/*` with whatever shapes the frontend expects; backend changes that violate those shapes would not be caught by either test suite until deployment. This will become a larger problem if a separate mobile frontend is added.
 - **No dedicated security testing.** No SAST on application code, no SCA on dependencies, no dynamic scanning of auth endpoints.
 - **No visual regression or accessibility automation.** CSS and layout changes rely on manual spot-checks and Storybook review.
@@ -44,7 +44,8 @@
 ```bash
 cd backend && mvn test                        # Backend integration tests + JaCoCo report
 cd backend && mvn pitest:mutationCoverage     # Mutation testing with PIT
-cd frontend && npm run lint                   # Lint only
+cd frontend && npm run lint                   # ESLint
+cd frontend && npm test                       # Vitest unit tests (thin coverage)
 cd frontend && npm run storybook              # Component workshop on :6006
 cd e2e && npx playwright test                 # E2E regression suite (backend-free)
 ```

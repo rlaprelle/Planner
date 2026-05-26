@@ -22,6 +22,7 @@ frontend/src/locales/
     auth.json         # Login, register
     dashboard.json    # Dashboard cards, greeting, streaks
     ritual.json       # Triage, inbox, reflection, completion phases
+    settings.json     # User-settings page strings
     tasks.json        # Task/project CRUD, deferral, scheduling
     deferred.json     # Quick capture, inbox, defer actions
     timeBlocking.json # Start Day calendar, time block grid
@@ -42,7 +43,7 @@ frontend/src/locales/
 | Date/time formatting sites | ~9 files | `toLocaleDateString`, `formatDistanceToNow`, manual formatting |
 | Problematic string concatenation | ~15 instances | Template literals building sentences, inline ternary plurals |
 | Aria-labels with text | ~40+ | Some static, some with interpolated variables |
-| Suggested namespaces | 8 | See translation file structure above |
+| Suggested namespaces | 9 | See translation file structure above |
 
 ### ADHD-Friendly Microcopy
 
@@ -97,7 +98,7 @@ Walk every frontend source file and produce a comprehensive catalog of all user-
 2. For each file in `frontend/src/` that contains user-facing text, record:
    - File path
    - Every hardcoded string (buttons, headings, labels, placeholders, error messages, aria-labels, toast notifications)
-   - Suggested namespace assignment (common, auth, dashboard, ritual, tasks, deferred, timeBlocking, admin)
+   - Suggested namespace assignment (common, auth, dashboard, ritual, settings, tasks, deferred, timeBlocking, admin)
    - Flag strings that need special handling: interpolation, plurals, or ADHD-tone microcopy
 3. Catalog all date/time formatting call sites with file path, line, and current format pattern
 4. Catalog all string concatenation patterns that build user-visible sentences, with the current code and a suggested `t()` replacement
@@ -118,7 +119,7 @@ Install the library, configure it, and extract all hardcoded strings into Englis
    - Namespace-based loading from `frontend/src/locales/en/*.json`
    - Browser language detection (for future use; English-only at this stage)
 3. Wrap `<App>` in the i18next `<I18nextProvider>`
-4. Extract all hardcoded strings into the 8 English JSON namespace files
+4. Extract all hardcoded strings into the 9 English JSON namespace files
 5. Replace every hardcoded string in JSX with `t()` calls, file by file:
    - Pages (~15 files)
    - Components (~20 files)

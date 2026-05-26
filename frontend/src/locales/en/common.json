@@ -34,5 +34,11 @@
   "logOut": "Log out",
   "badgeOverflow": "99+",
   "settings": "Settings",
-  "admin": "Admin"
+  "admin": "Admin",
+  "errorBoundary": {
+    "headline": "Something went wrong.",
+    "body": "Take a breath — it's not your fault. Refreshing the page usually clears this up.",
+    "reload": "Refresh the page",
+    "detailsLabel": "Show technical details (dev only)"
+  }
 }

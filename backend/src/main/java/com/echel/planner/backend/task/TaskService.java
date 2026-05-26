@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +57,7 @@ public class TaskService {
 
         Task saved = taskRepository.save(task);
         List<TaskResponse> children = List.of();
-        return TaskResponse.from(saved, computeDeadlineGroup(saved.getDueDate()), children);
+        return TaskResponse.from(saved, computeDeadlineGroup(saved.getDueDate(), user), children);
     }
 
     @Transactional(readOnly = true)
@@ -70,7 +71,7 @@ public class TaskService {
     public TaskResponse get(AppUser user, UUID id) {
         Task task = findOwnedTask(user, id);
         List<TaskResponse> children = buildChildResponses(task.getId(), user);
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), children);
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate(), user), children);
     }
 
     @Transactional(readOnly = true)
@@ -80,7 +81,7 @@ public class TaskService {
                 .toInstant();
         List<Task> tasks = taskRepository.findCompletedTodayForUser(user.getId(), startOfDay);
         return tasks.stream()
-                .map(t -> TaskResponse.from(t, computeDeadlineGroup(t.getDueDate()), List.of()))
+                .map(t -> TaskResponse.from(t, computeDeadlineGroup(t.getDueDate(), user), List.of()))
                 .toList();
     }
 
@@ -112,7 +113,7 @@ public class TaskService {
         }
 
         List<TaskResponse> children = buildChildResponses(task.getId(), user);
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), children);
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate(), user), children);
     }
 
     public TaskResponse archive(AppUser user, UUID id) {
@@ -122,7 +123,7 @@ public class TaskService {
         List<Task> children = taskRepository.findByParentTaskIdAndUserId(task.getId(), user.getId());
         Instant now = task.getArchivedAt();
         children.forEach(child -> child.setArchivedAt(now));
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate(), user), List.of());
     }
 
     public TaskResponse changeStatus(AppUser user, UUID id, TaskStatusRequest request) {
@@ -139,15 +140,15 @@ public class TaskService {
             task.setCancelledAt(null);
         }
         List<TaskResponse> children = buildChildResponses(task.getId(), user);
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), children);
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate(), user), children);
     }
 
     @Transactional(readOnly = true)
     public List<TaskResponse> listActive(AppUser user) {
-        LocalDate today = LocalDate.now(java.time.ZoneId.of(user.getTimezone()));
+        LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
         List<Task> tasks = taskRepository.findActiveForUser(user.getId(), today);
         return tasks.stream()
-                .map(t -> TaskResponse.from(t, computeDeadlineGroup(t.getDueDate()), List.of()))
+                .map(t -> TaskResponse.from(t, computeDeadlineGroup(t.getDueDate(), user), List.of()))
                 .toList();
     }
 
@@ -157,7 +158,7 @@ public class TaskService {
      */
     public TaskResponse deferTask(AppUser user, UUID id, TaskDeferRequest request) {
         Task task = findOwnedTask(user, id);
-        LocalDate today = LocalDate.now(java.time.ZoneId.of(user.getTimezone()));
+        LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
 
         LocalDate visibleFrom;
         SchedulingScope scope;
@@ -186,7 +187,7 @@ public class TaskService {
         task.setSchedulingScope(scope);
         task.setDeferralCount(task.getDeferralCount() + 1);
 
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate(), user), List.of());
     }
 
     /** Cancels a task — a conscious decision that it no longer matters. */
@@ -194,7 +195,7 @@ public class TaskService {
         Task task = findOwnedTask(user, id);
         task.setStatus(TaskStatus.CANCELLED);
         task.setCancelledAt(Instant.now());
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate(), user), List.of());
     }
 
     /**
@@ -205,7 +206,7 @@ public class TaskService {
         Task task = findOwnedTask(user, id);
         task.setVisibleFrom(request.visibleFrom());
         task.setSchedulingScope(request.schedulingScope());
-        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate()), List.of());
+        return TaskResponse.from(task, computeDeadlineGroup(task.getDueDate(), user), List.of());
     }
 
     // --- Private helpers ---
@@ -223,7 +224,7 @@ public class TaskService {
     }
 
     private List<TaskResponse> sortAndMap(List<Task> tasks, AppUser user) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
         // Rolling 7-day window (not calendar week boundary) — intentional for ADHD-friendly "next 7 days" UX
         LocalDate endOfWeek = today.plusDays(7);
 
@@ -241,8 +242,8 @@ public class TaskService {
                 .toList();
     }
 
-    private DeadlineGroup computeDeadlineGroup(LocalDate dueDate) {
-        LocalDate today = LocalDate.now();
+    private DeadlineGroup computeDeadlineGroup(LocalDate dueDate, AppUser user) {
+        LocalDate today = LocalDate.now(ZoneId.of(user.getTimezone()));
         return DeadlineGroup.fromDueDate(dueDate, today, today.plusDays(7));
     }
 

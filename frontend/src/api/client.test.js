@@ -38,8 +38,8 @@ describe('handleResponse', () => {
     await expect(handleResponse(res)).rejects.toThrow('Not found')
   })
 
-  it('throws with "HTTP {status}" when the body has no message field', async () => {
-    const res = new Response(JSON.stringify({ detail: 'something else' }), { status: 500 })
+  it('throws with "HTTP {status}" when the body has no recognized message field', async () => {
+    const res = new Response(JSON.stringify({ unrelated: 'something else' }), { status: 500 })
     Object.defineProperty(res, 'ok', { value: false })
 
     await expect(handleResponse(res)).rejects.toThrow('HTTP 500')

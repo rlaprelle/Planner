@@ -1,6 +1,7 @@
 import { authFetch, handleResponse } from './client'
+import { API_BASE } from './config'
 
-const BASE = '/api/v1'
+const BASE = `${API_BASE}/api/v1`
 
 export async function getProjectTasks(projectId) {
   const res = await authFetch(`${BASE}/projects/${projectId}/tasks`)
@@ -44,7 +45,7 @@ export async function updateTaskStatus(taskId, status) {
 }
 
 export async function getTodayCompletedTasks() {
-  const res = await authFetch(`/api/v1/tasks/completed-today`)
+  const res = await authFetch(`${BASE}/tasks/completed-today`)
   return handleResponse(res)
 }
 

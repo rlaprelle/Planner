@@ -18,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -328,6 +330,70 @@ class TaskServiceTest {
         assertThat(response.id()).isEqualTo(taskId);
         assertThat(response.children()).hasSize(1);
         assertThat(response.children().get(0).id()).isEqualTo(childId);
+    }
+
+    // --- timezone-aware DeadlineGroup ---
+
+    /**
+     * Regression for issue #29: TaskService.computeDeadlineGroup and sortAndMap used
+     * bare LocalDate.now() and so bucketed tasks by the JVM's calendar day rather than
+     * the user's. Near midnight in the user's zone, that yielded the wrong DeadlineGroup.
+     *
+     * Strategy: pick two zones spanning a >23h offset (Pacific/Kiritimati UTC+14 vs
+     * Pacific/Pago_Pago UTC-11). At any instant their calendar days differ. We set the
+     * task's dueDate to "today" in the eastern zone, then verify:
+     *   - eastern user sees it as TODAY
+     *   - western user sees it as THIS_WEEK (the date is still in their future)
+     * This avoids any dependence on what zone the JVM happens to be running in.
+     */
+    @Test
+    void get_bucketsDueDateByUserTimezone_notServerTimezone() throws Exception {
+        ZoneId eastern = ZoneId.of("Pacific/Kiritimati"); // UTC+14
+        ZoneId western = ZoneId.of("Pacific/Pago_Pago");  // UTC-11
+
+        LocalDate easternToday = LocalDate.now(eastern);
+        LocalDate westernToday = LocalDate.now(western);
+        // Sanity check the premise: across a 25h offset these dates always differ.
+        assertThat(easternToday).isAfter(westernToday);
+
+        AppUser easternUser = new AppUser("east@example.com", "h", "East", eastern.getId());
+        setField(easternUser, "id", UUID.randomUUID());
+        AppUser westernUser = new AppUser("west@example.com", "h", "West", western.getId());
+        setField(westernUser, "id", UUID.randomUUID());
+
+        Project easternProject = new Project(easternUser, "P");
+        setField(easternProject, "id", UUID.randomUUID());
+        Project westernProject = new Project(westernUser, "P");
+        setField(westernProject, "id", UUID.randomUUID());
+
+        UUID easternTaskId = UUID.randomUUID();
+        Task easternTask = new Task(easternUser, easternProject, "Due today (eastern)");
+        setField(easternTask, "id", easternTaskId);
+        easternTask.setDueDate(easternToday);
+
+        UUID westernTaskId = UUID.randomUUID();
+        Task westernTask = new Task(westernUser, westernProject, "Due today (eastern) but viewed by westerner");
+        setField(westernTask, "id", westernTaskId);
+        westernTask.setDueDate(easternToday);
+
+        when(taskRepository.findByIdAndUserId(easternTaskId, easternUser.getId()))
+                .thenReturn(Optional.of(easternTask));
+        when(taskRepository.findByParentTaskIdAndUserIdAndArchivedAtIsNull(easternTaskId, easternUser.getId()))
+                .thenReturn(List.of());
+        when(taskRepository.findByIdAndUserId(westernTaskId, westernUser.getId()))
+                .thenReturn(Optional.of(westernTask));
+        when(taskRepository.findByParentTaskIdAndUserIdAndArchivedAtIsNull(westernTaskId, westernUser.getId()))
+                .thenReturn(List.of());
+
+        TaskResponse easternResponse = taskService.get(easternUser, easternTaskId);
+        TaskResponse westernResponse = taskService.get(westernUser, westernTaskId);
+
+        assertThat(easternResponse.deadlineGroup())
+                .as("eastern user: dueDate equals today in their zone")
+                .isEqualTo(DeadlineGroup.TODAY);
+        assertThat(westernResponse.deadlineGroup())
+                .as("western user: same dueDate is still tomorrow in their zone (within rolling week)")
+                .isEqualTo(DeadlineGroup.THIS_WEEK);
     }
 
     // --- Utility ---

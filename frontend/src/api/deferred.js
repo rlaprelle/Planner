@@ -1,6 +1,7 @@
 import { authFetch, handleResponse } from './client'
+import { API_BASE } from './config'
 
-const BASE = '/api/v1'
+const BASE = `${API_BASE}/api/v1`
 
 export async function createDeferredItem(rawText) {
   const res = await authFetch(`${BASE}/deferred`, {

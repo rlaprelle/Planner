@@ -1,5 +1,7 @@
 # Echel Planner
 
+**Version:** 0.1.0 — see [CHANGELOG.md](CHANGELOG.md) for release history.
+
 *Planning that works with your brain, not against it.*
 
 Echel Planner is a daily work management tool designed for people with ADHD.
@@ -109,6 +111,18 @@ Tasks are estimated in **points** (1-5), not hours. Points are deliberately vagu
 Both scripts start PostgreSQL (via Docker), the Spring Boot backend, and the Vite frontend. Press **Ctrl+C** to stop everything.
 
 Once running, open **http://localhost:5173**.
+
+### Running the Full Stack in Docker
+
+For a deployable shape — backend and database both in containers — use the deploy compose file:
+
+```bash
+docker compose -f compose.deploy.yml up -d --build
+curl http://localhost:8080/actuator/health   # {"status":"UP"}
+docker compose -f compose.deploy.yml down    # add -v to drop the DB volume
+```
+
+Override `BACKEND_PORT`, `POSTGRES_*`, or `JWT_SECRET` via shell env or a `.env` file alongside the compose file. The frontend is not yet bundled into the deploy stack — production static-asset builds are tracked in issue #78.
 
 ### For Contributors
 

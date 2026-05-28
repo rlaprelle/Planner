@@ -15,17 +15,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.lang.reflect.Field;
+import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, AuthService.class, AuthExceptionHandler.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, AuthService.class, AuthExceptionHandler.class, AuthRateLimitFilter.class})
 class AuthControllerIntegrationTest {
 
     @Autowired
@@ -43,6 +48,9 @@ class AuthControllerIntegrationTest {
     @MockBean
     private AppUserRepository userRepository;
 
+    @MockBean
+    private RefreshTokenRepository refreshTokenRepository;
+
     private AppUser existingUser;
 
     @BeforeEach
@@ -53,12 +61,18 @@ class AuthControllerIntegrationTest {
                 "Alice",
                 "UTC"
         );
+        // Give the in-memory user a stable id so refresh-token rows can reference it.
+        setUserId(existingUser, UUID.randomUUID());
 
         when(userRepository.findByEmail("alice@example.com"))
+                .thenReturn(Optional.of(existingUser));
+        when(userRepository.findById(existingUser.getId()))
                 .thenReturn(Optional.of(existingUser));
         when(userRepository.findByEmail("new@example.com"))
                 .thenReturn(Optional.empty());
         when(userRepository.save(any(AppUser.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+        when(refreshTokenRepository.save(any(RefreshToken.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
     }
 
@@ -135,11 +149,20 @@ class AuthControllerIntegrationTest {
     // --- Refresh ---
 
     @Test
-    void refresh_validCookie_returns200WithNewAccessToken() throws Exception {
-        String refreshToken = jwtService.generateRefreshToken("alice@example.com", AppUser.Role.USER);
+    void refresh_validCookie_returns200WithNewAccessTokenAndRotatedCookie() throws Exception {
+        String rawToken = "raw-refresh-token-value-123";
+        RefreshToken stored = new RefreshToken(
+                existingUser.getId(),
+                AuthService.sha256(rawToken),
+                UUID.randomUUID(),
+                null,
+                Instant.now().plusSeconds(3600)
+        );
+        when(refreshTokenRepository.findByTokenHash(AuthService.sha256(rawToken)))
+                .thenReturn(Optional.of(stored));
 
         MvcResult result = mockMvc.perform(post("/api/v1/auth/refresh")
-                        .cookie(new Cookie(AuthService.REFRESH_COOKIE_NAME, refreshToken)))
+                        .cookie(new Cookie(AuthService.REFRESH_COOKIE_NAME, rawToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andReturn();
@@ -147,12 +170,96 @@ class AuthControllerIntegrationTest {
         Cookie newRefreshCookie = result.getResponse().getCookie(AuthService.REFRESH_COOKIE_NAME);
         assertThat(newRefreshCookie).isNotNull();
         assertThat(newRefreshCookie.getValue()).isNotBlank();
+        // Rotation: the cookie value must change.
+        assertThat(newRefreshCookie.getValue()).isNotEqualTo(rawToken);
+        // The old row was revoked in place during rotation.
+        assertThat(stored.isRevoked()).isTrue();
     }
 
     @Test
     void refresh_missingCookie_returns401() throws Exception {
         mockMvc.perform(post("/api/v1/auth/refresh"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void refresh_unknownCookie_returns401() throws Exception {
+        when(refreshTokenRepository.findByTokenHash(any())).thenReturn(Optional.empty());
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                        .cookie(new Cookie(AuthService.REFRESH_COOKIE_NAME, "ghost")))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void refresh_revokedCookie_returns401_andRevokesChain() throws Exception {
+        String rawToken = "already-rotated";
+        RefreshToken stored = new RefreshToken(
+                existingUser.getId(),
+                AuthService.sha256(rawToken),
+                UUID.randomUUID(),
+                null,
+                Instant.now().plusSeconds(3600)
+        );
+        stored.revoke(Instant.now().minusSeconds(60));
+        when(refreshTokenRepository.findByTokenHash(AuthService.sha256(rawToken)))
+                .thenReturn(Optional.of(stored));
+
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                        .cookie(new Cookie(AuthService.REFRESH_COOKIE_NAME, rawToken)))
+                .andExpect(status().isUnauthorized());
+
+        // Reuse detection: every active token for the user is revoked, not just this one.
+        verify(refreshTokenRepository).revokeAllActiveForUser(eq(existingUser.getId()), any());
+    }
+
+    @Test
+    void refresh_expiredCookie_returns401() throws Exception {
+        String rawToken = "expired-token";
+        RefreshToken stored = new RefreshToken(
+                existingUser.getId(),
+                AuthService.sha256(rawToken),
+                UUID.randomUUID(),
+                null,
+                Instant.now().minusSeconds(60)
+        );
+        when(refreshTokenRepository.findByTokenHash(AuthService.sha256(rawToken)))
+                .thenReturn(Optional.of(stored));
+
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                        .cookie(new Cookie(AuthService.REFRESH_COOKIE_NAME, rawToken)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    // --- Logout ---
+
+    @Test
+    void logout_revokesPresentedRefreshToken_andClearsCookie() throws Exception {
+        String rawToken = "logout-target";
+        RefreshToken stored = new RefreshToken(
+                existingUser.getId(),
+                AuthService.sha256(rawToken),
+                UUID.randomUUID(),
+                null,
+                Instant.now().plusSeconds(3600)
+        );
+        when(refreshTokenRepository.findByTokenHash(AuthService.sha256(rawToken)))
+                .thenReturn(Optional.of(stored));
+
+        MvcResult result = mockMvc.perform(post("/api/v1/auth/logout")
+                        .cookie(new Cookie(AuthService.REFRESH_COOKIE_NAME, rawToken)))
+                .andExpect(status().isNoContent())
+                .andReturn();
+
+        assertThat(stored.isRevoked()).isTrue();
+        Cookie cleared = result.getResponse().getCookie(AuthService.REFRESH_COOKIE_NAME);
+        assertThat(cleared).isNotNull();
+        assertThat(cleared.getMaxAge()).isZero();
+    }
+
+    @Test
+    void logout_withoutCookie_stillReturns204() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/logout"))
+                .andExpect(status().isNoContent());
     }
 
     // --- Protected endpoints ---
@@ -173,5 +280,16 @@ class AuthControllerIntegrationTest {
                 .andReturn();
 
         assertThat(result.getResponse().getStatus()).isEqualTo(404);
+    }
+
+    /** Bypass JPA's normal id assignment so test users can be referenced by id. */
+    private static void setUserId(AppUser user, UUID id) {
+        try {
+            Field f = AppUser.class.getDeclaredField("id");
+            f.setAccessible(true);
+            f.set(user, id);
+        } catch (ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

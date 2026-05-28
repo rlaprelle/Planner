@@ -1,0 +1,204 @@
+name: Deploy
+
+# Triggers a production deploy on merge to main. Also runnable manually for
+# rollbacks: dispatch the workflow with a previously-deployed SHA via the
+# image_tag input.
+#
+# Required GitHub Secrets:
+#   AWS_ACCESS_KEY_ID      — IAM user 'github-actions-deploy'
+#   AWS_SECRET_ACCESS_KEY  — its access key secret
+#
+# Required GitHub Variables (Settings → Variables → Actions):
+#   AWS_REGION                 e.g. us-east-1
+#   ECR_REPOSITORY             e.g. planner-backend
+#   ECS_CLUSTER                ECS cluster name (e.g. planner-backend-cluster)
+#   ECS_SERVICE                ECS service name (e.g. planner-backend-service)
+#   S3_BUCKET                  e.g. echelplanner-frontend-prod
+#   CLOUDFRONT_DISTRIBUTION_ID e.g. E1ABC...
+#   BACKEND_URL                e.g. https://api.echelplanner.com
+#   FRONTEND_URL               e.g. https://echelplanner.com
+#
+# See docs/DEPLOYMENT.md for the AWS console runbook that creates these.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy (defaults to current SHA). Use a prior SHA to roll back.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  backend-deploy:
+    name: Backend → ECR → ECS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Resolve image tag
+        id: tag
+        run: |
+          if [ -n "${{ inputs.image_tag }}" ]; then
+            echo "value=${{ inputs.image_tag }}" >> "$GITHUB_OUTPUT"
+            echo "Using rollback tag: ${{ inputs.image_tag }}"
+          else
+            echo "value=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+            echo "Using current SHA: ${GITHUB_SHA}"
+          fi
+
+      - name: Build and push backend image
+        # Skipped on rollback runs — the image already exists in ECR.
+        if: inputs.image_tag == ''
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ steps.tag.outputs.value }}
+            ${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Retag existing ECR image as latest (rollback path)
+        # On manual rollback, point :latest at the chosen SHA so ECS picks
+        # it up on force-new-deployment. The task definition tracks :latest.
+        if: inputs.image_tag != ''
+        run: |
+          set -euo pipefail
+          MANIFEST=$(aws ecr batch-get-image \
+            --repository-name "${{ vars.ECR_REPOSITORY }}" \
+            --image-ids imageTag="${{ steps.tag.outputs.value }}" \
+            --query 'images[0].imageManifest' --output text)
+          if [ -z "$MANIFEST" ] || [ "$MANIFEST" = "None" ]; then
+            echo "::error::No image found in ECR for tag ${{ steps.tag.outputs.value }}"
+            exit 1
+          fi
+          aws ecr put-image \
+            --repository-name "${{ vars.ECR_REPOSITORY }}" \
+            --image-tag latest \
+            --image-manifest "$MANIFEST"
+
+      - name: Trigger ECS deploy
+        run: |
+          set -euo pipefail
+          # Forces ECS to pull :latest and roll a new task. The task
+          # definition itself isn't changed; we just re-deploy the same
+          # revision with a freshly-pulled image.
+          aws ecs update-service \
+            --cluster "${{ vars.ECS_CLUSTER }}" \
+            --service "${{ vars.ECS_SERVICE }}" \
+            --force-new-deployment \
+            > /dev/null
+          echo "ECS deployment triggered for ${{ vars.ECS_SERVICE }}"
+
+      - name: Wait for ECS deployment to stabilize
+        run: |
+          set -euo pipefail
+          # services-stable waits until running count == desired count and
+          # there are no active deployments. Built-in 40-attempt / 15s
+          # polling — about 10 minutes max.
+          aws ecs wait services-stable \
+            --cluster "${{ vars.ECS_CLUSTER }}" \
+            --services "${{ vars.ECS_SERVICE }}"
+
+      - name: Smoke test backend
+        run: |
+          set -euo pipefail
+          # ECS marks the service stable as soon as healthy targets are
+          # registered, but the ALB target group health-check needs a
+          # cycle or two before traffic flows reliably.
+          for i in $(seq 1 10); do
+            BODY=$(curl -fsS "${{ vars.BACKEND_URL }}/actuator/health" || echo "")
+            if echo "$BODY" | grep -q '"status":"UP"'; then
+              echo "Backend healthy: $BODY"
+              exit 0
+            fi
+            echo "[$i/10] health not UP yet, retrying in 10s"
+            sleep 10
+          done
+          echo "::error::Backend never reported UP at ${{ vars.BACKEND_URL }}/actuator/health"
+          exit 1
+
+  frontend-deploy:
+    name: Frontend → S3 → CloudFront
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build production bundle
+        working-directory: frontend
+        env:
+          VITE_API_URL: ${{ vars.BACKEND_URL }}
+        run: npm run build
+
+      - name: Sync hashed assets (long cache)
+        working-directory: frontend
+        run: |
+          aws s3 sync dist/ s3://${{ vars.S3_BUCKET }}/ \
+            --delete \
+            --exclude "index.html" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Sync index.html (no cache)
+        working-directory: frontend
+        run: |
+          aws s3 cp dist/index.html s3://${{ vars.S3_BUCKET }}/index.html \
+            --cache-control "public, max-age=60, must-revalidate"
+
+      - name: Invalidate CloudFront
+        run: |
+          set -euo pipefail
+          # Only /index.html needs invalidation — hashed assets are unique per
+          # build. Invalidating /* is a no-op for those but adds latency, so
+          # keep it tight.
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/index.html" "/"
+
+      - name: Smoke test frontend
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 10); do
+            if curl -fsS -o /dev/null "${{ vars.FRONTEND_URL }}/"; then
+              echo "Frontend reachable at ${{ vars.FRONTEND_URL }}/"
+              exit 0
+            fi
+            echo "[$i/10] frontend not reachable yet, retrying in 10s"
+            sleep 10
+          done
+          echo "::error::Frontend root never returned 200 at ${{ vars.FRONTEND_URL }}/"
+          exit 1

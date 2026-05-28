@@ -1,6 +1,7 @@
 import { authFetch, handleResponse } from './client'
+import { API_BASE } from './config'
 
-const BASE = '/api/v1/admin'
+const BASE = `${API_BASE}/api/v1/admin`
 
 function adminFetch(path, options = {}) {
   return authFetch(`${BASE}${path}`, options)

@@ -1,6 +1,7 @@
 import { authFetch, handleResponse } from './client'
+import { API_BASE } from './config'
 
-const BASE = '/api/v1/projects'
+const BASE = `${API_BASE}/api/v1/projects`
 
 export async function getProjects() {
   const res = await authFetch(BASE)

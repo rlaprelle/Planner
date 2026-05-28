@@ -1,4 +1,6 @@
-const BASE = '/api/v1/auth'
+import { API_BASE } from './config'
+
+const BASE = `${API_BASE}/api/v1/auth`
 
 async function handleResponse(res) {
   if (!res.ok) {

@@ -125,11 +125,11 @@ jobs:
       - name: Smoke test backend
         run: |
           set -euo pipefail
-          # ECS marks the service stable as soon as healthy targets are
-          # registered, but the ALB target group health-check needs a
-          # cycle or two before traffic flows reliably.
+          # /health is the lightweight liveness endpoint on the main port
+          # (HealthController). /actuator/health is the deep aggregated check
+          # on the management port (not reachable via the public ALB).
           for i in $(seq 1 10); do
-            BODY=$(curl -fsS "${{ vars.BACKEND_URL }}/actuator/health" || echo "")
+            BODY=$(curl -fsS "${{ vars.BACKEND_URL }}/health" || echo "")
             if echo "$BODY" | grep -q '"status":"UP"'; then
               echo "Backend healthy: $BODY"
               exit 0
@@ -137,7 +137,7 @@ jobs:
             echo "[$i/10] health not UP yet, retrying in 10s"
             sleep 10
           done
-          echo "::error::Backend never reported UP at ${{ vars.BACKEND_URL }}/actuator/health"
+          echo "::error::Backend never reported UP at ${{ vars.BACKEND_URL }}/health"
           exit 1
 
   frontend-deploy:

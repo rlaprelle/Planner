@@ -247,7 +247,7 @@ The resulting resources are managed by standard ECS APIs (cluster, service, task
    - `PLANNER_DB_PASSWORD` ← full ARN of `planner/db-password`
 
    The ARN includes a 6-character random suffix after the secret name (e.g. `arn:aws:secretsmanager:us-east-1:<account>:secret:planner/jwt-secret-AbC123`). You can't construct it from just the name — copy it from the console.
-7. Health check (configured on the ALB target group): HTTP path `/actuator/health`, healthy threshold 2, interval 30s.
+7. Health check (configured on the ALB target group): HTTP path `/health` on port 8080, healthy threshold 2, interval 30s. (See [Health endpoints](#health-endpoints) below — use `/health` not `/actuator/health`; the latter lives on the management port and isn't reachable via the ALB.)
 8. Create. The wizard will provision: an ECS cluster, a task definition, a Fargate service, an ALB with target group, and security groups. Wait 5–10 min for the service to reach `RUNNING` with `desired count` matching `running count`.
 
 ### 7b. Connect ECS to RDS
@@ -273,7 +273,7 @@ The ECS Express wizard provisions an ALB with HTTP (port 80) by default. We need
 
 1. **Route 53 → Hosted zones → echelplanner.com → Create record.**
 2. Record name: `api`. Type: **A** with **Alias** toggled on. Route traffic to: Alias to Application and Classic Load Balancer → us-east-1 → pick the ALB from 7c.
-3. Save. `https://api.echelplanner.com/actuator/health` should return `{"status":"UP"}` within a minute or two.
+3. Save. `https://api.echelplanner.com/health` should return `{"status":"UP"}` within a minute or two.
 
 ### 7e. Note the deploy targets
 
@@ -303,7 +303,7 @@ Both go into GitHub Variables in Phase 8.
 1. Merge this PR's branch into `dev`.
 2. Open a PR from `dev` to `main`. Merge it.
 3. The push to `main` triggers `.github/workflows/deploy.yml`. Watch the run in the Actions tab.
-4. On success, both `https://echelplanner.com` and `https://api.echelplanner.com/actuator/health` should return 200.
+4. On success, both `https://echelplanner.com` and `https://api.echelplanner.com/health` should return 200.
 
 Something will almost certainly go wrong on the first deploy — usually an IAM permission gap or an env var name mismatch. Read the failing step's logs; the most common fixes:
 - ECS task can't pull from ECR → the ECS task execution role needs `AmazonECSTaskExecutionRolePolicy` (Express mode usually attaches this automatically)
@@ -391,6 +391,19 @@ This tells Spring to honor `X-Forwarded-Proto` from the proxy / ALB, so `HttpSer
 If neither is set, the app refuses to start rather than running silently misconfigured.
 
 Companion guard: `JwtSecretProductionGuard` (see [#79](https://github.com/rlaprelle/Planner/issues/79)) fails startup if the dev-default JWT secret leaks into prod.
+
+## Health endpoints
+
+Two distinct concepts, on two different ports:
+
+| Endpoint | Port | Aggregates downstream? | Use case |
+|----------|------|------------------------|----------|
+| `/health` (HealthController) | 8080 (main) | No — process-up only | ALB target group health check, external smoke test, anything publicly reachable |
+| `/actuator/health` | 9090 (management) | Yes — DB, Hikari pool, etc. | Internal observability, deep diagnostics, Prometheus scraper |
+
+The lightweight `/health` endpoint deliberately doesn't touch downstream dependencies: a brief Postgres hiccup shouldn't take the whole service out of the load balancer. The aggregated `/actuator/health` on the management port (9090) is where you go to ask "and is the database also OK?" — but that port isn't exposed via the ALB, so it's only reachable from inside the task's VPC.
+
+When configuring the ALB target group health check, use **path `/health`, port 8080**. Not `/actuator/health`.
 
 ## Required env vars under prod
 

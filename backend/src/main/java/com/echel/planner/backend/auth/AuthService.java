@@ -140,6 +140,27 @@ public class AuthService {
         return buildClearRefreshCookie();
     }
 
+    /**
+     * Issue a brand-new session (access token + rotated refresh cookie) for a user.
+     * Used after a credential change so the active client stays signed in even
+     * though {@link #revokeAllSessions} has just invalidated its old token.
+     */
+    @Transactional
+    public AuthResult issueSession(AppUser user) {
+        return issueNewSession(user);
+    }
+
+    /**
+     * Revoke every active refresh token for a user — "sign out everywhere".
+     * Used after a password or email change so other devices must re-authenticate.
+     *
+     * @return the number of tokens revoked
+     */
+    @Transactional
+    public int revokeAllSessions(UUID userId) {
+        return refreshTokenRepository.revokeAllActiveForUser(userId, Instant.now());
+    }
+
     private String readRefreshCookie(HttpServletRequest httpRequest) {
         Cookie cookie = WebUtils.getCookie(httpRequest, REFRESH_COOKIE_NAME);
         if (cookie == null || cookie.getValue() == null || cookie.getValue().isBlank()) {

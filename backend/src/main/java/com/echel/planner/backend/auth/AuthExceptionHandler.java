@@ -24,4 +24,14 @@ public class AuthExceptionHandler {
     ProblemDetail handleBadCredentials(RuntimeException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid email or password");
     }
+
+    @ExceptionHandler(AccountService.IncorrectPasswordException.class)
+    ProblemDetail handleIncorrectPassword(AccountService.IncorrectPasswordException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(AccountService.InvalidEmailChangeTokenException.class)
+    ProblemDetail handleInvalidEmailChangeToken(AccountService.InvalidEmailChangeTokenException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 }

@@ -160,6 +160,31 @@ Secret values are editable later: click the secret → Retrieve secret value →
 
     **Don't** create a single secret with three key/value pairs — ECS task definitions map one secret to one env var, and the three-separate-plaintext-secrets layout is what Phase 7 wires up.
 
+## Phase 5b — SES for transactional email
+
+The backend sends one transactional email today: the verification link for a
+self-service **email change** (Settings → Account). In prod (`EMAIL_PROVIDER=ses`)
+this goes through AWS SES; in dev the default `log` provider just writes the link
+to the application log, so no setup is needed locally.
+
+1. **Console → SES → Configuration → Identities → Create identity.**
+   - Verify a **domain** (recommended): SES gives you DKIM CNAME records to add in
+     Route 53 (Phase 1). Domain verification + DKIM is what keeps mail out of spam.
+   - A single verified email address also works for a first cut, but domain
+     verification is the production-grade choice.
+2. Set `EMAIL_FROM` (Phase 7, step 5) to an address on that verified identity.
+3. **Move out of the SES sandbox.** New SES accounts can only send to *verified*
+   recipients. To email arbitrary users, request production access:
+   **SES → Account dashboard → Request production access.** This is a manual AWS
+   review and can take a day — do it early.
+4. **Grant the ECS task role permission to send.** Add an inline policy to the
+   task role allowing `ses:SendEmail` (and `ses:SendRawEmail`) on `*` (or scope to
+   the verified identity ARN). Credentials resolve from the task role via the
+   default AWS provider chain — no keys in env vars.
+
+If you skip this phase, set `EMAIL_PROVIDER=log` in Phase 7 to keep the app
+healthy; the email-change feature will then log links instead of sending them.
+
 ## Phase 6 — S3 + CloudFront for the frontend
 
 ### 6a. S3 bucket
@@ -240,6 +265,10 @@ The resulting resources are managed by standard ECS APIs (cluster, service, task
 5. Environment variables (plain values):
    - `SPRING_PROFILES_ACTIVE` = `prod`
    - `APP_CORS_ALLOWED_ORIGINS` = `https://echelplanner.com,https://www.echelplanner.com`
+   - `FRONTEND_BASE_URL` = `https://echelplanner.com` — the public origin email-change verification links point back to (the frontend `/verify-email` route).
+   - `EMAIL_PROVIDER` = `ses` (the prod default; set `log` to disable real sending and just log the link).
+   - `EMAIL_FROM` = a **verified SES sender identity** (e.g. `no-reply@echelplanner.com`). See [Phase 5b](#phase-5b--ses-for-transactional-email).
+   - `EMAIL_SES_REGION` = the SES region (e.g. `us-east-1`) if it differs from the task's default AWS region; otherwise omit.
 6. Environment variables (from Secrets Manager — the wizard usually labels these "Secrets" or "Sensitive data"). **Paste the full ARN, not the bare name** — ECS will reject bare names with a misleading "Systems Manager parameter name is invalid" error:
    - `JWT_SECRET` ← full ARN of `planner/jwt-secret` (Secrets Manager → click the secret → copy the Secret ARN at the top)
    - `PLANNER_DB_URL` ← full ARN of `planner/db-url`
@@ -324,6 +353,7 @@ What's stored where:
 | `AWS_REGION`, `ECR_REPOSITORY`, ... | GitHub repo Variables | The deploy workflow |
 | `JWT_SECRET`, `PLANNER_DB_URL`, `PLANNER_DB_USER`, `PLANNER_DB_PASSWORD` | AWS Secrets Manager | The backend container at startup |
 | `SPRING_PROFILES_ACTIVE=prod`, `APP_CORS_ALLOWED_ORIGINS` | ECS task definition env vars | The backend container at startup |
+| `FRONTEND_BASE_URL`, `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_SES_REGION` | ECS task definition env vars | The backend container at startup (email-change verification) |
 | `VITE_API_URL` | GitHub repo Variable (`BACKEND_URL`), inlined into the build | Baked into the SPA bundle at build time |
 
 ## Rollback procedure

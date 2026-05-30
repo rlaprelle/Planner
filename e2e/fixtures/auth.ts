@@ -19,6 +19,7 @@ export const test = base.extend({
     await page.route('**/api/v1/user/preferences', route =>
       route.fulfill({
         json: {
+          email: 'test@example.com',
           displayName: 'Test User',
           timezone: 'America/New_York',
           defaultStartTime: '08:00:00',

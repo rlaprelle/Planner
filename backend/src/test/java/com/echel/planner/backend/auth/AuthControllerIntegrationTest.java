@@ -1,8 +1,10 @@
 package com.echel.planner.backend.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.echel.planner.backend.auth.dto.ConfirmEmailChangeRequest;
 import com.echel.planner.backend.auth.dto.LoginRequest;
 import com.echel.planner.backend.auth.dto.RegisterRequest;
+import com.echel.planner.backend.email.EmailSender;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, AuthService.class, AuthExceptionHandler.class, AuthRateLimitFilter.class})
+@Import({SecurityConfig.class, JwtService.class, JwtAuthFilter.class, AuthService.class, AccountService.class,
+         AuthExceptionHandler.class, AuthRateLimitFilter.class})
 class AuthControllerIntegrationTest {
 
     @Autowired
@@ -50,6 +53,12 @@ class AuthControllerIntegrationTest {
 
     @MockBean
     private RefreshTokenRepository refreshTokenRepository;
+
+    @MockBean
+    private EmailChangeTokenRepository emailChangeTokenRepository;
+
+    @MockBean
+    private EmailSender emailSender;
 
     private AppUser existingUser;
 
@@ -260,6 +269,57 @@ class AuthControllerIntegrationTest {
     void logout_withoutCookie_stillReturns204() throws Exception {
         mockMvc.perform(post("/api/v1/auth/logout"))
                 .andExpect(status().isNoContent());
+    }
+
+    // --- Confirm email change ---
+
+    @Test
+    void confirmEmailChange_validToken_switchesEmailAndRevokesSessions() throws Exception {
+        String rawToken = "email-change-token";
+        EmailChangeToken token = new EmailChangeToken(
+                existingUser.getId(), "new@example.com",
+                AuthService.sha256(rawToken), Instant.now().plusSeconds(3600));
+        when(emailChangeTokenRepository.findByTokenHash(AuthService.sha256(rawToken)))
+                .thenReturn(Optional.of(token));
+
+        var req = new ConfirmEmailChangeRequest(rawToken);
+        mockMvc.perform(post("/api/v1/auth/email/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("new@example.com"));
+
+        assertThat(existingUser.getEmail()).isEqualTo("new@example.com");
+        assertThat(token.isConsumed()).isTrue();
+        verify(refreshTokenRepository).revokeAllActiveForUser(eq(existingUser.getId()), any());
+    }
+
+    @Test
+    void confirmEmailChange_unknownToken_returns400() throws Exception {
+        when(emailChangeTokenRepository.findByTokenHash(any())).thenReturn(Optional.empty());
+
+        var req = new ConfirmEmailChangeRequest("ghost");
+        mockMvc.perform(post("/api/v1/auth/email/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void confirmEmailChange_expiredToken_returns400() throws Exception {
+        String rawToken = "expired-change";
+        EmailChangeToken token = new EmailChangeToken(
+                existingUser.getId(), "new@example.com",
+                AuthService.sha256(rawToken), Instant.now().minusSeconds(60));
+        when(emailChangeTokenRepository.findByTokenHash(AuthService.sha256(rawToken)))
+                .thenReturn(Optional.of(token));
+
+        var req = new ConfirmEmailChangeRequest(rawToken);
+        mockMvc.perform(post("/api/v1/auth/email/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isBadRequest());
+        assertThat(existingUser.getEmail()).isEqualTo("alice@example.com");
     }
 
     // --- Protected endpoints ---

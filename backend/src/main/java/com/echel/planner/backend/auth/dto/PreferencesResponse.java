@@ -7,6 +7,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 public record PreferencesResponse(
+        String email,
         String displayName,
         String timezone,
         @JsonFormat(pattern = "HH:mm:ss") LocalTime defaultStartTime,
@@ -17,6 +18,7 @@ public record PreferencesResponse(
 ) {
     public static PreferencesResponse from(AppUser user) {
         return new PreferencesResponse(
+                user.getEmail(),
                 user.getDisplayName(),
                 user.getTimezone(),
                 user.getDefaultStartTime(),

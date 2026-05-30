@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 import * as Label from '@radix-ui/react-label'
 import { getTimeZones } from '@vvo/tzdb'
 import { getPreferences, updatePreferences } from '@/api/preferences'
+import { changePassword, requestEmailChange } from '@/api/account'
+import { useAuth } from '@/auth/useAuth'
 
 const DAY_KEYS = [
   { value: 'MONDAY', labelKey: 'monday' },
@@ -81,17 +83,26 @@ export function SettingsPage() {
     )
   }
 
-  // key-prop remount: when prefs change (e.g., after save), the form
-  // remounts with fresh initial values — no useEffect + setState needed
   return (
-    <SettingsForm
-      key={JSON.stringify(prefs)}
-      prefs={prefs}
-      success={success}
-      error={error}
-      onSuccess={() => { setSuccess(true); setError(null); setTimeout(() => setSuccess(false), 3000) }}
-      onError={(msg) => { setError(msg); setSuccess(false) }}
-    />
+    <div className="max-w-xl mx-auto px-6 py-10">
+      <h1 className="text-2xl font-bold text-ink-heading mb-1">{t('settings')}</h1>
+      <p className="text-sm text-ink-secondary mb-8">{t('subtitle')}</p>
+
+      {/* key-prop remount: when prefs change (e.g., after save), the form
+          remounts with fresh initial values — no useEffect + setState needed */}
+      <SettingsForm
+        key={JSON.stringify(prefs)}
+        prefs={prefs}
+        success={success}
+        error={error}
+        onSuccess={() => { setSuccess(true); setError(null); setTimeout(() => setSuccess(false), 3000) }}
+        onError={(msg) => { setError(msg); setSuccess(false) }}
+      />
+
+      <hr className="my-10 border-edge" />
+
+      <AccountSection email={prefs.email} />
+    </div>
   )
 }
 
@@ -162,11 +173,7 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold text-ink-heading mb-1">{t('settings')}</h1>
-      <p className="text-sm text-ink-secondary mb-8">{t('subtitle')}</p>
-
-      <form onSubmit={handleSubmit} className="space-y-10">
+    <form onSubmit={handleSubmit} className="space-y-10">
         {/* Profile */}
         <section>
           <h2 className="text-lg font-semibold text-ink-heading mb-4">{t('profile')}</h2>
@@ -320,7 +327,190 @@ function SettingsForm({ prefs, success, error, onSuccess, onError }) {
         >
           {mutation.isPending ? t('common:saving') : t('common:save')}
         </button>
-      </form>
-    </div>
+    </form>
+  )
+}
+
+function AccountSection({ email }) {
+  const { t } = useTranslation('settings')
+
+  return (
+    <section className="space-y-10">
+      <div>
+        <h2 className="text-lg font-semibold text-ink-heading mb-1">{t('account')}</h2>
+        <p className="text-sm text-ink-secondary mb-4">{t('accountSubtitle')}</p>
+      </div>
+      <ChangeEmailForm currentEmail={email} />
+      <ChangePasswordForm />
+    </section>
+  )
+}
+
+function ChangeEmailForm({ currentEmail }) {
+  const { t } = useTranslation('settings')
+  const [newEmail, setNewEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const mutation = useMutation({
+    mutationFn: () => requestEmailChange(newEmail, password),
+  })
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    mutation.mutate()
+  }
+
+  if (mutation.isSuccess) {
+    return (
+      <div>
+        <h3 className="text-sm font-medium text-ink-body mb-2">{t('changeEmail')}</h3>
+        <p className="text-sm text-emerald-600 font-medium" role="status">
+          {t('emailChangeRequested', { email: newEmail })}
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <h3 className="text-sm font-medium text-ink-body">{t('changeEmail')}</h3>
+      <p className="text-sm text-ink-secondary">
+        {t('currentEmailLabel')} <span className="font-medium text-ink-body">{currentEmail}</span>
+      </p>
+
+      <Field label={t('newEmail')} htmlFor="newEmail">
+        <input
+          id="newEmail"
+          type="email"
+          autoComplete="email"
+          value={newEmail}
+          onChange={e => setNewEmail(e.target.value)}
+          className={inputClass}
+          placeholder={t('newEmailPlaceholder')}
+        />
+      </Field>
+
+      <Field label={t('currentPassword')} htmlFor="emailCurrentPassword">
+        <input
+          id="emailCurrentPassword"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          className={inputClass}
+          placeholder={t('passwordPlaceholder')}
+        />
+      </Field>
+
+      {mutation.isError && (
+        <p className="text-sm text-error font-medium" role="alert">
+          {mutation.error?.message || t('emailChangeFailed')}
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={mutation.isPending || !newEmail || !password}
+        className="py-2.5 px-6 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-400
+          text-white text-sm font-semibold rounded-lg shadow-soft
+          focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-2
+          transition-colors duration-150"
+      >
+        {mutation.isPending ? t('sending') : t('sendVerification')}
+      </button>
+    </form>
+  )
+}
+
+function ChangePasswordForm() {
+  const { t } = useTranslation('settings')
+  const { updateAccessToken } = useAuth()
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [clientError, setClientError] = useState(null)
+
+  const mutation = useMutation({
+    mutationFn: () => changePassword(currentPassword, newPassword),
+    onSuccess: (data) => {
+      // The session was rotated; adopt the fresh access token so subsequent
+      // requests don't fall back to a token whose refresh cookie was revoked.
+      if (data?.accessToken) updateAccessToken(data.accessToken)
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    },
+  })
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    setClientError(null)
+    if (newPassword !== confirmPassword) {
+      setClientError(t('passwordsDontMatch'))
+      return
+    }
+    mutation.mutate()
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+      <h3 className="text-sm font-medium text-ink-body">{t('changePassword')}</h3>
+
+      <Field label={t('currentPassword')} htmlFor="currentPassword">
+        <input
+          id="currentPassword"
+          type="password"
+          autoComplete="current-password"
+          value={currentPassword}
+          onChange={e => setCurrentPassword(e.target.value)}
+          className={inputClass}
+          placeholder={t('passwordPlaceholder')}
+        />
+      </Field>
+
+      <Field label={t('newPassword')} htmlFor="newPassword">
+        <input
+          id="newPassword"
+          type="password"
+          autoComplete="new-password"
+          value={newPassword}
+          onChange={e => setNewPassword(e.target.value)}
+          className={inputClass}
+          placeholder={t('passwordPlaceholder')}
+        />
+      </Field>
+
+      <Field label={t('confirmNewPassword')} htmlFor="confirmNewPassword">
+        <input
+          id="confirmNewPassword"
+          type="password"
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={e => setConfirmPassword(e.target.value)}
+          className={inputClass}
+          placeholder={t('passwordPlaceholder')}
+        />
+      </Field>
+
+      {(clientError || mutation.isError) && (
+        <p className="text-sm text-error font-medium" role="alert">
+          {clientError || mutation.error?.message || t('passwordChangeFailed')}
+        </p>
+      )}
+      {mutation.isSuccess && (
+        <p className="text-sm text-emerald-600 font-medium" role="status">{t('passwordChanged')}</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={mutation.isPending || !currentPassword || !newPassword || !confirmPassword}
+        className="py-2.5 px-6 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-400
+          text-white text-sm font-semibold rounded-lg shadow-soft
+          focus:outline-none focus:ring-2 focus:ring-edge-focus focus:ring-offset-2
+          transition-colors duration-150"
+      >
+        {mutation.isPending ? t('common:saving') : t('updatePassword')}
+      </button>
+    </form>
   )
 }

@@ -85,6 +85,11 @@
 - `POST /api/v1/auth/register` - Create account
 - `POST /api/v1/auth/login` - Returns access token + refresh token
 - `POST /api/v1/auth/refresh` - Rotate refresh token
+- `POST /api/v1/auth/email/confirm` - Redeem an email-change verification token (public; token-authenticated)
+
+### Account
+- `POST /api/v1/user/password` - Change password (re-auth with current password; rotates the session)
+- `POST /api/v1/user/email` - Begin an email change; sends a verification link to the new address (verify-before-switch)
 
 ### Core CRUD
 - Projects, Tasks, Deferred Items (standard REST operations)

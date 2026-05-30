@@ -1,6 +1,8 @@
 package com.echel.planner.backend.auth;
 
 import com.echel.planner.backend.auth.dto.AuthResponse;
+import com.echel.planner.backend.auth.dto.ConfirmEmailChangeRequest;
+import com.echel.planner.backend.auth.dto.EmailChangeConfirmedResponse;
 import com.echel.planner.backend.auth.dto.LoginRequest;
 import com.echel.planner.backend.auth.dto.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final AccountService accountService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, AccountService accountService) {
         this.authService = authService;
+        this.accountService = accountService;
     }
 
     @PostMapping("/register")
@@ -52,5 +56,18 @@ public class AuthController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, authService.logout(request).toString())
                 .build();
+    }
+
+    /**
+     * Completes an email change from the verification link. Public (no access
+     * token) because possession of the single-use token — delivered only to the
+     * new address — is the proof of control. On success every session is revoked,
+     * so the client must sign back in with the new email.
+     */
+    @PostMapping("/email/confirm")
+    public ResponseEntity<EmailChangeConfirmedResponse> confirmEmailChange(
+            @Valid @RequestBody ConfirmEmailChangeRequest request) {
+        String newEmail = accountService.confirmEmailChange(request.token());
+        return ResponseEntity.ok(new EmailChangeConfirmedResponse(newEmail));
     }
 }

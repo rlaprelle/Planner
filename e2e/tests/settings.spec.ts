@@ -1,6 +1,7 @@
 import { test, expect } from '../fixtures/auth'
 
 const PREFERENCES = {
+  email: 'test@example.com',
   displayName: 'Test User',
   timezone: 'America/New_York',
   defaultStartTime: '09:00:00',
@@ -82,5 +83,77 @@ test.describe('Settings page', () => {
     await page.getByRole('button', { name: 'Save' }).click()
 
     await expect(page.getByRole('alert')).toBeVisible()
+  })
+})
+
+test.describe('Account section', () => {
+  test('shows the current email', async ({ page }) => {
+    await mockPreferences(page)
+    await page.goto('/settings')
+
+    await expect(page.getByRole('heading', { name: 'Account' })).toBeVisible()
+    await expect(page.getByText('test@example.com')).toBeVisible()
+  })
+
+  test('changing password shows success and updates the access token', async ({ page }) => {
+    await mockPreferences(page)
+    await page.route('**/api/v1/user/password', route =>
+      route.fulfill({ json: { accessToken: 'rotated-token' } })
+    )
+    await page.goto('/settings')
+
+    await page.locator('#currentPassword').fill('secret123')
+    await page.locator('#newPassword').fill('newsecret123')
+    await page.locator('#confirmNewPassword').fill('newsecret123')
+    await page.getByRole('button', { name: 'Update password' }).click()
+
+    await expect(page.getByText('Password updated!')).toBeVisible()
+  })
+
+  test('mismatched new passwords are caught client-side', async ({ page }) => {
+    await mockPreferences(page)
+    let called = false
+    await page.route('**/api/v1/user/password', route => {
+      called = true
+      route.fulfill({ json: { accessToken: 'rotated-token' } })
+    })
+    await page.goto('/settings')
+
+    await page.locator('#currentPassword').fill('secret123')
+    await page.locator('#newPassword').fill('newsecret123')
+    await page.locator('#confirmNewPassword').fill('different456')
+    await page.getByRole('button', { name: 'Update password' }).click()
+
+    await expect(page.getByRole('alert')).toBeVisible()
+    expect(called).toBe(false)
+  })
+
+  test('wrong current password surfaces the backend error', async ({ page }) => {
+    await mockPreferences(page)
+    await page.route('**/api/v1/user/password', route =>
+      route.fulfill({ status: 401, json: { detail: 'Current password is incorrect' } })
+    )
+    await page.goto('/settings')
+
+    await page.locator('#currentPassword').fill('wrong')
+    await page.locator('#newPassword').fill('newsecret123')
+    await page.locator('#confirmNewPassword').fill('newsecret123')
+    await page.getByRole('button', { name: 'Update password' }).click()
+
+    await expect(page.getByText('Current password is incorrect')).toBeVisible()
+  })
+
+  test('requesting an email change shows the check-your-inbox message', async ({ page }) => {
+    await mockPreferences(page)
+    await page.route('**/api/v1/user/email', route =>
+      route.fulfill({ status: 202, body: '' })
+    )
+    await page.goto('/settings')
+
+    await page.locator('#newEmail').fill('new@example.com')
+    await page.locator('#emailCurrentPassword').fill('secret123')
+    await page.getByRole('button', { name: 'Send verification email' }).click()
+
+    await expect(page.getByText(/check new@example\.com/i)).toBeVisible()
   })
 })

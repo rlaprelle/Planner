@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Account management** — change your password (with current-password re-authentication) and change your sign-in email from Settings → Account. Email changes are verify-before-switch: a link is sent to the new address and the email only switches once that link is followed. Both operations sign other devices out; confirming an email change requires logging back in. Email delivery uses AWS SES in production (configurable via `EMAIL_PROVIDER`).
+
 ## [0.1.0] - 2026-05-25
 
 Initial public pre-release of Echel Planner.

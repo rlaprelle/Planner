@@ -58,11 +58,17 @@ export function AuthProvider({ children }) {
     setAuthToken(null)
   }, [])
 
+  // Adopt a freshly-issued access token (e.g. after a password change rotates
+  // the session) without going through a full login.
+  const updateAccessToken = useCallback((accessToken) => {
+    storeToken(accessToken)
+  }, [storeToken])
+
   const role = useMemo(() => extractRole(token), [token])
   const isAdmin = role === 'ADMIN'
 
   return (
-    <AuthContext.Provider value={{ token, user, role, isAdmin, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ token, user, role, isAdmin, login, logout, updateAccessToken, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

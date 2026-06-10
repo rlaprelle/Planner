@@ -60,6 +60,37 @@ export async function mockProjects(page: Page) {
   )
 }
 
+export const PROJECT_TASKS = [
+  {
+    id: 'task-1',
+    projectId: 'proj-1',
+    title: 'Write tests',
+    parentTaskId: null,
+    status: 'OPEN',
+    priority: 3,
+    pointsEstimate: 2,
+    energyLevel: null,
+    dueDate: null,
+    visibleFrom: null,
+    archivedAt: null,
+    children: [],
+  },
+]
+
+export async function mockProjectDetail(page: Page, projectId = 'proj-1') {
+  await page.route(`**/api/v1/projects/${projectId}`, route =>
+    route.fulfill({
+      json: { id: projectId, name: 'Work', color: '#6366f1', isActive: true },
+    })
+  )
+  await page.route(`**/api/v1/projects/${projectId}/tasks`, route =>
+    route.fulfill({ json: PROJECT_TASKS })
+  )
+  await page.route(`**/api/v1/projects/${projectId}/events`, route =>
+    route.fulfill({ json: [] })
+  )
+}
+
 export async function mockSavePlan(page: Page) {
   await page.route('**/api/v1/schedule/today/plan', route =>
     route.fulfill({ json: [] })

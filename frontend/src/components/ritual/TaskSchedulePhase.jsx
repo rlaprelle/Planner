@@ -176,7 +176,7 @@ export function TaskSchedulePhase({ mode, onPhaseComplete }) {
       {mode === 'week' && (
         <div className="space-y-3 mb-4">
           <p className="text-sm font-medium text-ink-body">{t('assignToDay')}</p>
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-7 sm:gap-1">
             {days.map((day) => (
               <button
                 key={day.iso}

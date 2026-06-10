@@ -20,7 +20,7 @@ export function InboxPage() {
   }
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-4 sm:p-8 max-w-2xl">
       <h1 className="text-2xl font-semibold text-ink-heading mb-6">{t('inbox')}</h1>
 
       {items.length === 0 ? (

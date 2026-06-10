@@ -49,7 +49,7 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-50" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
           <Dialog.Title className="text-base font-semibold text-ink-heading mb-2">
             {t('archiveThisTask')}
           </Dialog.Title>
@@ -91,6 +91,7 @@ function ChildTaskItem({ child, projectId }) {
     mutationFn: ({ taskId, status }) => updateTaskStatus(taskId, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks', projectId] })
     },
   })
 
@@ -151,6 +152,7 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
     mutationFn: (data) => updateTask(task.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks', projectId] })
     },
   })
 
@@ -158,6 +160,7 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
     mutationFn: () => archiveTask(task.id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks', projectId] })
       setArchiveOpen(false)
       onOpenChange(false)
     },
@@ -210,7 +213,7 @@ export function TaskDetailModal({ open, onOpenChange, task, projectName, project
       <Dialog.Root open={open} onOpenChange={onOpenChange}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-full max-w-lg max-h-[85vh] bg-surface-raised rounded-2xl shadow-modal focus:outline-none flex flex-col overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
+          <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[calc(100vw-2rem)] max-w-lg max-h-[85vh] bg-surface-raised rounded-2xl shadow-modal focus:outline-none flex flex-col overflow-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95">
             {/* Header */}
             <div className="flex items-start gap-2 px-6 py-5 border-b border-edge-subtle flex-shrink-0">
               <div className="flex-1 min-w-0">

@@ -17,6 +17,8 @@
   "markAsCompleted": "Mark as Completed",
   "appName": "Echel Planner",
   "mainNavigation": "Main navigation",
+  "openMenu": "Open navigation menu",
+  "closeMenu": "Close navigation menu",
   "dashboard": "Dashboard",
   "projects": "Projects",
   "inbox": "Inbox",

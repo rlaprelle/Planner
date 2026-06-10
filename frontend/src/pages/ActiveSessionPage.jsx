@@ -198,7 +198,7 @@ export default function ActiveSessionPage() {
       )}
 
       {/* Action buttons */}
-      <div className="flex gap-3 mt-8 relative">
+      <div className="flex flex-wrap justify-center gap-3 mt-8 relative">
         <button
           onClick={() => completeMutation.mutate()}
           disabled={isPending}

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Mobile-friendly layout** — the app is now usable on phone-sized screens: the sidebar becomes a slide-in drawer behind a hamburger button, task details open as a full modal instead of a side panel on small screens, dashboard cards and ritual layouts stack vertically, dialogs fit the viewport, and the Start Day time grid scrolls horizontally. Drag-and-drop scheduling now supports touch (hold briefly, then drag).
+
 ## [0.1.0] - 2026-05-25
 
 Initial public pre-release of Echel Planner.

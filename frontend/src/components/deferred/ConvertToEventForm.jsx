@@ -67,7 +67,7 @@ export function ConvertToEventForm({ item, onDone, onCancel }) {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
           <label className="block text-xs font-medium text-ink-secondary mb-1">{t('dateRequired')}</label>
           <input

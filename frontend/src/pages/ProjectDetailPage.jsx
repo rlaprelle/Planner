@@ -8,14 +8,18 @@ import { getProjectEvents } from '@/api/events'
 import { TaskList } from './project-detail/TaskList'
 import { EventList } from './project-detail/EventList'
 import { TaskDetailPanel } from './project-detail/TaskDetailPanel'
+import { TaskDetailModal } from './project-detail/TaskDetailModal'
 import { AddTaskModal } from './project-detail/AddTaskModal'
 import { PlusIcon, Spinner } from './project-detail/icons'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 export default function ProjectDetailPage() {
   const { t } = useTranslation('tasks')
   const { projectId } = useParams()
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [addTaskOpen, setAddTaskOpen] = useState(false)
+  // Wide screens show task details in a side panel; small screens use a full modal
+  const isWide = useMediaQuery('(min-width: 1024px)')
 
   const {
     data: project,
@@ -63,7 +67,7 @@ export default function ProjectDetailPage() {
       {/* Left panel — task list */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-edge bg-surface-raised flex-shrink-0">
+        <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-edge bg-surface-raised flex-shrink-0">
           <div>
             <Link
               to="/projects"
@@ -113,8 +117,8 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
-      {/* Right panel — task details */}
-      {resolvedSelectedTask && (
+      {/* Right panel — task details (wide screens) */}
+      {resolvedSelectedTask && isWide && (
         <div className="w-96 flex-shrink-0 border-l border-edge overflow-hidden">
           <TaskDetailPanel
             key={resolvedSelectedTask.id}
@@ -124,6 +128,20 @@ export default function ProjectDetailPage() {
             onClose={handleClosePanel}
           />
         </div>
+      )}
+
+      {/* Task details as a modal (small screens) */}
+      {resolvedSelectedTask && !isWide && (
+        <TaskDetailModal
+          key={resolvedSelectedTask.id}
+          open
+          onOpenChange={(open) => {
+            if (!open) handleClosePanel()
+          }}
+          task={resolvedSelectedTask}
+          projectName={projectName}
+          projectId={projectId}
+        />
       )}
 
       {/* Add task modal */}

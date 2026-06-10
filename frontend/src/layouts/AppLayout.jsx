@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { Outlet } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -201,6 +201,24 @@ export function AppLayout() {
   const displayName = user?.displayName || user?.email || 'User'
   const { session } = useActiveSession()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
+  // Close the drawer whenever navigation happens
+  const [prevPathname, setPrevPathname] = useState(location.pathname)
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname)
+    if (mobileNavOpen) setMobileNavOpen(false)
+  }
+
+  useEffect(() => {
+    if (!mobileNavOpen) return
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setMobileNavOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [mobileNavOpen])
 
   const { data: deferredItems = [] } = useQuery({
     queryKey: ['deferred'],
@@ -210,16 +228,64 @@ export function AppLayout() {
   const inboxCount = deferredItems.length
 
   return (
-    <div className="flex h-screen bg-surface">
-      {/* Sidebar */}
+    <div className="flex h-screen flex-col md:flex-row bg-surface">
+      {/* Mobile top bar */}
+      <header className="md:hidden flex items-center gap-3 px-4 py-3 bg-surface-raised border-b border-edge flex-shrink-0">
+        <button
+          type="button"
+          onClick={() => setMobileNavOpen(true)}
+          aria-label={t('openMenu')}
+          aria-expanded={mobileNavOpen}
+          className="p-2 -ml-2 rounded-md text-ink-secondary hover:bg-surface-soft hover:text-ink-heading transition-colors focus:outline-none focus:ring-2 focus:ring-edge-focus"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <EchelLogo size={22} />
+        <span className="text-lg font-semibold text-ink-heading tracking-tight">{t('appName')}</span>
+      </header>
+
+      {/* Drawer overlay (mobile only) */}
+      {mobileNavOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setMobileNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar — drawer on mobile, static on md+ */}
       <nav
-        className="w-60 flex-shrink-0 flex flex-col bg-surface-raised border-r border-edge"
+        className={[
+          'fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] transform transition-transform duration-200 ease-out',
+          mobileNavOpen ? 'translate-x-0' : '-translate-x-full',
+          'md:static md:z-auto md:w-60 md:max-w-none md:translate-x-0 md:transition-none',
+          'flex-shrink-0 flex flex-col bg-surface-raised border-r border-edge',
+        ].join(' ')}
         aria-label={t('mainNavigation')}
       >
         {/* Logo / Brand */}
         <div className="px-5 py-5 border-b border-edge-subtle flex items-center gap-2.5">
           <EchelLogo size={24} />
           <span className="text-lg font-semibold text-ink-heading tracking-tight">{t('appName')}</span>
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen(false)}
+            aria-label={t('closeMenu')}
+            className="md:hidden ml-auto p-2 -mr-2 rounded-md text-ink-muted hover:bg-surface-soft hover:text-ink-heading transition-colors focus:outline-none focus:ring-2 focus:ring-edge-focus"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         </div>
 
         {/* Active session timer */}
@@ -306,7 +372,7 @@ export function AppLayout() {
       </nav>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 min-h-0 overflow-y-auto">
         <Outlet />
       </main>
     </div>

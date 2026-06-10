@@ -114,7 +114,7 @@ export function DashboardPage() {
   const { todayBlockCount, todayCompletedCount, streakDays, upcomingDeadlines, deferredItemCount } = data ?? {}
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
 
       {/* Toast */}
       {toast && (
@@ -131,7 +131,7 @@ export function DashboardPage() {
 
       <WeeklyBanner summary={weeklySummary} t={t} />
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
 
         {/* Card 1: Today at a glance */}
         <Card>
@@ -237,7 +237,7 @@ export function DashboardPage() {
       </div>
 
       {/* Quick actions */}
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Link
           to="/start-day"
           className="px-4 py-2 text-sm rounded-md bg-primary-500 text-white hover:bg-primary-600 transition-colors font-medium"

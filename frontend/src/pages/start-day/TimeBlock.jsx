@@ -80,7 +80,7 @@ export function TimeBlock({
     <div
       ref={mergedRef}
       style={style}
-      className={`rounded select-none border group overflow-hidden ${
+      className={`rounded select-none border group overflow-hidden touch-manipulation ${
         isCompleted
           ? 'bg-surface-soft border-edge text-ink-muted'
           : 'bg-primary-500 border-primary-600 text-white'

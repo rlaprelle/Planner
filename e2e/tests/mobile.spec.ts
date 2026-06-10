@@ -45,9 +45,13 @@ test.describe('Mobile layout', () => {
     await page.goto('/')
     await expect(page.getByText('days in a row')).toBeVisible()
 
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
-    )
+    // <main> is the app's scroll container (its overflow-y: auto forces
+    // overflow-x to compute to auto), so horizontal overflow shows up
+    // there — the document itself never grows.
+    const overflow = await page.evaluate(() => {
+      const main = document.querySelector('main')!
+      return main.scrollWidth - main.clientWidth
+    })
     expect(overflow).toBe(0)
   })
 

@@ -11,6 +11,7 @@ import { useTimeGrid } from './start-day/useTimeGrid'
 import { pushBlocks, toGridBlock, snapTo15, minutesToTime, timeToMinutes } from './start-day/pushBlocks'
 import { TimeBlockGrid } from './start-day/TimeBlockGrid'
 import { TaskBrowserRow } from './start-day/TaskBrowserRow'
+import { activatorClientX } from './start-day/dragCoords'
 
 const TODAY = format(new Date(), 'yyyy-MM-dd')
 
@@ -234,12 +235,6 @@ export function StartDayPage() {
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
   )
-
-  /** clientX of the activating pointer — works for both mouse and touch events. */
-  function activatorClientX(event) {
-    const ae = event.activatorEvent
-    return ae.clientX ?? ae.touches?.[0]?.clientX ?? 0
-  }
 
   /** Snap a cursor clientX to a centered 1-hour block start time. */
   function cursorToSnappedStart(clientX) {

@@ -247,8 +247,12 @@ The resulting resources are managed by standard ECS APIs (cluster, service, task
    - `PLANNER_DB_PASSWORD` ← full ARN of `planner/db-password`
 
    The ARN includes a 6-character random suffix after the secret name (e.g. `arn:aws:secretsmanager:us-east-1:<account>:secret:planner/jwt-secret-AbC123`). You can't construct it from just the name — copy it from the console.
-7. Health check (configured on the ALB target group): HTTP path `/health` on port 8080, healthy threshold 2, interval 30s. (See [Health endpoints](#health-endpoints) below — use `/health` not `/actuator/health`; the latter lives on the management port and isn't reachable via the ALB.)
-8. Create. The wizard will provision: an ECS cluster, a task definition, a Fargate service, an ALB with target group, and security groups. Wait 5–10 min for the service to reach `RUNNING` with `desired count` matching `running count`.
+7. Health check (configured on the ALB target group): HTTP path `/health`, port `traffic-port`, healthy threshold `2`, unhealthy threshold `2`, interval `15s`. (See [Health endpoints](#health-endpoints) below — use `/health` not `/actuator/health`; the latter lives on the management port and isn't reachable via the ALB.)
+
+   ECS Express's default of 5 consecutive successes × 30s = 2.5 min of warmup before a healthy task gets traffic. With `2` × `15s` that drops to 30s — same liveness guarantee, half the deploy time.
+8. Create. The wizard will provision: an ECS cluster, a task definition, a Fargate service, an ALB with target groups, and security groups. Wait 5–10 min for the service to reach `RUNNING` with `desired count` matching `running count`.
+
+   **ECS Express creates two target groups** as part of its blue/green deployment pattern. If you tune health-check settings post-creation (e.g. the `2` × `15s` values above weren't accepted by the wizard), update **both** target groups identically. A new task may be registered to either one depending on the deployment phase, and any target group with stale health-check config will reject it.
 
 ### 7b. Connect ECS to RDS
 
@@ -414,12 +418,3 @@ When configuring the ALB target group health check, use **path `/health`, port 8
 - `PLANNER_DB_URL`, `PLANNER_DB_USER`, `PLANNER_DB_PASSWORD`
 - `APP_CORS_ALLOWED_ORIGINS` — comma-separated list of allowed origins (default permits localhost dev only)
 
-## Follow-ups
-
-Worth doing eventually, scoped out of [#88](https://github.com/rlaprelle/Planner/issues/88):
-
-- **OIDC instead of access keys** for the GitHub → AWS trust. Removes long-lived credentials from the repo.
-- **Drop the ECS SG → DB SG rule** if you eventually move ECS into a private subnet — currently the DB security group must allow the ECS service's SG explicitly.
-- **Infrastructure as code** (Terraform or CDK) so a second environment is reproducible. Clickops is fine for the first env; the second one is where you regret it.
-- **CloudWatch alarms** on ECS deployment-failure and ALB 5xx rate. Currently the deploy workflow catches startup failures; runtime regressions wait for a user to report.
-- **CDN for the API** if global latency becomes a concern. The ALB is regional.

@@ -35,7 +35,7 @@ export function TaskCard({ task, isSelected, isScheduled, onToggle, section = 'd
   return (
     <div
       ref={setNodeRef}
-      className={`flex items-center gap-2 bg-white rounded px-2 py-1.5 border text-xs
+      className={`flex items-center gap-2 bg-white rounded px-2 py-1.5 border text-xs touch-manipulation
         ${isDragging ? 'opacity-40 border-primary-300' : 'border-edge'}
         ${isScheduled ? 'opacity-50' : 'cursor-grab hover:border-primary-300 hover:shadow-card'}
         transition-all`}

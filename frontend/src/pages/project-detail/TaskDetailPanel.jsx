@@ -49,7 +49,7 @@ function ArchiveConfirmModal({ open, onOpenChange, taskTitle, onConfirm, isPendi
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/40 z-40" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
+        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[calc(100vw-2rem)] max-w-sm bg-surface-raised rounded-xl shadow-modal p-6 focus:outline-none">
           <Dialog.Title className="text-base font-semibold text-ink-heading mb-2">
             {t('archiveThisTask')}
           </Dialog.Title>

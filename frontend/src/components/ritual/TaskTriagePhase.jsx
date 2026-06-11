@@ -177,7 +177,7 @@ function TaskTriageInner({ initialTasks, onPhaseComplete }) {
       )}
 
       <div className="space-y-3">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             onClick={() => deferMutation.mutate({ taskId: currentTask.id, target: 'TOMORROW' })}
             disabled={isPending || !canDefer('TOMORROW')}

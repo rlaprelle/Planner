@@ -59,6 +59,30 @@ export default {
         modal: '0 8px 32px rgba(124,107,158,0.18)',
         soft: '0 1px 2px rgba(124,107,158,0.05)',
       },
+      keyframes: {
+        'drawer-in': {
+          from: { transform: 'translateX(-100%)' },
+          to: { transform: 'translateX(0)' },
+        },
+        'drawer-out': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-100%)' },
+        },
+        'overlay-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        'overlay-out': {
+          from: { opacity: '1' },
+          to: { opacity: '0' },
+        },
+      },
+      animation: {
+        'drawer-in': 'drawer-in 200ms ease-out',
+        'drawer-out': 'drawer-out 150ms ease-in',
+        'overlay-in': 'overlay-in 200ms ease-out',
+        'overlay-out': 'overlay-out 150ms ease-in',
+      },
     },
   },
   plugins: [],

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { DndContext, DragOverlay, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { format } from 'date-fns'
 import { useTranslation } from 'react-i18next'
 
@@ -11,6 +11,7 @@ import { useTimeGrid } from './start-day/useTimeGrid'
 import { pushBlocks, toGridBlock, snapTo15, minutesToTime, timeToMinutes } from './start-day/pushBlocks'
 import { TimeBlockGrid } from './start-day/TimeBlockGrid'
 import { TaskBrowserRow } from './start-day/TaskBrowserRow'
+import { activatorClientX } from './start-day/dragCoords'
 
 const TODAY = format(new Date(), 'yyyy-MM-dd')
 
@@ -228,7 +229,12 @@ export function StartDayPage() {
   })
 
   // --- dnd-kit drag events ---
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
+  // Mouse drags activate after a small movement; touch drags require a short
+  // hold so the page can still be scrolled with a swipe.
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } })
+  )
 
   /** Snap a cursor clientX to a centered 1-hour block start time. */
   function cursorToSnappedStart(clientX) {
@@ -252,7 +258,7 @@ export function StartDayPage() {
       return
     }
 
-    const currentX = event.activatorEvent.clientX + delta.x
+    const currentX = activatorClientX(event) + delta.x
     const snapped = cursorToSnappedStart(currentX)
     setDropPreview({ startMinutes: snapped, endMinutes: snapped + 60 })
   }
@@ -287,7 +293,7 @@ export function StartDayPage() {
       const task = activeData.task
       if (scheduledTaskIds.has(task.id)) return
 
-      const dropClientX = event.activatorEvent.clientX + delta.x
+      const dropClientX = activatorClientX(event) + delta.x
       const snapped = cursorToSnappedStart(dropClientX)
 
       const newBlock = makeBlock(task, snapped, snapped + 60, gridBlocks.length)
@@ -306,7 +312,7 @@ export function StartDayPage() {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragMove={handleDragMove} onDragEnd={handleDragEnd}>
-      <div className="p-6 max-w-7xl mx-auto space-y-4">
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4">
 
         <h1 className="text-2xl font-semibold text-ink-heading">
           Start Day — {new Date().toLocaleDateString(i18n.language, { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -345,8 +351,8 @@ export function StartDayPage() {
           </div>
         </section>
 
-        {/* Row 2: Due today (left) + Due this week (right) */}
-        <div className="flex gap-4">
+        {/* Row 2: Due today + Due this week — stacked on small screens */}
+        <div className="flex flex-col md:flex-row gap-4">
           <section className="flex-1 min-w-0 bg-surface-raised border border-deadline-today-bg rounded-lg p-4 shadow-card">
             <div className="text-xs font-semibold text-deadline-today-text uppercase tracking-wider mb-3">
               {t('dueToday')}
@@ -378,7 +384,7 @@ export function StartDayPage() {
 
         {/* Row 3: Horizontal calendar */}
         <section className="bg-surface-raised border border-edge rounded-lg p-4 shadow-card">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div className="text-xs font-semibold text-primary-700 uppercase tracking-wider">
               {t('todaysPlan')}
               <span className="ml-2 font-normal text-ink-muted normal-case tracking-normal">
@@ -409,18 +415,23 @@ export function StartDayPage() {
             </div>
           </div>
 
-          <TimeBlockGrid
-            blocks={gridBlocks}
-            onBlocksChange={setBlocks}
-            onRemoveBlock={handleRemoveBlock}
-            dropPreview={dropPreview}
-            gridRef={gridRef}
-            minutesToPercent={minutesToPercent}
-            durationToPercent={durationToPercent}
-            startResize={startResize}
-            dayStartMinutes={dayStartMinutes}
-            dayEndMinutes={dayEndMinutes}
-          />
+          {/* Horizontal scroll on narrow screens so hour columns stay usable */}
+          <div className="overflow-x-auto">
+            <div className="min-w-[560px] lg:min-w-0">
+              <TimeBlockGrid
+                blocks={gridBlocks}
+                onBlocksChange={setBlocks}
+                onRemoveBlock={handleRemoveBlock}
+                dropPreview={dropPreview}
+                gridRef={gridRef}
+                minutesToPercent={minutesToPercent}
+                durationToPercent={durationToPercent}
+                startResize={startResize}
+                dayStartMinutes={dayStartMinutes}
+                dayEndMinutes={dayEndMinutes}
+              />
+            </div>
+          </div>
 
           {saveMutation.isError && (
             <p className="mt-2 text-xs text-error">

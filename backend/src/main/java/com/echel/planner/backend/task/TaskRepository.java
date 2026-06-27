@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     Optional<Task> findByIdAndUserId(UUID id, UUID userId);
 
-    List<Task> findByIdInAndUserId(java.util.Collection<UUID> ids, UUID userId);
+    List<Task> findByIdInAndUserId(Collection<UUID> ids, UUID userId);
 
     List<Task> findByProjectIdAndUserIdAndParentTaskIsNullAndArchivedAtIsNull(UUID projectId, UUID userId);
 

@@ -88,8 +88,8 @@ class ScheduleServiceEventTest {
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
-        when(taskRepository.findByIdAndUserId(taskId, userId))
-                .thenReturn(Optional.of(task));
+        when(taskRepository.findByIdInAndUserId(java.util.Set.of(taskId), userId))
+                .thenReturn(java.util.List.of(task));
         when(timeBlockRepository.saveAll(any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -184,8 +184,8 @@ class ScheduleServiceEventTest {
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
-        when(taskRepository.findByIdAndUserId(taskId, userId))
-                .thenReturn(Optional.of(task));
+        when(taskRepository.findByIdInAndUserId(java.util.Set.of(taskId), userId))
+                .thenReturn(java.util.List.of(task));
         when(timeBlockRepository.saveAll(any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 

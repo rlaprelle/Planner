@@ -83,6 +83,45 @@ class ScheduleServiceTest {
     }
 
     // -------------------------------------------------------------------------
+    // getToday
+    // -------------------------------------------------------------------------
+
+    @Test
+    void getToday_returnsMappedBlocks() {
+        TimeBlock block = new TimeBlock(user, LocalDate.now(), task, LocalTime.of(9, 0), LocalTime.of(9, 30), 0);
+        when(timeBlockRepository.findByUserIdAndBlockDateWithTask(eq(userId), any(LocalDate.class)))
+                .thenReturn(List.of(block));
+
+        List<TimeBlockResponse> responses = scheduleService.getToday(user);
+
+        assertThat(responses).hasSize(1);
+        assertThat(responses.get(0).startTime()).isEqualTo(LocalTime.of(9, 0));
+        assertThat(responses.get(0).endTime()).isEqualTo(LocalTime.of(9, 30));
+    }
+
+    @Test
+    void getToday_usesUserTimezone() {
+        // AppUser default timezone is UTC in the setup
+        // Let's set it to something specific and verify the LocalDate matches that zone
+        AppUser tokyoUser = new AppUser("tokyo@example.com", "hash", "Tokyo User", "Asia/Tokyo");
+        try {
+            var field = AppUser.class.getDeclaredField("id");
+            field.setAccessible(true);
+            field.set(tokyoUser, userId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        scheduleService.getToday(tokyoUser);
+
+        ArgumentCaptor<LocalDate> dateCaptor = ArgumentCaptor.forClass(LocalDate.class);
+        verify(timeBlockRepository).findByUserIdAndBlockDateWithTask(eq(userId), dateCaptor.capture());
+
+        LocalDate expectedTokyoDate = LocalDate.now(java.time.ZoneId.of("Asia/Tokyo"));
+        assertThat(dateCaptor.getValue()).isEqualTo(expectedTokyoDate);
+    }
+
+    // -------------------------------------------------------------------------
     // savePlan validation
     // -------------------------------------------------------------------------
 

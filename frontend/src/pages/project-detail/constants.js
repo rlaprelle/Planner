@@ -26,12 +26,6 @@ export const ENERGY_OPTIONS = [
   { value: 'HIGH', label: 'High' },
 ]
 
-export const DEADLINE_GROUP_LABELS = {
-  TODAY: 'Today',
-  THIS_WEEK: 'This Week',
-  NO_DEADLINE: 'No Deadline',
-}
-
 // Priority dot colors
 export const PRIORITY_DOT_COLORS = {
   1: 'bg-gray-300',

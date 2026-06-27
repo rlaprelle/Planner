@@ -212,10 +212,7 @@ public class TaskService {
     // --- Private helpers ---
 
     private void cascadeProjectToChildren(UUID parentTaskId, UUID userId, Project project) {
-        List<Task> children = taskRepository.findByParentTaskIdAndUserId(parentTaskId, userId);
-        for (Task child : children) {
-            child.setProject(project);
-        }
+        taskRepository.updateProjectForChildren(parentTaskId, userId, project);
     }
 
     private List<TaskResponse> buildChildResponses(UUID parentTaskId, AppUser user) {

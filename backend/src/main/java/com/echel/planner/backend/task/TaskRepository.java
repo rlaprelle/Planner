@@ -1,7 +1,9 @@
 package com.echel.planner.backend.task;
 
+import com.echel.planner.backend.project.Project;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,6 +22,15 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
     List<Task> findByParentTaskIdAndUserIdAndArchivedAtIsNull(UUID parentTaskId, UUID userId);
 
     List<Task> findByParentTaskIdAndUserId(UUID parentTaskId, UUID userId);
+
+    @Modifying
+    @Query("""
+            UPDATE Task t SET t.project = :project
+            WHERE t.parentTask.id = :parentTaskId AND t.user.id = :userId
+            """)
+    void updateProjectForChildren(@Param("parentTaskId") UUID parentTaskId,
+                                  @Param("userId") UUID userId,
+                                  @Param("project") Project project);
 
     @Query("""
             SELECT t FROM Task t

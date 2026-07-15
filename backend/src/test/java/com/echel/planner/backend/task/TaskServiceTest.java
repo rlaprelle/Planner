@@ -254,8 +254,11 @@ class TaskServiceTest {
                 .thenReturn(Optional.of(parent));
         when(projectRepository.findByIdAndUserId(newProjectId, userId))
                 .thenReturn(Optional.of(newProject));
-        when(taskRepository.findByParentTaskIdAndUserId(taskId, userId))
-                .thenReturn(List.of(child));
+
+        // Simulating the effect of the bulk update since child is a mocked response
+        // In a real scenario, the child's project would be updated in the DB
+        child.setProject(newProject);
+
         when(taskRepository.findByParentTaskIdAndUserIdAndArchivedAtIsNull(taskId, userId))
                 .thenReturn(List.of(child));
         // child's children
@@ -266,6 +269,8 @@ class TaskServiceTest {
                 "Updated Title", null, null, null, null, null, null, null, null, newProjectId);
 
         TaskResponse response = taskService.update(user, taskId, request);
+
+        verify(taskRepository).updateProjectForChildren(taskId, userId, newProject);
 
         assertThat(parent.getProject()).isEqualTo(newProject);
         assertThat(child.getProject()).isEqualTo(newProject);

@@ -353,6 +353,43 @@ class ScheduleServiceTest {
     }
 
     // -------------------------------------------------------------------------
+    // extendBlock
+    // -------------------------------------------------------------------------
+
+    @Test
+    void extendBlock_createsExtensionBlock() {
+        TimeBlock block = new TimeBlock(user, LocalDate.now(), task, LocalTime.of(9, 0), LocalTime.of(9, 30), 1);
+        when(timeBlockRepository.findByIdAndUserId(blockId, userId)).thenReturn(Optional.of(block));
+
+        TimeBlock extension = new TimeBlock(user, LocalDate.now(), task, LocalTime.of(9, 30), LocalTime.of(10, 0), 2);
+        when(timeBlockRepository.save(any(TimeBlock.class))).thenReturn(extension);
+
+        TimeBlockResponse response = scheduleService.extendBlock(user, blockId, 30);
+
+        ArgumentCaptor<TimeBlock> captor = ArgumentCaptor.forClass(TimeBlock.class);
+        verify(timeBlockRepository).save(captor.capture());
+        TimeBlock savedExtension = captor.getValue();
+
+        assertThat(savedExtension.getUser()).isEqualTo(user);
+        assertThat(savedExtension.getTask()).isEqualTo(task);
+        assertThat(savedExtension.getStartTime()).isEqualTo(LocalTime.of(9, 30));
+        assertThat(savedExtension.getEndTime()).isEqualTo(LocalTime.of(10, 0));
+        assertThat(savedExtension.getSortOrder()).isEqualTo(2);
+
+        assertThat(response.startTime()).isEqualTo(LocalTime.of(9, 30));
+        assertThat(response.endTime()).isEqualTo(LocalTime.of(10, 0));
+    }
+
+    @Test
+    void extendBlock_throwsWhenNotFound() {
+        when(timeBlockRepository.findByIdAndUserId(blockId, userId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> scheduleService.extendBlock(user, blockId, 30))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("not found");
+    }
+
+    // -------------------------------------------------------------------------
     // doneForNow
     // -------------------------------------------------------------------------
 

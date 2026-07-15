@@ -20,7 +20,11 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -106,10 +110,19 @@ public class ScheduleService {
                     event.getStartTime(), event.getEndTime(), 0));
         }
 
+        Set<UUID> taskIds = taskBlocks.stream()
+                .map(SavePlanRequest.BlockEntry::taskId)
+                .collect(Collectors.toSet());
+
+        Map<UUID, Task> taskMap = taskIds.isEmpty() ? Map.of() :
+                taskRepository.findByIdInAndUserId(taskIds, user.getId()).stream()
+                .collect(Collectors.toMap(Task::getId, Function.identity()));
+
         for (SavePlanRequest.BlockEntry entry : taskBlocks) {
-            Task task = taskRepository.findByIdAndUserId(entry.taskId(), user.getId())
-                    .orElseThrow(() -> new ValidationException(
-                            "Task not found: " + entry.taskId()));
+            Task task = taskMap.get(entry.taskId());
+            if (task == null) {
+                throw new ValidationException("Task not found: " + entry.taskId());
+            }
             allBlocks.add(new TimeBlock(user, today, task,
                     entry.startTime(), entry.endTime(), 0));
         }

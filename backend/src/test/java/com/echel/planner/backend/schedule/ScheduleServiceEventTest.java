@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,8 +89,8 @@ class ScheduleServiceEventTest {
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
-        when(taskRepository.findByIdAndUserId(taskId, userId))
-                .thenReturn(Optional.of(task));
+        when(taskRepository.findByIdInAndUserId(Set.of(taskId), userId))
+                .thenReturn(List.of(task));
         when(timeBlockRepository.saveAll(any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -184,8 +185,8 @@ class ScheduleServiceEventTest {
 
         when(eventService.findForDate(eq(user), any(LocalDate.class)))
                 .thenReturn(List.of(event));
-        when(taskRepository.findByIdAndUserId(taskId, userId))
-                .thenReturn(Optional.of(task));
+        when(taskRepository.findByIdInAndUserId(Set.of(taskId), userId))
+                .thenReturn(List.of(task));
         when(timeBlockRepository.saveAll(any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 

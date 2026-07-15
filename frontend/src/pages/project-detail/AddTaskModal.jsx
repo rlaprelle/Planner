@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { createTask } from '@/api/tasks'
 import { PRIORITY_OPTIONS } from './constants'
-import { PlusIcon } from './icons'
 
 export function AddTaskModal({ open, onOpenChange, projectId, parentTaskId = null, parentTitle = null }) {
   const { t } = useTranslation('tasks')
